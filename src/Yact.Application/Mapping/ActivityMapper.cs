@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Yact.Application.DTOs;
-using Yact.Domain.Models;
+using Yact.Domain.Entities.Activity;
 
 namespace Yact.Application.Mapping;
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Yact.Domain.Models;
+using Yact.Domain.Entities.Activity;
 
 namespace Yact.Infrastructure.Data;
 
@@ -51,7 +51,7 @@ public class AppDbContext : DbContext
             EndDate = DateTime.Now,
             DistanceMeters = 10000,
             ElevationMeters = 100,
-            IsIndoor = false,
+            Type = "Cycling",
             CreateDate = DateTime.Now,
         });
     }

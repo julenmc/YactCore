@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Yact.Application.Interfaces;
-using Yact.Domain.Models;
+using Yact.Domain.Entities.Activity;
 using Yact.Domain.Repositories;
 
 namespace Yact.Application.Handlers.Activities.UploadActivity;
@@ -9,35 +9,34 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
 {
     private readonly IFileStorageService _fileStorage;
     private readonly IActivityRepository _activityRepository;
+    private readonly IActivityReaderService _activityReaderService;
 
     public UploadActivityHandler(
         IFileStorageService fileStorage,
-        IActivityRepository activityRepository)
+        IActivityRepository activityRepository,
+        IActivityReaderService activityReaderService)
     {
         _fileStorage = fileStorage;
         _activityRepository = activityRepository;
+        _activityReaderService = activityReaderService;
     }
 
     public async Task<int> Handle(UploadActivityCommand request, CancellationToken cancellationToken)
-    {
-        // Save file
-        var filePath = await _fileStorage.SaveFileAsync(
-            request.FileStream,
-            request.FileName,
-            "activities");
+    {      
+        // Read file
+        var activity = await _activityReaderService.ReadActivityAsync(request.FileStream, request.FileName);
+        activity.CreateDate = DateTime.Now;
+
+        // Analyze file (intervals, climbs...)
 
         // Reset stream to read file
         request.FileStream.Position = 0;
 
-        // Analyze file (intervals, climbs...)
-
-        // Create entity with data
-        var activity = new Activity
-        {
-            Name = request.FileName,
-            Path = filePath,
-            CreateDate = DateTime.Now,
-        };
+        // Save file
+        activity.Path = await _fileStorage.SaveFileAsync(
+            request.FileStream,
+            request.FileName,
+            "activities");
 
         // Save activity in DB
         await _activityRepository.AddAsync(activity);

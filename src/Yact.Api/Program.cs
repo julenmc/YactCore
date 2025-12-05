@@ -9,7 +9,8 @@ using Yact.Domain.Repositories;
 using Yact.Infrastructure.Configuration;
 using Yact.Infrastructure.Data;
 using Yact.Infrastructure.Repositories;
-using Yact.Infrastructure.Services;
+using Yact.Infrastructure.Services.ActivityReader;
+using Yact.Infrastructure.Services.FileStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ IMapper mapper = ActivityMapper.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// MediatR (si lo usas)
+// MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(UploadActivityHandler).Assembly));
 
@@ -36,6 +37,9 @@ builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.Configure<FileStorageConfiguration>(
     builder.Configuration.GetSection("FileStorage"));
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
+// Read service
+builder.Services.AddScoped<IActivityReaderService, ActivityReaderService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

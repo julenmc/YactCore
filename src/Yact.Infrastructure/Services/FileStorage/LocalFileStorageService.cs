@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Yact.Application.Interfaces;
 using Yact.Infrastructure.Configuration;
 
-namespace Yact.Infrastructure.Services;
+namespace Yact.Infrastructure.Services.FileStorage;
 
 public class LocalFileStorageService : IFileStorageService
 {

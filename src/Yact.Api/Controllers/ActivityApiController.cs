@@ -1,9 +1,12 @@
 ﻿using Azure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using Yact.Application.DTOs;
+using Yact.Application.Handlers.Activities.DeleteActivityById;
 using Yact.Application.Handlers.Activities.GetActivities;
 using Yact.Application.Handlers.Activities.GetActivitiesById;
+using Yact.Application.Handlers.Activities.UpdateActivity;
 using Yact.Application.Handlers.Activities.UploadActivity;
 
 namespace Yact.Api.Controllers;
@@ -75,7 +78,7 @@ public class ActivityApiController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("upload")]
     public async Task<ActionResult<ResponseDto>> UploadFile(IFormFile file)
     {
         if (file == null)
@@ -87,12 +90,68 @@ public class ActivityApiController : ControllerBase
             var command = new UploadActivityCommand(
                 stream,
                 file.FileName);
-            
+
             var activityId = await _mediator.Send(command);
             return Ok(new ResponseDto
             {
                 IsSuccess = true,
                 Result = activityId
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResponseDto
+            {
+                IsSuccess = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ResponseDto>> DeleteById(int id)
+    {
+        try
+        {
+            var command = new DeleteActivityByIdCommand(id);
+
+            var activityId = await _mediator.Send(command);
+            if (activityId == -1)
+            {
+                return StatusCode(500, new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"Activity with ID {id} not found"
+                });
+            }
+            return Ok(new ResponseDto
+            {
+                IsSuccess = true,
+                Result = activityId
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResponseDto
+            {
+                IsSuccess = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<ResponseDto>> Update([FromBody] ActivityDto activityDto)
+    {
+        try
+        {
+            var command = new UpdateActivityCommand(activityDto);
+
+            var activity = await _mediator.Send(command);
+            return Ok(new ResponseDto
+            {
+                IsSuccess = true,
+                Result = activity
             });
         }
         catch (Exception ex)
