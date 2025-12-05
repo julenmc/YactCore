@@ -24,8 +24,9 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
     public async Task<int> Handle(UploadActivityCommand request, CancellationToken cancellationToken)
     {      
         // Read file
-        var activity = await _activityReaderService.ReadActivityAsync(request.FileStream, request.FileName);
-        activity.CreateDate = DateTime.Now;
+        var activity = await _activityReaderService.ReadActivityAsync(request.FileStream);
+        activity.Info.Name = request.FileName;
+        activity.Info.CreateDate = DateTime.Now;
 
         // Analyze file (intervals, climbs...)
 
@@ -33,14 +34,14 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
         request.FileStream.Position = 0;
 
         // Save file
-        activity.Path = await _fileStorage.SaveFileAsync(
+        activity.Info.Path = await _fileStorage.SaveFileAsync(
             request.FileStream,
             request.FileName,
             "activities");
 
         // Save activity in DB
-        await _activityRepository.AddAsync(activity);
+        await _activityRepository.AddAsync(activity.Info);
 
-        return activity.Id;
+        return activity.Info.Id;
     }
 }

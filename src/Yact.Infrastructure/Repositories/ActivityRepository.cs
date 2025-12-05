@@ -14,26 +14,26 @@ public class ActivityRepository : IActivityRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<Activity>> GetAllAsync()
+    public async Task<IEnumerable<ActivityInfo>> GetAllAsync()
     {
         return await _db.Activities.ToListAsync();
     }
 
-    public async Task<Activity?> GetByIdAsync(int id)
+    public async Task<ActivityInfo?> GetByIdAsync(int id)
     {
         return await _db.Activities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task AddAsync(Activity activity)
+    public async Task AddAsync(ActivityInfo activity)
     {
         await _db.Activities.AddAsync(activity);
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Activity?> RemoveByIdAsync(int id)
+    public async Task<ActivityInfo?> RemoveByIdAsync(int id)
     {
         // Create aux entity just for the id
-        var activity = new Activity { Id = id, Name = "Dummy", Path = "Dummy Path" };
+        var activity = new ActivityInfo { Id = id, Name = "Dummy", Path = "Dummy Path" };
 
         try
         {
@@ -51,7 +51,7 @@ public class ActivityRepository : IActivityRepository
         }
     }
 
-    public async Task<Activity?> UpdateAsync(Activity activity)
+    public async Task<ActivityInfo?> UpdateAsync(ActivityInfo activity)
     {
         var updated = _db.Update(activity);
         if (updated == null) 

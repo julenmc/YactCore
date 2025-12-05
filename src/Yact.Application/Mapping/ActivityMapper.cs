@@ -10,8 +10,8 @@ public class ActivityMapper
     {
         var mappingConfig = new MapperConfiguration(config =>
         {
-            config.CreateMap<Activity, ActivityDto>();
-            config.CreateMap<ActivityDto, Activity>();
+            config.CreateMap<ActivityInfo, ActivityInfoDto>();
+            config.CreateMap<ActivityInfoDto, ActivityInfo>();
         });
         return mappingConfig;
     }

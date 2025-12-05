@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     }
 
     //public DbSet<Climb> Climbs { get; set; }
-    public DbSet<Activity> Activities { get; set; }
+    public DbSet<ActivityInfo> Activities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,7 +41,7 @@ public class AppDbContext : DbContext
         //    HeightDiff = 0
         //});
 
-        modelBuilder.Entity<Activity>().HasData(new Activity
+        modelBuilder.Entity<ActivityInfo>().HasData(new ActivityInfo
         {
             Id = 1,
             Name = "Dummy Activity",

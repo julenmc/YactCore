@@ -4,5 +4,5 @@ namespace Yact.Application.Interfaces;
 
 public interface IActivityReaderService
 {
-    Task<Activity> ReadActivityAsync(Stream fileStream, string fileName, string description = "");
+    Task<Activity> ReadActivityAsync(Stream fileStream);
 }

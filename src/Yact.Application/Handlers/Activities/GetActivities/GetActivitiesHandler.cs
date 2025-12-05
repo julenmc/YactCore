@@ -5,7 +5,7 @@ using Yact.Domain.Repositories;
 
 namespace Yact.Application.Handlers.Activities.GetActivities;
 
-public class GetActivitiesHandler : IRequestHandler<GetActivitiesQuery, IEnumerable<ActivityDto>>
+public class GetActivitiesHandler : IRequestHandler<GetActivitiesQuery, IEnumerable<ActivityInfoDto>>
 {
     private readonly IActivityRepository _repository;
     private readonly IMapper _mapper;
@@ -16,9 +16,9 @@ public class GetActivitiesHandler : IRequestHandler<GetActivitiesQuery, IEnumera
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ActivityDto>> Handle(GetActivitiesQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ActivityInfoDto>> Handle(GetActivitiesQuery request, CancellationToken cancellationToken)
     {
         var activities = await _repository.GetAllAsync();
-        return _mapper.Map<IEnumerable<ActivityDto>>(activities);
+        return _mapper.Map<IEnumerable<ActivityInfoDto>>(activities);
     }
 }

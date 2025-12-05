@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Yact.Domain\Yact.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Handlers\Records\GetRecordsById\" />
+  </ItemGroup>
+
 </Project>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yact.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddActivitiesToDb : Migration
+    public partial class FirstDBMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,12 +19,12 @@ namespace Yact.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Path = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Distance = table.Column<double>(type: "float", nullable: false),
-                    Elevation = table.Column<double>(type: "float", nullable: false),
-                    IsIndoor = table.Column<bool>(type: "bit", nullable: false),
+                    DistanceMeters = table.Column<double>(type: "float", nullable: false),
+                    ElevationMeters = table.Column<double>(type: "float", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -32,6 +32,11 @@ namespace Yact.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Activities", x => x.Id);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Activities",
+                columns: new[] { "Id", "CreateDate", "Description", "DistanceMeters", "ElevationMeters", "EndDate", "Name", "Path", "StartDate", "Type", "UpdateDate" },
+                values: new object[] { 1, new DateTime(2025, 12, 5, 17, 56, 3, 859, DateTimeKind.Local).AddTicks(7201), "This is a dummy activity", 10000.0, 100.0, new DateTime(2025, 12, 5, 17, 56, 3, 859, DateTimeKind.Local).AddTicks(7198), "Dummy Activity", "dummy_activity.fit", new DateTime(2025, 12, 5, 17, 26, 3, 859, DateTimeKind.Local).AddTicks(7155), "Cycling", null });
         }
 
         /// <inheritdoc />

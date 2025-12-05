@@ -1,7 +1,5 @@
-﻿using Azure;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using Yact.Application.DTOs;
 using Yact.Application.Handlers.Activities.DeleteActivityById;
 using Yact.Application.Handlers.Activities.GetActivities;
@@ -13,7 +11,7 @@ namespace Yact.Api.Controllers;
 
 [Route("api/activities")]
 [ApiController]
-public class ActivityApiController : ControllerBase
+public partial class ActivityApiController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -28,7 +26,7 @@ public class ActivityApiController : ControllerBase
         try
         {
             var query = new GetActivitiesQuery();
-            IEnumerable<ActivityDto> activities = await _mediator.Send(query);
+            IEnumerable<ActivityInfoDto> activities = await _mediator.Send(query);
             return Ok(new ResponseDto
             {
                 IsSuccess = true,
@@ -141,7 +139,7 @@ public class ActivityApiController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ResponseDto>> Update([FromBody] ActivityDto activityDto)
+    public async Task<ActionResult<ResponseDto>> Update([FromBody] ActivityInfoDto activityDto)
     {
         try
         {

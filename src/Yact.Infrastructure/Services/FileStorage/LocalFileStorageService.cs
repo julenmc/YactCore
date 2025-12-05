@@ -37,7 +37,7 @@ public class LocalFileStorageService : IFileStorageService
             await stream.CopyToAsync(fileStreamOutput);
         }
 
-        return Path.Combine(folder, uniqueFileName);
+        return filePath;
     }
 
     public async Task<Stream> GetFileAsync(string filePath)

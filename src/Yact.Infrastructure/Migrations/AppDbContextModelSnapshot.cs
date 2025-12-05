@@ -22,7 +22,7 @@ namespace Yact.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Yact.Domain.Entities.Activity.Activity", b =>
+            modelBuilder.Entity("Yact.Domain.Entities.Activity.ActivityInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,6 +50,7 @@ namespace Yact.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -69,14 +70,14 @@ namespace Yact.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 12, 5, 10, 51, 50, 751, DateTimeKind.Local).AddTicks(4968),
+                            CreateDate = new DateTime(2025, 12, 5, 17, 56, 3, 859, DateTimeKind.Local).AddTicks(7201),
                             Description = "This is a dummy activity",
                             DistanceMeters = 10000.0,
                             ElevationMeters = 100.0,
-                            EndDate = new DateTime(2025, 12, 5, 10, 51, 50, 751, DateTimeKind.Local).AddTicks(4965),
+                            EndDate = new DateTime(2025, 12, 5, 17, 56, 3, 859, DateTimeKind.Local).AddTicks(7198),
                             Name = "Dummy Activity",
                             Path = "dummy_activity.fit",
-                            StartDate = new DateTime(2025, 12, 5, 10, 21, 50, 751, DateTimeKind.Local).AddTicks(4918),
+                            StartDate = new DateTime(2025, 12, 5, 17, 26, 3, 859, DateTimeKind.Local).AddTicks(7155),
                             Type = "Cycling"
                         });
                 });

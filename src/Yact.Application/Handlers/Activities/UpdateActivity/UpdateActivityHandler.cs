@@ -6,7 +6,7 @@ using Yact.Domain.Repositories;
 
 namespace Yact.Application.Handlers.Activities.UpdateActivity;
 
-public class UpdateActivityHandler : IRequestHandler<UpdateActivityCommand, ActivityDto>
+public class UpdateActivityHandler : IRequestHandler<UpdateActivityCommand, ActivityInfoDto>
 {
     private readonly IActivityRepository _repository;
     private readonly IMapper _mapper;
@@ -17,11 +17,11 @@ public class UpdateActivityHandler : IRequestHandler<UpdateActivityCommand, Acti
         _mapper = mapper;
     }
 
-    public async Task<ActivityDto> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
+    public async Task<ActivityInfoDto> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
     {
-        var activity = _mapper.Map<Activity>(command.ActivityDto);
+        var activity = _mapper.Map<ActivityInfo>(command.ActivityDto);
         activity.UpdateDate = DateTime.Now;
         var updated = await _repository.UpdateAsync(activity);
-        return _mapper.Map<ActivityDto>(updated);
+        return _mapper.Map<ActivityInfoDto>(updated);
     }
 }

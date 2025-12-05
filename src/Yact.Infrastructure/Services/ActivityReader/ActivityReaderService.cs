@@ -8,7 +8,7 @@ public class ActivityReaderService : IActivityReaderService
 {
     private const double Semicircles = 2147483648.0;
 
-    public async Task<YactActivity.Activity> ReadActivityAsync(Stream fileStream, string fileName, string description = "")
+    public async Task<YactActivity.Activity> ReadActivityAsync(Stream fileStream)
     {
         using var ms = new MemoryStream();
         await fileStream.CopyToAsync(ms);
@@ -18,8 +18,12 @@ public class ActivityReaderService : IActivityReaderService
         var broadcaster = new MesgBroadcaster();
         var result = new YactActivity.Activity()
         {
-            Name = fileName,
-            Path = "Error", // change in application
+            Info = new YactActivity.ActivityInfo()
+            {
+                Name = "Name",
+                Path = "Error", // change in application
+            },
+            RecordData = new List<YactActivity.RecordData>()
         };
         float? lastAltitude = null;
 
@@ -30,31 +34,34 @@ public class ActivityReaderService : IActivityReaderService
             if (lastAltitude != null && currentAltitude != null)
             {
                 float altDiff = (float)(currentAltitude - lastAltitude);
-                result.ElevationMeters += (altDiff > 0) ? altDiff : 0;
+                result.Info.ElevationMeters += (altDiff > 0) ? altDiff : 0;
             }
             lastAltitude = currentAltitude;
 
-            //result.Records.Add(new RecordData
-            //{
-            //    Timestamp = m.GetTimestamp().GetDateTime(),
-            //    Latitude = ConvertSemicircles(m.GetPositionLat()),
-            //    Longitude = ConvertSemicircles(m.GetPositionLong()),
-            //    Altitude = m.GetAltitude(),
-            //    Speed = m.GetSpeed(),
-            //    HeartRate = m.GetHeartRate(),
-            //    Power = m.GetPower(),
-            //    Cadence = m.GetCadence()
-            //});
+            result.RecordData.Add(new YactActivity.RecordData
+            {
+                Timestamp = m.GetTimestamp().GetDateTime(),
+                Coordinates = new YactActivity.CoordinatesData
+                {
+                    Latitude = m.GetPositionLat(),
+                    Longitude = m.GetPositionLong(),
+                    Altitude = m.GetAltitude(),
+                },
+                SpeedMps = m.GetSpeed(),
+                HeartRate = m.GetHeartRate(),
+                Power = m.GetPower(),
+                Cadence = m.GetCadence()
+            });
         };
 
         broadcaster.SessionMesgEvent += (s, e) =>
         {
             var m = (SessionMesg)e.mesg;
 
-            result.Type = m.GetSport()?.ToString();
-            result.DistanceMeters = Math.Round((double)(m.GetTotalDistance() ?? 0.0f));
-            result.StartDate = m.GetStartTime().GetDateTime();
-            result.EndDate = result.StartDate.AddSeconds(m.GetTotalElapsedTime() ?? 0.0f);
+            result.Info.Type = m.GetSport()?.ToString();
+            result.Info.DistanceMeters = Math.Round((double)(m.GetTotalDistance() ?? 0.0f));
+            result.Info.StartDate = m.GetStartTime().GetDateTime();
+            result.Info.EndDate = result.Info.StartDate.AddSeconds(m.GetTotalElapsedTime() ?? 0.0f);
         };
 
         //broadcaster.LapMesgEvent += (s, e) =>
@@ -75,7 +82,7 @@ public class ActivityReaderService : IActivityReaderService
 
         // Decodificación (Fit SDK no es async, pero el I/O sí lo es)
         decode.Read(ms);
-        result.ElevationMeters = Math.Round(result.ElevationMeters);
+        result.Info.ElevationMeters = Math.Round(result.Info.ElevationMeters);
 
         return result;
     }
