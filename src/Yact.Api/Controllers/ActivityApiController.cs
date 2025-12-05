@@ -1,0 +1,107 @@
+﻿using Azure;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Yact.Application.DTOs;
+using Yact.Application.Handlers.Activities.GetActivities;
+using Yact.Application.Handlers.Activities.GetActivitiesById;
+using Yact.Application.Handlers.Activities.UploadActivity;
+
+namespace Yact.Api.Controllers;
+
+[Route("api/activities")]
+[ApiController]
+public class ActivityApiController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public ActivityApiController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ResponseDto>> Get()
+    {
+        try
+        {
+            var query = new GetActivitiesQuery();
+            IEnumerable<ActivityDto> activities = await _mediator.Send(query);
+            return Ok(new ResponseDto
+            {
+                IsSuccess = true,
+                Result = activities
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResponseDto
+            {
+                IsSuccess = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ResponseDto>> Get(int id)
+    {
+        try
+        {
+            var query = new GetActivityByIdQuery(id);
+            var activity = await _mediator.Send(query);
+
+            if (activity == null)
+            {
+                return NotFound(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Activity not found"
+                });
+            }
+
+            return Ok(new ResponseDto
+            {
+                IsSuccess = true,
+                Result = activity
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResponseDto
+            {
+                IsSuccess = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ResponseDto>> UploadFile(IFormFile file)
+    {
+        if (file == null)
+            return BadRequest("No file uploaded");
+
+        try
+        {
+            using var stream = file.OpenReadStream();
+            var command = new UploadActivityCommand(
+                stream,
+                file.FileName);
+            
+            var activityId = await _mediator.Send(command);
+            return Ok(new ResponseDto
+            {
+                IsSuccess = true,
+                Result = activityId
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResponseDto
+            {
+                IsSuccess = false,
+                Message = ex.Message
+            });
+        }
+    }
+}

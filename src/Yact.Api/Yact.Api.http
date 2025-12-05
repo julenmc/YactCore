@@ -1,0 +1,6 @@
+@Yact.Api_HostAddress = http://localhost:5291
+
+GET {{Yact.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
