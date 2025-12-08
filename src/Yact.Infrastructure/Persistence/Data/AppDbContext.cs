@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Yact.Domain.Entities.Activity;
+using Yact.Infrastructure.Persistence.Models.Activity;
+using Yact.Infrastructure.Persistence.Models.Cyclist;
 
-namespace Yact.Infrastructure.Data;
+namespace Yact.Infrastructure.Persistence.Data;
 
 public class AppDbContext : DbContext
 {
@@ -9,8 +10,9 @@ public class AppDbContext : DbContext
     {
     }
 
-    //public DbSet<Climb> Climbs { get; set; }
     public DbSet<ActivityInfo> Activities { get; set; }
+    public DbSet<CyclistInfo> CyclistInfos { get; set; }
+    public DbSet<CyclistFitness> CyclistFitnesses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,28 +24,18 @@ public class AppDbContext : DbContext
         //    .WithOne(d => d.ActivityInfo)
         //    .HasForeignKey<Activity>(d => d.ActivityFileId);
 
-        //modelBuilder.Entity<Climb>().HasData(new Climb
-        //{
-        //    Id = 1,
-        //    Name = "Dummy Climb",
-        //    Path = "",
-        //    LongitudeInit = 0,
-        //    LongitudeEnd = 0,
-        //    LatitudeInit = 0,
-        //    LatitudeEnd = 0,
-        //    AltitudeInit = 0,
-        //    AltitudeEnd = 0,
-        //    InitRouteDistance = 0,
-        //    EndRouteDistance = 0,
-        //    Distance = 0,
-        //    AverageSlope = 0,
-        //    MaxSlope = 0,
-        //    HeightDiff = 0
-        //});
+        modelBuilder.Entity<CyclistInfo>().HasData(new CyclistInfo
+        {
+            Id = 1,
+            Name = "Dummy",
+            LastName = "Cyclist",
+            BirthDate = DateTime.Now,
+        });
 
         modelBuilder.Entity<ActivityInfo>().HasData(new ActivityInfo
         {
             Id = 1,
+            CyclistId = 1,
             Name = "Dummy Activity",
             Path = "dummy_activity.fit",
             Description = "This is a dummy activity",

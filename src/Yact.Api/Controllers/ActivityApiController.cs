@@ -77,7 +77,7 @@ public partial class ActivityApiController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<ActionResult<ResponseDto>> UploadFile(IFormFile file)
+    public async Task<ActionResult<ResponseDto>> UploadFile(IFormFile file, int cyclistId)
     {
         if (file == null)
             return BadRequest("No file uploaded");
@@ -87,7 +87,8 @@ public partial class ActivityApiController : ControllerBase
             using var stream = file.OpenReadStream();
             var command = new UploadActivityCommand(
                 stream,
-                file.FileName);
+                file.FileName,
+                cyclistId);
 
             var activityId = await _mediator.Send(command);
             return Ok(new ResponseDto

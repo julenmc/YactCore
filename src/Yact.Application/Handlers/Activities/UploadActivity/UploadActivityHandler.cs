@@ -40,7 +40,7 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
             "activities");
 
         // Save activity in DB
-        await _activityRepository.AddAsync(activity.Info);
+        await _activityRepository.AddAsync(activity.Info, request.CyclistId);
 
         return activity.Info.Id;
     }

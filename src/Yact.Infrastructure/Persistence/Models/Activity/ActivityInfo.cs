@@ -1,9 +1,9 @@
-﻿namespace Yact.Domain.Entities.Activity;
+﻿namespace Yact.Infrastructure.Persistence.Models.Activity;
 
 public class ActivityInfo
 {
-    public int Id { get; set; }
-    public int CyclistId { get; set; }
+    public required int Id { get; set; }
+    public required int CyclistId { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required string Path { get; set; }

@@ -3,9 +3,10 @@
 public class ActivityInfoDto
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
+    public int CyclistId { get; set; }
+    public string? Name { get; set; }
     public string? Description { get; set; }
-    public required string? Path { get; set; }
+    public string? Path { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public double Distance { get; set; }

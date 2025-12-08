@@ -2,7 +2,7 @@
 using Yact.Application.Interfaces;
 using YactActivity = Yact.Domain.Entities.Activity;
 
-namespace Yact.Infrastructure.Services.ActivityReader;
+namespace Yact.Infrastructure.FileStorage;
 
 public class ActivityReaderService : IActivityReaderService
 {
@@ -34,7 +34,7 @@ public class ActivityReaderService : IActivityReaderService
             if (lastAltitude != null && currentAltitude != null)
             {
                 float altDiff = (float)(currentAltitude - lastAltitude);
-                result.Info.ElevationMeters += (altDiff > 0) ? altDiff : 0;
+                result.Info.ElevationMeters += altDiff > 0 ? altDiff : 0;
             }
             lastAltitude = currentAltitude;
 

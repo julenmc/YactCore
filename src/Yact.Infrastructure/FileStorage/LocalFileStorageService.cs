@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Yact.Application.Interfaces;
-using Yact.Infrastructure.Configuration;
 
-namespace Yact.Infrastructure.Services.FileStorage;
+namespace Yact.Infrastructure.FileStorage;
 
 public class LocalFileStorageService : IFileStorageService
 {
