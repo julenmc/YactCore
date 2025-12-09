@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using Yact.Application.Queries.Records;
 using Yact.Application.Responses;
 
@@ -6,8 +7,11 @@ namespace Yact.Api.Controllers;
 
 public partial class ActivityApiController
 {
-    [HttpGet("{id}/records/power")]
-    public async Task<ActionResult<ResponseDto>> GetPowerById(int id)
+    [HttpGet]
+    [Route("get-by-id/{id}/records/power")]
+    [ProducesResponseType(typeof(TimeSeriesResponseDto<double>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult<TimeSeriesResponseDto<double>>> GetPowerById(int id)
     {
         try
         {
@@ -16,31 +20,22 @@ public partial class ActivityApiController
 
             if (data == null)
             {
-                return NotFound(new ResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "Activity not found"
-                });
+                return NotFound();
             }
 
-            return Ok(new ResponseDto
-            {
-                IsSuccess = true,
-                Result = data
-            });
+            return Ok(data);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
     }
 
-    [HttpGet("{id}/records/heart-rate")]
-    public async Task<ActionResult<ResponseDto>> GetHrById(int id)
+    [HttpGet]
+    [Route("get-by-id/{id}/records/heart-rate")]
+    [ProducesResponseType(typeof(TimeSeriesResponseDto<int>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult<TimeSeriesResponseDto<int>>> GetHrById(int id)
     {
         try
         {
@@ -49,31 +44,22 @@ public partial class ActivityApiController
 
             if (data == null)
             {
-                return NotFound(new ResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "Activity not found"
-                });
+                return NotFound();
             }
 
-            return Ok(new ResponseDto
-            {
-                IsSuccess = true,
-                Result = data
-            });
+            return Ok(data);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
     }
 
-    [HttpGet("{id}/records/cadence")]
-    public async Task<ActionResult<ResponseDto>> GetCadenceById(int id)
+    [HttpGet]
+    [Route("get-by-id/{id}/records/cadence")]
+    [ProducesResponseType(typeof(TimeSeriesResponseDto<int>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult<TimeSeriesResponseDto<int>>> GetCadenceById(int id)
     {
         try
         {
@@ -82,32 +68,20 @@ public partial class ActivityApiController
 
             if (data == null)
             {
-                return NotFound(new ResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "Activity not found"
-                });
+                return NotFound();
             }
 
-            return Ok(new ResponseDto
-            {
-                IsSuccess = true,
-                Result = data
-            });
+            return Ok(data);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
     }
 
-    [HttpGet("{id}/records/all")]
-    public async Task<ActionResult<ResponseDto>> GetAllRecordsById (int id) // should return a csv with all the records
-    {
-        throw new NotImplementedException();
-    }
+    //[HttpGet("{id}/records/all")]
+    //public async Task<ActionResult<ResponseDto>> GetAllRecordsById (int id) // should return a csv with all the records
+    //{
+    //    throw new NotImplementedException();
+    //}
 }

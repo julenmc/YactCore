@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using Yact.Application.Commands.Cyclists;
 using Yact.Application.Queries.Cyclists;
 using Yact.Application.Responses;
@@ -17,31 +18,26 @@ public class CyclistApiController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<ResponseDto>> Get()
-    {
-        try
-        {
-            var query = new GetCyclistsQuery();
-            var cyclists = await _mediator.Send(query);
-            return Ok(new ResponseDto
-            {
-                IsSuccess = true,
-                Result = cyclists
-            });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
-        }
-    }
+    //[HttpGet]
+    //public async Task<ActionResult<IEnumerable<CyclistDto>>> Get()
+    //{
+    //    try
+    //    {
+    //        var query = new GetCyclistsQuery();
+    //        var cyclists = await _mediator.Send(query);
+    //        return Ok(cyclists);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+    //    }
+    //}
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<ResponseDto>> GetById(int id)
+    [HttpGet]
+    [Route("get-by-id/{id}")]
+    [ProducesResponseType(typeof(CyclistDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult<CyclistDto>> GetById(int id)
     {
         try
         {
@@ -50,81 +46,63 @@ public class CyclistApiController : ControllerBase
 
             if (cyclist == null)
             {
-                return NotFound(new ResponseDto
-                {
-                    IsSuccess = false,
-                    Message = $"Cyclist with ID {id} not found"
-                });
+                return NotFound();
             }
 
-            return Ok(new ResponseDto
-            {
-                IsSuccess = true,
-                Result = cyclist
-            });
+            return Ok(cyclist);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
     }
 
-    [HttpPost("create")]
-    public async Task<ActionResult<ResponseDto>> CreateCyclist([FromBody] CreateCyclistCommand command)
+    [HttpPost]
+    [Route("create")]
+    [ProducesResponseType(typeof(CyclistDto), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<CyclistDto>> CreateCyclist([FromBody] CreateCyclistCommand command)
     {
         try
         {
             var result = await _mediator.Send(command);
-            return Ok(new ResponseDto { Result = result });
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult<ResponseDto>> DeleteCyclist(int id)
+    [HttpDelete]
+    [Route("delete/{id}")]
+    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<int>> DeleteCyclist(int id)
     {
         try
         {
             var command = new DeleteCyclistCommand(id);
             var result = await _mediator.Send(command);
-            return Ok(new ResponseDto { Result = result });
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
     }
 
     [HttpPut]
-    public async Task<ActionResult<ResponseDto>> Update([FromBody] UpdateCyclistCommand command)
+    [Route("update")]
+    [ProducesResponseType(typeof(CyclistDto), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<CyclistDto>> Update([FromBody] UpdateCyclistCommand command)
     {
         try
         {
             var result = await _mediator.Send(command);
-            return Ok(new ResponseDto { Result = result });
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            });
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
         }
 
     }
