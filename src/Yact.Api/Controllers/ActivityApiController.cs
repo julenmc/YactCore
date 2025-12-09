@@ -1,11 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Yact.Application.DTOs;
-using Yact.Application.Handlers.Activities.DeleteActivityById;
-using Yact.Application.Handlers.Activities.GetActivities;
-using Yact.Application.Handlers.Activities.GetActivitiesById;
-using Yact.Application.Handlers.Activities.UpdateActivity;
-using Yact.Application.Handlers.Activities.UploadActivity;
+using Yact.Application.Commands.Activities;
+using Yact.Application.Queries.Activities;
+using Yact.Application.Responses;
 
 namespace Yact.Api.Controllers;
 

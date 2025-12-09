@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using System.Text.Json;
-using Yact.Infrastructure.Persistence.Models.Activity;
+﻿using Yact.Infrastructure.Persistence.Models.Activity;
 using Entities = Yact.Domain.Entities.Activity;
 
 namespace Yact.Infrastructure.Persistence.Mappers;

@@ -42,11 +42,11 @@ public class ActivityRepository : IActivityRepository
     public async Task<Entities.ActivityInfo?> RemoveByIdAsync(int id)
     {
         // Create aux entity just for the id
-        var activity = new Entities.ActivityInfo { Id = id, Name = "Dummy", Path = "Dummy Path" };
+        var activity = new ActivityInfo { Id = id, CyclistId = 0, Name = "Dummy", Path = "Dummy Path" };
 
         try
         {
-            var deleted = _db.Activities.Remove(activity.ToModel());
+            var deleted = _db.Activities.Remove(activity);
             if (deleted == null)
                 return null;
 

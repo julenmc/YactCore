@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Yact.Application.DTOs;
-using Yact.Application.Handlers.Records.GetPowerById;
+using Yact.Application.Queries.Records;
+using Yact.Application.Responses;
 
 namespace Yact.Api.Controllers;
 

@@ -1,18 +1,14 @@
 ﻿using AutoMapper;
-using Yact.Application.DTOs;
+using Yact.Application.Responses;
 using Yact.Domain.Entities.Activity;
 
 namespace Yact.Application.Mapping;
 
-public class ActivityMapper
+public class ActivityMapper : Profile
 {
-    public static MapperConfiguration RegisterMaps()
+    public ActivityMapper()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-        {
-            config.CreateMap<ActivityInfo, ActivityInfoDto>();
-            config.CreateMap<ActivityInfoDto, ActivityInfo>();
-        });
-        return mappingConfig;
+        CreateMap<ActivityInfo, ActivityInfoDto>();
+        CreateMap<ActivityInfoDto, ActivityInfo>();
     }
 }

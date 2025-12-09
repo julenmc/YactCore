@@ -1,0 +1,13 @@
+﻿using Yact.Domain.Entities.Cyclist;
+
+namespace Yact.Application.Responses;
+
+public class CyclistDto
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public string? LastName { get; set; }
+    public string? FullName => $"{Name} {LastName}";
+    public DateTime BirthDate { get; set; }
+    public int Age => DateTime.Now.Year - BirthDate.Year - (DateTime.Now.DayOfYear < BirthDate.DayOfYear ? 1 : 0);
+}
