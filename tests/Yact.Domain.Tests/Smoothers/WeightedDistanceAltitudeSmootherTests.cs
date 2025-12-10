@@ -178,6 +178,9 @@ public class WeightedDistanceAltitudeSmootherTests
         // Records far apart remain unchanged (outside window)
         Assert.Equal(originalAltitude1, records[0].Coordinates.Altitude);
         Assert.Equal(originalAltitude2, records[1].Coordinates.Altitude);
+        Assert.NotNull(records[1].Slope);
+        var expectedSlope = originalAltitude2 - originalAltitude1; // * 100 / 100
+        Assert.Equal(expectedSlope, records[1].Slope ?? 0);
     }
 
     [Fact]
@@ -201,6 +204,11 @@ public class WeightedDistanceAltitudeSmootherTests
         foreach (var record in records)
         {
             Assert.Equal(constantAltitude, record.Coordinates.Altitude, 5);
+        }
+        for (int i = 1; i < records.Count; i++) 
+        {
+            Assert.NotNull(records[i].Slope);
+            Assert.Equal(0, records[i].Slope ?? 0, 3);
         }
     }
 
@@ -384,6 +392,8 @@ public class WeightedDistanceAltitudeSmootherTests
         for (int i = 1; i < records.Count; i++)
         {
             Assert.True(records[i].Coordinates.Altitude >= records[i - 1].Coordinates.Altitude - 1);
+            Assert.NotNull(records[i].Slope);
+            Assert.True(records[i].Slope > 0);
         }
     }
 
@@ -408,6 +418,8 @@ public class WeightedDistanceAltitudeSmootherTests
         for (int i = 1; i < records.Count; i++)
         {
             Assert.True(records[i].Coordinates.Altitude <= records[i - 1].Coordinates.Altitude + 1);
+            Assert.NotNull(records[i].Slope);
+            Assert.True(records[i].Slope < 0);
         }
     }
 
@@ -438,6 +450,8 @@ public class WeightedDistanceAltitudeSmootherTests
         for (int i = 1; i < records.Count; i++)
         {
             Assert.True(records[i].Coordinates.Altitude >= records[i - 1].Coordinates.Altitude);
+            Assert.NotNull(records[i].Slope);
+            Assert.True(records[i].Slope > 0);
         }
     }
 
