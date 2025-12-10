@@ -43,9 +43,9 @@ public class ActivityReaderService : IActivityReaderService
                 Timestamp = m.GetTimestamp().GetDateTime(),
                 Coordinates = new YactActivity.CoordinatesData
                 {
-                    Latitude = m.GetPositionLat(),
-                    Longitude = m.GetPositionLong(),
-                    Altitude = m.GetAltitude(),
+                    Latitude = m.GetPositionLat() ?? 0,
+                    Longitude = m.GetPositionLong() ?? 0,
+                    Altitude = m.GetAltitude() ?? 0,
                 },
                 SpeedMps = m.GetSpeed(),
                 HeartRate = m.GetHeartRate(),

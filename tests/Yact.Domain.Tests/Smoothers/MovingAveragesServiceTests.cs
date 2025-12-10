@@ -1,11 +1,11 @@
-﻿using Yact.Domain.Services.Smoother;
-using Yact.Domain.Entities.Smoother;
+﻿using Yact.Domain.Entities.Smoother;
+using Yact.Domain.Services.Smoothers.Metrics;
 
 namespace Yact.Domain.Tests.Smoothers;
 
 public class MovingAveragesServiceTests
 {
-    private readonly MovingAveragesService _service = new();
+    private readonly MovingAveragesMetricsService _service = new();
 
     #region Error Cases
 

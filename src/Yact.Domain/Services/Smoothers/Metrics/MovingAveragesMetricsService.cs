@@ -1,8 +1,8 @@
 ﻿using Yact.Domain.Entities.Smoother;
 
-namespace Yact.Domain.Services.Smoother;
+namespace Yact.Domain.Services.Smoothers.Metrics;
 
-public class MovingAveragesService : ISmootherService<List<MovingAverageMetric>>
+public class MovingAveragesMetricsService : IMetricsSmootherService<List<MovingAverageMetric>>
 {
     /// <summary>
     /// Calculates a moving average and related metrics for a sequence of numeric records using a sliding window.
@@ -49,7 +49,7 @@ public class MovingAveragesService : ISmootherService<List<MovingAverageMetric>>
         if (recordValues.Count > 0)
         {
             float avg = sum / recordValues.Count;
-            float variance = (sumSquares / recordValues.Count) - (avg * avg);
+            float variance = sumSquares / recordValues.Count - avg * avg;
             float stdDev = (float)Math.Sqrt(Math.Max(0, variance));
 
             result.Add(new MovingAverageMetric
@@ -81,7 +81,7 @@ public class MovingAveragesService : ISmootherService<List<MovingAverageMetric>>
 
             // Calculate metrics
             float avg = sum / windowSize;
-            float variance = (sumSquares / windowSize) - (avg * avg);
+            float variance = sumSquares / windowSize - avg * avg;
             float stdDev = (float)Math.Sqrt(Math.Max(0, variance));
             result.Add(new MovingAverageMetric
             {

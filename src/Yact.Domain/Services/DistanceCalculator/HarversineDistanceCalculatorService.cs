@@ -18,14 +18,7 @@ public class HarversineDistanceCalculatorService : IDistanceCalculator
         for (int i = 1; i < records.Count; i++)
         {
             RecordData curr = records[i];
-            if (curr.Coordinates == null || curr.Coordinates.Latitude == null || curr.Coordinates.Longitude == null)
-            {
-                toRemove.Add(curr);
-                continue;
-            }
             RecordData prev = records[i - 1];
-            if (prev.Coordinates == null || prev.Coordinates.Latitude == null || prev.Coordinates.Longitude == null)
-                continue;
 
             var distance = CalculateDistanceFromToPoints(prev.Coordinates, curr.Coordinates);
             totalDistance += distance;
