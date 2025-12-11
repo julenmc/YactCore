@@ -1,9 +1,12 @@
-﻿namespace Yact.Infrastructure.Persistence.Models.Activity;
+﻿using Yact.Infrastructure.Persistence.Models.Analytics;
+using Yact.Infrastructure.Persistence.Models.Climb;
+using Yact.Infrastructure.Persistence.Models.Cyclist;
+
+namespace Yact.Infrastructure.Persistence.Models.Activity;
 
 public class ActivityInfo
 {
     public required int Id { get; set; }
-    public required int CyclistId { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required string Path { get; set; }
@@ -14,4 +17,12 @@ public class ActivityInfo
     public string? Type { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
+
+    // Foreign Key
+    public required int CyclistId { get; set; }
+    public CyclistInfo? Cyclist { get; set; }
+
+    // 1-N relation for climbs and intervals
+    public List<ActivityClimb>? Climbs { get; set; }
+    public List<Interval>? Intervals { get; set; }
 }

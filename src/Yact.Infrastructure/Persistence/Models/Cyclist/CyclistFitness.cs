@@ -3,7 +3,6 @@
 public class CyclistFitness
 {
     public required int Id { get; set; }
-    public required int CyclistId { get; set; }
     public DateTime UpdateDate { get; set; }
     public ushort Height { get; set; }
     public float Weight { get; set; }
@@ -12,4 +11,8 @@ public class CyclistFitness
     public string? PowerCurveJson { get; set; }
     public string? HrZonesRaw { get; set; }
     public string? PowerZonesRaw { get; set; }
+
+    // Foreing Key
+    public required int CyclistId { get; set; }
+    public CyclistInfo? Cyclist { get; set; }
 }

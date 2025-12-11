@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yact.Infrastructure.Persistence.Models.Activity;
+using Yact.Infrastructure.Persistence.Models.Analytics;
+using Yact.Infrastructure.Persistence.Models.Climb;
 using Yact.Infrastructure.Persistence.Models.Cyclist;
 
 namespace Yact.Infrastructure.Persistence.Data;
@@ -10,9 +12,12 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<ActivityInfo> Activities { get; set; }
     public DbSet<CyclistInfo> CyclistInfos { get; set; }
     public DbSet<CyclistFitness> CyclistFitnesses { get; set; }
+    public DbSet<ActivityInfo> ActivityInfos { get; set; }
+    public DbSet<ClimbInfo> Climbs { get; set; }
+    public DbSet<Interval> Intervals { get; set; }
+    public DbSet<ActivityClimb> ActivityClimbs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +50,21 @@ public class AppDbContext : DbContext
             ElevationMeters = 100,
             Type = "Cycling",
             CreateDate = DateTime.Now,
+        });
+
+        modelBuilder.Entity<ClimbInfo>().HasData(new ClimbInfo
+        {
+            Id = 1,
+            Name = "Unknown",
+            LongitudeInit = 0,
+            LongitudeEnd = 0,
+            LatitudeInit = 0,
+            LatitudeEnd = 0,
+            AltitudeInit = 0,
+            AltitudeEnd = 0,
+            Slope = 0,
+            MaxSlope = 0,
+            Elevation = 0
         });
     }
 }

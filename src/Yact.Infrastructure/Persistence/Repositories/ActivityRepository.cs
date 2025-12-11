@@ -18,7 +18,7 @@ public class ActivityRepository : IActivityRepository
 
     public async Task<IEnumerable<Entities.ActivityInfo>> GetAllAsync()
     {
-        var objList = await _db.Activities.ToListAsync();
+        var objList = await _db.ActivityInfos.ToListAsync();
         List<Entities.ActivityInfo> result = new List<Entities.ActivityInfo>();
         foreach (var item in objList)
         {
@@ -29,13 +29,13 @@ public class ActivityRepository : IActivityRepository
 
     public async Task<Entities.ActivityInfo?> GetByIdAsync(int id)
     {
-        var obj = await _db.Activities.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _db.ActivityInfos.FirstOrDefaultAsync(x => x.Id == id);
         return obj?.ToDomain();
     }
 
     public async Task AddAsync(Entities.ActivityInfo activity, int cyclistId)
     {
-        await _db.Activities.AddAsync(activity.ToModel(cyclistId));
+        await _db.ActivityInfos.AddAsync(activity.ToModel(cyclistId));
         await _db.SaveChangesAsync();
     }
 
@@ -46,7 +46,7 @@ public class ActivityRepository : IActivityRepository
 
         try
         {
-            var deleted = _db.Activities.Remove(activity);
+            var deleted = _db.ActivityInfos.Remove(activity);
             if (deleted == null)
                 return null;
 
