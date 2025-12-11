@@ -378,7 +378,7 @@ public partial class ClimbFinderServiceTest
 
     [Theory]
     [MemberData(nameof(EdgeClimbData))]
-    public void FindClimbs_Edge_ReturnsCorrectNumberOfClimbs(float distance, float slope)
+    public void FindClimbs_EdgeRegular_ReturnsCorrectNumberOfClimbs(float distance, float slope)
     {
         // Arrange
         List<RecordData> records = new List<RecordData>()
@@ -397,7 +397,7 @@ public partial class ClimbFinderServiceTest
 
     [Theory]
     [MemberData(nameof(EdgeClimbData))]
-    public void FindClimbs_Edge_ReturnsCorrectMetrics(float distance, float slope)
+    public void FindClimbs_EdgeRegular_ReturnsCorrectMetrics(float distance, float slope)
     {
         // Arrange
         var elevation = distance * slope / 100;
@@ -434,7 +434,7 @@ public partial class ClimbFinderServiceTest
 
     [Theory]
     [MemberData(nameof(EdgeNoClimbData))]
-    public void FindClimbs_Edge_ReturnsNoClimbs(float distance, float slope)
+    public void FindClimbs_EdgeRegular_ReturnsNoClimbs(float distance, float slope)
     {
         // Arrange
         List<RecordData> records = new List<RecordData>()

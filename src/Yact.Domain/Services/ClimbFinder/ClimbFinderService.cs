@@ -66,25 +66,16 @@ public class ClimbFinderService : IClimbFinderService
             if (r == Result.EndWarning)
             {
                 _debugTrace.Add($"Climb could end at {Math.Round(records[i].DistanceMeters!.Value)}m ({records[i].Coordinates.Altitude}m alt)");
+                int index = i;
+                r = Check(climb, records[index]);
                 // Checks future points to see if there's a climb or not
-                int index = i + 1;
+                index++;
                 if (index >= records.Count)
                     break;
-                r = Check(climb, records[index]);
-                while (index < records.Count)
+                while (index < records.Count && r == Result.EndWarning)
                 {
-                    if (r == Result.EndWarning)
-                    {
-                        index++;
-                        if (index == records.Count - 1)     // If activity has ended checks if it has a port at the end
-                        {
-                            r = IsClimb(climb, 0, 0) ? Result.ClimbEnd : Result.NoClimb;
-                            break;
-                        }
-                        r = Check(climb, records[index]);
-                    }
-                    else
-                        break;
+                    r = Check(climb, records[index]);
+                    index++;
                 }
 
                 if (r == Result.ClimbEnd)
@@ -97,9 +88,9 @@ public class ClimbFinderService : IClimbFinderService
                 }
                 else if (r == Result.Continue)
                 {
-                    _debugTrace.Add($"Climb continues at {Math.Round(records[index].DistanceMeters!.Value)}m");
+                    _debugTrace.Add($"Climb continues at {Math.Round(records[index - 1].DistanceMeters!.Value)}m");
                     ForcePoint(climb, records[i]);
-                    forceDistance = records[index].DistanceMeters!.Value;
+                    forceDistance = records[index - 1].DistanceMeters!.Value;
                 }
             }
             else if (r == Result.NoClimb)
@@ -199,10 +190,10 @@ public class ClimbFinderService : IClimbFinderService
         _checkPrevDistance = record.DistanceMeters!.Value;
 
         double slope = record.Slope!.Value; // Point slope
-        double checkSlope = (record.Coordinates.Altitude - _climbRecords.First().Coordinates.Altitude) /
-            (record.DistanceMeters!.Value - _climbRecords.First().DistanceMeters!.Value) * 100; // Slope in the climb with the point to check
+        double checkSlope = (record.Coordinates.Altitude - _climbRecords.Last().Coordinates.Altitude) /
+            (record.DistanceMeters!.Value - _climbRecords.Last().DistanceMeters!.Value) * 100; // Slope in the sector to check
 
-        bool hasToCheckAltitude = record.Coordinates.Altitude < _climbRecords.Last().Coordinates.Altitude;
+        bool hasToCheckAltitude = record.Coordinates.Altitude <= _climbRecords.Last().Coordinates.Altitude;
         bool hasToCheckSlope = record.Slope < SlopeAcceptanceValue;
 
         if (!hasToCheckAltitude && !hasToCheckSlope)
@@ -228,11 +219,11 @@ public class ClimbFinderService : IClimbFinderService
 
     private bool IsClimb(ClimbMetrics climb, double slope, double altitude)
     {
-        for (int i = 0; i < MountReq.GetLength(0); i++)
+        for (int i = 0; i < ClimbRequirements.GetLength(0); i++)
         {
-            if ((climb.Slope >= MountReq[i, 0]) && (climb.DistanceMeters! >= MountReq[i,1]))
+            if ((climb.Slope >= ClimbRequirements[i, 0]) && (climb.DistanceMeters! >= ClimbRequirements[i,1]))
                 return true;
-            if (i == MountReq.GetLength(0) - 1)
+            if (i == ClimbRequirements.GetLength(0) - 1)
                 return false;
         }
 
@@ -242,17 +233,22 @@ public class ClimbFinderService : IClimbFinderService
     private bool ContinueCheck(ClimbMetrics climb, double distance, double slope)
     {
         int checkRow = (slope < -3) ? 0 : 1;    // First row for downhills, second for flats
+        double checkClimbDistance = 0;
+        double checkStopDistance = 0;
+
+        // Check max distance
+        checkStopDistance = CheckLim[checkRow, CheckLim.GetLength(1) - 1, 1];
+        if (distance > checkStopDistance)
+            return false;
 
         // Check distances
         for (int i = 0; i < CheckLim.GetLength(1) - 1; i++)
         {
-            if ((climb.DistanceMeters < CheckLim[checkRow, i + 1, 0]) && (distance > CheckLim[checkRow, i, 1])) 
+            checkClimbDistance = CheckLim[checkRow, i, 0];
+            checkStopDistance = CheckLim[checkRow, i, 1];
+            if ((climb.DistanceMeters < checkClimbDistance) && (distance > checkStopDistance)) 
                 return false;
         }
-
-        // Check last distance
-        if ((climb.DistanceMeters < CheckLim[checkRow, CheckLim.GetLength(0) - 1, 0]) && (distance > CheckLim[checkRow, CheckLim.GetLength(0), 1]))
-            return false;
 
         return true;
     }
@@ -275,7 +271,7 @@ public class ClimbFinderService : IClimbFinderService
         };
     }
 
-    private static readonly double[,] MountReq =
+    private static readonly double[,] ClimbRequirements =
     {
         {2.5, 2000},
         {4.0, 1000},
@@ -289,20 +285,20 @@ public class ClimbFinderService : IClimbFinderService
     private static readonly double[,,] CheckLim =
     {
         {   // downhill limits
-            {0.0, 200},
-            {2000, 600},
-            {4000, 800},
-            {6000, 900},
-            {10000, 1200},
-            {15000, 2000}
+            {2000, 200},        // Climb distance / Allowed downhill distances. Up to 2km, 200m of downhill are allowed
+            {4000, 600},        // Up to 4km, 600m of downhill are allowed
+            {6000, 800},
+            {10000, 1000},
+            {15000, 1200},
+            {0, 2000},          // More than 2km of downhill won't be allowed
         },
         {   // flat distances
-            {0.0, 500},
-            {2000, 800},		// Mount distance / Allowed flat distances. Up to 2km 800m are allowed
-			{4000, 1000},
-            {6000, 1500},
-            {10000, 2000},
-            {15000, 3000}
+            {2000, 500},		// Climb distance / Allowed flat distances. Up to 2km, 500m of flat are allowed
+			{4000, 800},        // Up to 4km, 1000m of flat are allowed
+            {6000, 1000},
+            {10000, 1500},
+            {15000, 2000},
+            {0, 3000}           // More than 3km of flat won't be allowed
         }
     };
 }
