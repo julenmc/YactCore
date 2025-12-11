@@ -1,9 +1,10 @@
 ﻿using Yact.Domain.Entities.Activity;
+using Yact.Domain.Entities.Climb;
 
 namespace Yact.Domain.Services.ClimbFinder;
 
 public interface IClimbFinderService
 {
-    Task FindClimbs(IEnumerable<RecordData> records);
-    string GetDebugTrace();
+    List<ActivityClimb> FindClimbs(List<RecordData> records);
+    List<string> GetDebugTrace();
 }
