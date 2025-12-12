@@ -1,7 +1,7 @@
 ﻿using Yact.Domain.Entities.Activity;
 using Yact.Domain.Entities.Climb;
 
-namespace Yact.Domain.Services.ClimbFinder;
+namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.ClimbFinder;
 
 public class ClimbFinderService : IClimbFinderService
 {
@@ -221,7 +221,7 @@ public class ClimbFinderService : IClimbFinderService
     {
         for (int i = 0; i < ClimbRequirements.GetLength(0); i++)
         {
-            if ((climb.Slope >= ClimbRequirements[i, 0]) && (climb.DistanceMeters! >= ClimbRequirements[i,1]))
+            if (climb.Slope >= ClimbRequirements[i, 0] && climb.DistanceMeters! >= ClimbRequirements[i,1])
                 return true;
             if (i == ClimbRequirements.GetLength(0) - 1)
                 return false;
@@ -232,7 +232,7 @@ public class ClimbFinderService : IClimbFinderService
 
     private bool ContinueCheck(ClimbMetrics climb, double distance, double slope)
     {
-        int checkRow = (slope < -3) ? 0 : 1;    // First row for downhills, second for flats
+        int checkRow = slope < -3 ? 0 : 1;    // First row for downhills, second for flats
         double checkClimbDistance = 0;
         double checkStopDistance = 0;
 
@@ -246,7 +246,7 @@ public class ClimbFinderService : IClimbFinderService
         {
             checkClimbDistance = CheckLim[checkRow, i, 0];
             checkStopDistance = CheckLim[checkRow, i, 1];
-            if ((climb.DistanceMeters < checkClimbDistance) && (distance > checkStopDistance)) 
+            if (climb.DistanceMeters < checkClimbDistance && distance > checkStopDistance) 
                 return false;
         }
 

@@ -1,5 +1,5 @@
 ﻿using Yact.Domain.Entities.Smoother;
-using Yact.Domain.Services.Smoothers.Metrics;
+using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Metrics;
 
 namespace Yact.Domain.Tests.Smoothers;
 

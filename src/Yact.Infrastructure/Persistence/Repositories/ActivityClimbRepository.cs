@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Entities = Yact.Domain.Entities.Climb;
+using Yact.Domain.Entities.Cyclist;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Mappers;
+using Entities = Yact.Domain.Entities.Climb;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -43,5 +44,22 @@ public class ActivityClimbRepository : IActivityClimbRepository
             ret.Add(climb.ToDomain());
         }
         return ret;
+    }
+
+    public async Task AddAsync(Entities.ActivityClimb climb, int activityId)
+    {
+        climb.ActivityId = activityId;
+        await _db.ActivityClimbs.AddAsync(climb.ToModel());
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task AddAsync(IEnumerable<Entities.ActivityClimb> climbs, int activityId)
+    {
+        foreach (var climb in climbs)
+        {
+            climb.ActivityId = activityId;
+            await _db.ActivityClimbs.AddAsync(climb.ToModel());
+        }
+        await _db.SaveChangesAsync();
     }
 }

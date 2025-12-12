@@ -33,10 +33,12 @@ public class ActivityRepository : IActivityRepository
         return obj?.ToDomain();
     }
 
-    public async Task AddAsync(Entities.ActivityInfo activity, int cyclistId)
+    public async Task<int> AddAsync(Entities.ActivityInfo activity, int cyclistId)
     {
-        await _db.ActivityInfos.AddAsync(activity.ToModel(cyclistId));
+        var saved = await _db.ActivityInfos.AddAsync(activity.ToModel(cyclistId));
         await _db.SaveChangesAsync();
+
+        return saved.Entity.Id;
     }
 
     public async Task<Entities.ActivityInfo?> RemoveByIdAsync(int id)

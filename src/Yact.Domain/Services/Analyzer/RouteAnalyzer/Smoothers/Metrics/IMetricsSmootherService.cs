@@ -1,4 +1,4 @@
-﻿namespace Yact.Domain.Services.Smoothers.Metrics;
+﻿namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Metrics;
 
 public interface IMetricsSmootherService<T>
 {

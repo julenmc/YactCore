@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Entities.Activity;
 
-namespace Yact.Domain.Services.DistanceCalculator;
+namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
 
 public class HarversineDistanceCalculatorService : IDistanceCalculator
 {

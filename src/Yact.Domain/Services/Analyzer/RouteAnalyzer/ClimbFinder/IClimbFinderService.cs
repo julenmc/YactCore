@@ -1,7 +1,7 @@
 ﻿using Yact.Domain.Entities.Activity;
 using Yact.Domain.Entities.Climb;
 
-namespace Yact.Domain.Services.ClimbFinder;
+namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.ClimbFinder;
 
 public interface IClimbFinderService
 {

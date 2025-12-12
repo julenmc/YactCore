@@ -4,6 +4,7 @@ using System.Net;
 using Yact.Application.Commands.Activities;
 using Yact.Application.Queries.Activities;
 using Yact.Application.Responses;
+using Yact.Domain.Exceptions.Activity;
 
 namespace Yact.Api.Controllers;
 
@@ -76,6 +77,10 @@ public partial class ActivityApiController : ControllerBase
 
             var activityId = await _mediator.Send(command);
             return Ok(activityId);
+        }
+        catch (NoDataException ex)
+        {
+            return BadRequest($"Activity has no data. Message: {ex.Message}");
         }
         catch (Exception ex)
         {

@@ -1,4 +1,4 @@
-using Yact.Domain.Services.Smoothers.Altitude;
+using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Altitude;
 using Yact.Domain.Entities.Activity;
 
 namespace Yact.Domain.Tests.Smoothers;

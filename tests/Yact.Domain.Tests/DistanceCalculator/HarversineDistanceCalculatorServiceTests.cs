@@ -1,5 +1,5 @@
-using Yact.Domain.Services.DistanceCalculator;
 using Yact.Domain.Entities.Activity;
+using Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
 
 namespace Yact.Domain.Tests.DistanceCalculator;
 
