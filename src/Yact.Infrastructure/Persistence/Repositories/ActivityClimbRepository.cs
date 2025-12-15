@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Yact.Domain.Entities.Cyclist;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Mappers;
