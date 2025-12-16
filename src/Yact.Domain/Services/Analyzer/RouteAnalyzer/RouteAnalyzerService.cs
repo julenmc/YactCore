@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Entities.Activity;
 using Yact.Domain.Entities.Climb;
-using Yact.Domain.Services.Analyzer.RouteAnalyzer.ClimbFinder;
+using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Altitude;
 
@@ -11,13 +11,16 @@ public class RouteAnalyzerService : IRouteAnalyzerService
     private readonly IClimbFinderService _climbFinderService;
     private readonly IDistanceCalculator _distanceCalculator;
     private readonly IAltitudeSmootherService _altitudeSmootherService;
+    private readonly IClimbMatcherService _climbMatcherService;
 
     public RouteAnalyzerService(
         IClimbFinderService climbFinderService,
+        IClimbMatcherService climbMatcherService,
         IDistanceCalculator distanceCalculator,
         IAltitudeSmootherService altitudeSmootherService)
     {
         _climbFinderService = climbFinderService;
+        _climbMatcherService = climbMatcherService;
         _distanceCalculator = distanceCalculator;
         _altitudeSmootherService = altitudeSmootherService;
     }
@@ -30,18 +33,20 @@ public class RouteAnalyzerService : IRouteAnalyzerService
     /// This method will include the distances from the start, slopes and 
     /// smooth the altitude for each record.</param>
     /// <returns>List of climbs done in the activity</returns>
-    public List<ActivityClimb> AnalyzeRoute(List<RecordData> records)
+    public async Task<List<ActivityClimb>> AnalyzeRouteAsync(List<RecordData> records)
     {
         // Get distances, slopes and smoothed altitude
         GetRouteDistances(records);
 
         // Get the climbs
         var climbs = _climbFinderService.FindClimbs(records);
-        // TODO: have to create a service that compares the found climbs with the existing ones,
-        // right now every climb will reference to climb with id 1
+        // Check if found climbs already exist in the repository
         foreach (var climb in climbs)
         {
-            climb.ClimbId = 1;
+            if (await _climbMatcherService.MatchClimbWithRepositoryAsync(climb) == false)
+            {
+                // Create new climb in repository
+            }
         }
 
         return climbs;

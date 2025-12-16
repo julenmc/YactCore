@@ -24,7 +24,8 @@ internal static class ActivityClimbMapper
             LatitudeEnd = model.Climb?.LatitudeEnd ?? 0,
             AltitudeInit = model.Climb?.AltitudeInit ?? 0,
             AltitudeEnd = model.Climb?.AltitudeEnd ?? 0,
-            Metrics = climbMetrics
+            Metrics = climbMetrics,
+            Validated = model.Climb?.Validated ?? false,
         };
         return new Entities.ActivityClimb
         {

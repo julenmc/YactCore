@@ -14,6 +14,7 @@ public class ClimbInfo
     public double Slope { get; set; }
     public double MaxSlope { get; set; }
     public double Elevation { get; set; }
+    public bool Validated { get; set; }
 
     // 1-N relation with efforts
     public List<ActivityClimb>? Efforts { get; set; }

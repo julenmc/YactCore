@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Yact.Application.Interfaces;
 using Yact.Domain.Repositories;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer;
-using Yact.Domain.Services.Analyzer.RouteAnalyzer.ClimbFinder;
+using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Altitude;
 using Yact.Infrastructure.FileStorage;

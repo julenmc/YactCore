@@ -26,6 +26,7 @@ internal static class ClimbMapper
             LatitudeEnd = model.LatitudeEnd,
             AltitudeInit = model.AltitudeInit,
             AltitudeEnd = model.AltitudeEnd,
+            Validated = model.Validated,
         };
     }
 
@@ -45,6 +46,7 @@ internal static class ClimbMapper
             Slope = entity.Metrics.Slope,
             MaxSlope = entity.Metrics.MaxSlope,
             Elevation = entity.Metrics.Elevation,
+            Validated = entity.Validated,
         };
     }
 }

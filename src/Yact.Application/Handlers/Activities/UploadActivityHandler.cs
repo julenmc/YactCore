@@ -44,7 +44,7 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
         if (activity.RecordData == null || activity.RecordData.Count == 0)
             throw new NoDataException();
 
-        var activityClimbs = _routeAnalyzer.AnalyzeRoute(activity.RecordData);
+        var activityClimbs = _routeAnalyzer.AnalyzeRouteAsync(activity.RecordData);
         // var debugTrace = _routeAnalyzer.GetDebugTrace();
 
         _logger.LogInformation($"{activityClimbs.Count} climbs found:");

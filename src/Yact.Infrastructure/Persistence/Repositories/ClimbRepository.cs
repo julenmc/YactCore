@@ -33,7 +33,7 @@ public class ClimbRepository : IClimbRepository
         return climb?.ToDomain();
     }
 
-    public async Task<IEnumerable<ClimbData?>> GetByCoordinates(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
+    public async Task<IEnumerable<ClimbData>> GetByCoordinates(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
     {
         var climbList = await _db.Climbs
             .Where(c => (c.LatitudeInit >= latitudeMin && c.LatitudeInit <= latitudeMax) &&

@@ -64,7 +64,8 @@ public class AppDbContext : DbContext
             AltitudeEnd = 0,
             Slope = 0,
             MaxSlope = 0,
-            Elevation = 0
+            Elevation = 0,
+            Validated = true
         });
     }
 }

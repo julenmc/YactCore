@@ -12,4 +12,17 @@ public class ActivityClimb
     public ActivityInfo? Activity { get; set; }
     public required double StartPointMeters { get; set; }
     public double EndPointMeters => StartPointMeters + Data.Metrics.DistanceMeters;
+
+    public void MergeWith(ClimbData climb)
+    {
+        ClimbId = climb.Id;
+        Data.Name = climb.Name;
+        //LongitudeInit = climb.LongitudeInit;
+        //LongitudeEnd = climb.LongitudeEnd;
+        //LatitudeInit = climb.LatitudeInit;
+        //LatitudeEnd = climb.LatitudeEnd;
+        //AltitudeInit = climb.AltitudeInit;
+        //AltitudeEnd = climb.AltitudeEnd;
+        //Metrics.
+    }
 }

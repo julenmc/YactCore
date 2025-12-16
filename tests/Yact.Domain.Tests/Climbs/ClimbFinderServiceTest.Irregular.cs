@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Entities.Activity;
 
-namespace Yact.Domain.Tests.ClimbFinder;
+namespace Yact.Domain.Tests.Climbs;
 
 public partial class ClimbFinderServiceTest
 {
