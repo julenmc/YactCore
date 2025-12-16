@@ -35,9 +35,14 @@ public class ClimbRepository : IClimbRepository
 
     public async Task<IEnumerable<ClimbData>> GetByCoordinatesAsync(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
     {
+        var actualLatMin = Math.Min(latitudeMin, latitudeMax);
+        var actualLatMax = Math.Max(latitudeMin, latitudeMax);
+        var actualLonMin = Math.Min(longitudeMin, longitudeMax);
+        var actualLonMax = Math.Max(longitudeMin, longitudeMax);
+
         var climbList = await _db.Climbs
-            .Where(c => (c.LatitudeInit >= latitudeMin && c.LatitudeInit <= latitudeMax) &&
-            (c.LongitudeInit >= longitudeMin && c.LongitudeInit <= longitudeMax))
+            .Where(c => c.LatitudeInit >= actualLatMin && c.LatitudeInit <= actualLatMax &&
+                        c.LongitudeInit >= actualLonMin && c.LongitudeInit <= actualLonMax)
             .ToListAsync();
 
         List<ClimbData> result = new List<ClimbData>();

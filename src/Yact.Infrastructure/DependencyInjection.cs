@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IDistanceCalculator, HarversineDistanceCalculatorService>();
         services.AddScoped<IAltitudeSmootherService, WeightedDistanceAltitudeSmoother>();
         services.AddScoped<IClimbFinderService, ClimbFinderService>();
+        services.AddScoped<IClimbMatcherService, ClimbMatcherService>();
         services.AddScoped<IRouteAnalyzerService, RouteAnalyzerService>();
 
         return services;

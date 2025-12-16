@@ -255,10 +255,18 @@ public class ClimbFinderService : IClimbFinderService
 
     private ActivityClimb EndClimb(ClimbMetrics climb)
     {
+        var firstRecord = _climbRecords.First();
+        var lastRecord = _climbRecords.Last();
         return new ActivityClimb()
         {
             Data = new ClimbData 
             { 
+                LatitudeInit = firstRecord.Coordinates.Latitude,
+                LatitudeEnd = lastRecord.Coordinates.Latitude,
+                LongitudeInit = firstRecord.Coordinates.Longitude,
+                LongitudeEnd = lastRecord.Coordinates.Longitude,
+                AltitudeInit = firstRecord.Coordinates.Altitude,
+                AltitudeEnd = lastRecord.Coordinates.Altitude,
                 Metrics = new ClimbMetrics()
                 {
                     DistanceMeters = Math.Round(climb.DistanceMeters),

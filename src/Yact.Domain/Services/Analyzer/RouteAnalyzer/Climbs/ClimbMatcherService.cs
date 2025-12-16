@@ -29,13 +29,9 @@ public class ClimbMatcherService : IClimbMatcherService
                 climb.MergeWith(item);
                 return;
             }
-            else
-            {
-                var newClimb = await _repository.AddAsync(climb.Data);
-                newClimb.Name = "Unknown";
-                climb.MergeWith(newClimb);
-                return;
-            }
         }
+        var newClimb = await _repository.AddAsync(climb.Data);
+        newClimb.Name = "Unknown";
+        climb.MergeWith(newClimb);
     }
 }
