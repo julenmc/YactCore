@@ -4,6 +4,7 @@ using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Models.Activity;
 using Yact.Infrastructure.Persistence.Mappers;
+using Yact.Domain.Exceptions.Cyclist;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -31,6 +32,25 @@ public class ActivityRepository : IActivityRepository
     {
         var obj = await _db.ActivityInfos.FirstOrDefaultAsync(x => x.Id == id);
         return obj?.ToDomain();
+    }
+
+    public async Task<IEnumerable<Entities.ActivityInfo>> GetByCyclistIdAsync(int id)
+    {
+        // Check if cyclist exists
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == id);
+        if (cyclist == null)
+            throw new NoCyclistException();
+
+        // Get activities
+        var objList = await _db.ActivityInfos
+            .Where(a => a.CyclistId == id)
+            .ToListAsync();
+        List<Entities.ActivityInfo> result = new List<Entities.ActivityInfo>();
+        foreach (var item in objList)
+        {
+            result.Add(item.ToDomain());
+        }
+        return result;
     }
 
     public async Task<int> AddAsync(Entities.ActivityInfo activity, int cyclistId)

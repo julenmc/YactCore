@@ -5,6 +5,7 @@ using Yact.Application.Commands.Activities;
 using Yact.Application.Queries.Activities;
 using Yact.Application.Responses;
 using Yact.Domain.Exceptions.Activity;
+using Yact.Domain.Exceptions.Cyclist;
 
 namespace Yact.Api.Controllers;
 
@@ -51,6 +52,29 @@ public partial class ActivityApiController : ControllerBase
             }
 
             return Ok(activity);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("get-by-cyclist-id/{id}")]
+    [ProducesResponseType(typeof(IEnumerable<ActivityInfoDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult<IEnumerable<ActivityInfoDto>>> GetByCyclistId(int id)
+    {
+        try
+        {
+            var query = new GetActivitiesByCyclisIdQuery(id);
+            var activities = await _mediator.Send(query);
+
+            return Ok(activities);
+        }
+        catch (NoCyclistException)
+        {
+            return NotFound($"Cyclist with ID {id} doesn't exist");
         }
         catch (Exception ex)
         {
