@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Entities.Climb;
 
-namespace Yact.Domain.Tests.Climbs;
+namespace Yact.Domain.Tests.Entities;
 
 public class ClimbDataTests
 {

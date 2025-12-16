@@ -33,7 +33,7 @@ public class ClimbRepository : IClimbRepository
         return climb?.ToDomain();
     }
 
-    public async Task<IEnumerable<ClimbData>> GetByCoordinates(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
+    public async Task<IEnumerable<ClimbData>> GetByCoordinatesAsync(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
     {
         var climbList = await _db.Climbs
             .Where(c => (c.LatitudeInit >= latitudeMin && c.LatitudeInit <= latitudeMax) &&
@@ -48,15 +48,15 @@ public class ClimbRepository : IClimbRepository
         return result;
     }
 
-    public async Task<int> AddAsync(ClimbData climb)
+    public async Task<ClimbData> AddAsync(ClimbData climb)
     {
         var newClimb = await _db.Climbs.AddAsync(climb.ToModel());
         await _db.SaveChangesAsync();
 
-        return newClimb.Entity.Id;
+        return newClimb.Entity.ToDomain();
     }
 
-    public async Task<int> RemoveByIdAsync(int id)
+    public async Task<ClimbData?> RemoveByIdAsync(int id)
     {
         // Create aux entity just for the id
         var climb = new ClimbInfo { Id = id };
@@ -65,26 +65,26 @@ public class ClimbRepository : IClimbRepository
         {
             var deleted = _db.Climbs.Remove(climb);
             if (deleted == null)
-                return -1;
+                return null;
 
             var rowsAffected = await _db.SaveChangesAsync();
-            return rowsAffected > 0 ? deleted.Entity.ToDomain().Id : -1;
+            return rowsAffected > 0 ? deleted.Entity.ToDomain() : null;
         }
         catch (DbUpdateConcurrencyException)
         {
             // Entity didn't exist
-            return -1;
+            return null;
         }
     }
 
-    public async Task<int> UpdateAsync(ClimbData climb)
+    public async Task<ClimbData?> UpdateAsync(ClimbData climb)
     {
         var updated = _db.Update(climb.ToModel());
         if (updated == null)
-            return -1;
+            return null;
 
         var rowsAffected = await _db.SaveChangesAsync();
-        return rowsAffected > 0 ? updated.Entity.ToDomain().Id : -1;
+        return rowsAffected > 0 ? updated.Entity.ToDomain() : null;
     }
 
 }

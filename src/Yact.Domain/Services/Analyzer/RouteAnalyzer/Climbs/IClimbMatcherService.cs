@@ -4,5 +4,5 @@ namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 
 public interface IClimbMatcherService
 {
-    Task<bool> MatchClimbWithRepositoryAsync(ActivityClimb climb);
+    Task MatchClimbWithRepositoryAsync(ActivityClimb climb);
 }

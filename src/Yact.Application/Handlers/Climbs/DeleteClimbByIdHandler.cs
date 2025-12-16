@@ -20,6 +20,7 @@ public class DeleteClimbByIdHandler : IRequestHandler<DeleteClimbByIdCommand, in
 
     public async Task<int> Handle (DeleteClimbByIdCommand command, CancellationToken cancellationToken)
     {
-        return await _repository.RemoveByIdAsync(command.Id);
+        var deleted = await _repository.RemoveByIdAsync(command.Id);
+        return deleted != null ? deleted.Id : -1;
     }
 }

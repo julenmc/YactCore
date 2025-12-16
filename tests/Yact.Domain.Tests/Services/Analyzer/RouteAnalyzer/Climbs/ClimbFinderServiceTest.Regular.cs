@@ -1,9 +1,8 @@
-﻿using System.Security.Claims;
-using Yact.Domain.Entities.Activity;
+﻿using Yact.Domain.Entities.Activity;
 using Yact.Domain.Entities.Climb;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 
-namespace Yact.Domain.Tests.Climbs;
+namespace Yact.Domain.Tests.Services.Analyzer.RouteAnalyzer.Climbs;
 
 public partial class ClimbFinderServiceTest
 {

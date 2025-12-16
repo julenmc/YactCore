@@ -22,7 +22,7 @@ public class UpdateClimbHandler : IRequestHandler<UpdateClimbCommand, int>
     public async Task<int> Handle (UpdateClimbCommand command, CancellationToken cancellationToken)
     {
         var climb = _mapper.Map<ClimbData>(command.Climb);
-        var id = await _repository.UpdateAsync(climb);
-        return id;
+        var updated = await _repository.UpdateAsync(climb);
+        return updated != null ? updated.Id : -1;
     }
 }

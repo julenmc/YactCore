@@ -43,10 +43,7 @@ public class RouteAnalyzerService : IRouteAnalyzerService
         // Check if found climbs already exist in the repository
         foreach (var climb in climbs)
         {
-            if (await _climbMatcherService.MatchClimbWithRepositoryAsync(climb) == false)
-            {
-                // Create new climb in repository
-            }
+            await _climbMatcherService.MatchClimbWithRepositoryAsync(climb);
         }
 
         return climbs;

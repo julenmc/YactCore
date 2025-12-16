@@ -21,7 +21,7 @@ public class GetClimbsByCoordinatesHandler : IRequestHandler<GetClimbsByCoordina
 
     public async Task<IEnumerable<ClimbDto>> Handle (GetClimbsByCoordinatesQuery query, CancellationToken cancellationToken)
     {
-        var climbList = await _repository.GetByCoordinates(query.LatitudeMin, query.LatitudeMax, query.LongitudeMin, query.LongitudeMax);
+        var climbList = await _repository.GetByCoordinatesAsync(query.LatitudeMin, query.LatitudeMax, query.LongitudeMin, query.LongitudeMax);
         return _mapper.Map<IEnumerable<ClimbDto>>(climbList);
     }
 }

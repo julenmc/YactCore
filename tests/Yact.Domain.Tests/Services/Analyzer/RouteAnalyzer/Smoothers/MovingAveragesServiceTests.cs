@@ -1,7 +1,7 @@
 ﻿using Yact.Domain.Entities.Smoother;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Metrics;
 
-namespace Yact.Domain.Tests.Smoothers;
+namespace Yact.Domain.Tests.Services.Analyzer.RouteAnalyzer.Smoothers;
 
 public class MovingAveragesServiceTests
 {

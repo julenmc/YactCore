@@ -22,6 +22,7 @@ public class CreateClimbHandler : IRequestHandler<CreateClimbCommand, int>
     public async Task<int> Handle (CreateClimbCommand command, CancellationToken cancellationToken)
     {
         var climb = _mapper.Map<ClimbData>(command.Climb);
-        return await _repository.AddAsync(climb);
+        var added = await _repository.AddAsync(climb);
+        return added.Id;
     }
 }

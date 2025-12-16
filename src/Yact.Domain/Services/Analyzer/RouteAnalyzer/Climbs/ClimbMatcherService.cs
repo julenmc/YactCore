@@ -14,23 +14,28 @@ public class ClimbMatcherService : IClimbMatcherService
         _repository = repository;
     }
 
-    public async Task<bool> MatchClimbWithRepositoryAsync(ActivityClimb climb)
+    public async Task MatchClimbWithRepositoryAsync(ActivityClimb climb)
     {
         var latitudeMin = climb.Data.LatitudeInit * (1 - CoordinatesDelta);
         var latitudeMax = climb.Data.LatitudeInit * (1 + CoordinatesDelta);
         var longitudeMin = climb.Data.LongitudeInit * (1 - CoordinatesDelta);
         var longitudeMax = climb.Data.LongitudeInit * (1 + CoordinatesDelta);
 
-        var repoClimbList = await _repository.GetByCoordinates((float)latitudeMin, (float)latitudeMax, (float)longitudeMin, (float)longitudeMax);
+        var repoClimbList = await _repository.GetByCoordinatesAsync((float)latitudeMin, (float)latitudeMax, (float)longitudeMin, (float)longitudeMax);
         foreach (ClimbData item in repoClimbList)
         {
             if(climb.Data.Match(item))
             {
                 climb.MergeWith(item);
-                return true;
+                return;
+            }
+            else
+            {
+                var newClimb = await _repository.AddAsync(climb.Data);
+                newClimb.Name = "Unknown";
+                climb.MergeWith(newClimb);
+                return;
             }
         }
-
-        return false;
     }
 }

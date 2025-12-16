@@ -1,7 +1,7 @@
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Altitude;
 using Yact.Domain.Entities.Activity;
 
-namespace Yact.Domain.Tests.Smoothers;
+namespace Yact.Domain.Tests.Services.Analyzer.RouteAnalyzer.Smoothers;
 
 public class WeightedDistanceAltitudeSmootherTests
 {
