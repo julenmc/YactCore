@@ -9,8 +9,8 @@ public class ActivityInfoDto
     public string? Path { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public double Distance { get; set; }
-    public double Elevation { get; set; }
+    public double DistanceMeters { get; set; }
+    public double ElevationMeters { get; set; }
     public string? Type { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }

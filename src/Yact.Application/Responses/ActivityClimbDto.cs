@@ -3,6 +3,6 @@
 public class ActivityClimbDto
 {
     public int Id { get; set; }
-    public ClimbDto? Climb { get; set; }
+    public ClimbDto? Data { get; set; }
     public ActivityInfoDto? Activity { get; set; }
 }

@@ -34,7 +34,7 @@ public class ActivityClimbRepository : IActivityClimbRepository
     {
         var climbs = await _db.ActivityClimbs
             .Where(a => a.ClimbId == climbId)
-            .Include(a => a.Climb)
+            .Include(a => a.Activity)
             .ToListAsync();
 
         var ret = new List<Entities.ActivityClimb>();
