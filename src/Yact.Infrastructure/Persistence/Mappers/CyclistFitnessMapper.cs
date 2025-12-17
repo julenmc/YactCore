@@ -8,40 +8,65 @@ internal static class CyclistFitnessMapper
 {
     internal static Entities.CyclistFitness ToDomain(this CyclistFitness model)
     {
-        if (model.PowerCurveJson == null)
-            throw new ArgumentNullException(nameof(model.PowerCurveJson));
+        Entities.PowerCurve? powerCurve = null;
+        Dictionary<int, Entities.Zone>? powerZones = null;
+        Dictionary<int, Entities.Zone>? hrZones = null;
 
-        var powerData = JsonSerializer.Deserialize<Dictionary<int, int>>(model.PowerCurveJson)
+        if (model.PowerCurveJson != null)
+        {
+            var powerData = JsonSerializer.Deserialize<Dictionary<int, int>>(model.PowerCurveJson)
             ?? new Dictionary<int, int>();
 
-        var powerCurve = new Entities.PowerCurve(powerData);
+            powerCurve = new Entities.PowerCurve()
+            {
+                PowerBySeconds = powerData
+            };
+        }
+        if (model.PowerZonesRaw != null)
+        {
+            powerZones = ZonesMapper.MapFromJson(model.PowerZonesRaw);
+        }
+        if (model.HrZonesRaw != null)
+        {
+            hrZones = ZonesMapper.MapFromJson(model.HrZonesRaw);
+        }
 
         return new Entities.CyclistFitness()
         {
+            Id = model.Id,
+            CyclistId = model.CyclistId,
             UpdateDate = model.UpdateDate,
             Height = model.Height,
             Weight = model.Weight,
             Ftp = model.Ftp,
             Vo2Max = model.Vo2Max,
             PowerCurve = powerCurve,
+            PowerZones = powerZones,
+            HrZones = hrZones,
         };
     }
 
-    internal static CyclistFitness ToModel(this Entities.CyclistFitness entity, Entities.Cyclist cyclist)
+    internal static CyclistFitness ToModel(this Entities.CyclistFitness entity, int? cyclistID = null)
     {
         if (entity.PowerCurve == null)
             throw new ArgumentNullException(nameof(entity.PowerCurve));
+        if (entity.PowerZones == null)
+            throw new ArgumentNullException(nameof(entity.PowerZones));
+        if (entity.HrZones == null)
+            throw new ArgumentNullException (nameof(entity.HrZones));
 
         return new CyclistFitness
         {
             Id = 0,     // rewritten in DB
-            CyclistId = cyclist.Id,
+            CyclistId = cyclistID != null ? (int)cyclistID : entity.CyclistId,
             UpdateDate = entity.UpdateDate,
             Height = entity.Height,
             Weight = entity.Weight,
             Ftp = entity.Ftp,
             Vo2Max = entity.Vo2Max,
-            PowerCurveJson = JsonSerializer.Serialize(entity.PowerCurve.PowerBySeconds)
+            PowerCurveJson = JsonSerializer.Serialize(entity.PowerCurve.PowerBySeconds),
+            PowerZonesRaw = ZonesMapper.MapToJson(entity.PowerZones),
+            HrZonesRaw = ZonesMapper.MapToJson(entity.HrZones)
         };
     }
 }

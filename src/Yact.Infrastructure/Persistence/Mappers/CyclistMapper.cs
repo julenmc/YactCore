@@ -13,6 +13,7 @@ internal static class CyclistMapper
             Name = model.Name,
             LastName = model.LastName,
             BirthDate = model.BirthDate,
+            FitnessData = model.Fitnesss?.FirstOrDefault()?.ToDomain(),
         };
     }
 
@@ -23,7 +24,7 @@ internal static class CyclistMapper
             Id = entity.Id,
             Name = entity.Name != null ? entity.Name : "Unknown",
             LastName = entity.LastName != null ? entity.LastName : "Unknown",
-            BirthDate = entity.BirthDate
+            BirthDate = entity.BirthDate,
         };
     }
 }

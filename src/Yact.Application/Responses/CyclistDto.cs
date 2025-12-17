@@ -10,4 +10,5 @@ public class CyclistDto
     public string? FullName => $"{Name} {LastName}";
     public DateTime BirthDate { get; set; }
     public int Age => DateTime.Now.Year - BirthDate.Year - (DateTime.Now.DayOfYear < BirthDate.DayOfYear ? 1 : 0);
+    public CyclistFitnessDto? FitnessData { get; set; }
 }

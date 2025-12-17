@@ -1,6 +1,6 @@
-﻿namespace Yact.Domain.Entities.Cyclist;
+﻿namespace Yact.Application.Responses;
 
-public class CyclistFitness
+public class CyclistFitnessDto
 {
     public int Id { get; set; }
     public int CyclistId { get; set; }
@@ -9,7 +9,7 @@ public class CyclistFitness
     public float Weight { get; set; }
     public ushort Ftp { get; set; }
     public float Vo2Max { get; set; }
-    public PowerCurve? PowerCurve { get; set; }
-    public Dictionary<int, Zone>? HrZones { get; set; }
-    public Dictionary<int, Zone>? PowerZones { get; set; }
+    public PowerCurveDto? PowerCurve { get; set; }
+    public Dictionary<string, ZoneDto>? HrZones { get; set; }
+    public Dictionary<string, ZoneDto>? PowerZones { get; set; }
 }

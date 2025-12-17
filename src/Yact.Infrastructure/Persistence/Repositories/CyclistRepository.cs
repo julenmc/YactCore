@@ -29,8 +29,23 @@ public class CyclistRepository : ICyclistRepository
 
     public async Task<Entities.Cyclist?> GetByIdAsync(int id)
     {
-        var obj = await _db.CyclistInfos.FirstOrDefaultAsync(x => x.Id == id);
-        return obj?.ToDomain();
+        var obj = await _db.CyclistInfos
+            .Where(x => x.Id == id)
+            .Select(c => new
+            {
+                Cyclist = c,
+                LatestFitness = c.Fitnesss!
+                    .OrderByDescending(f => f.UpdateDate)
+                    .FirstOrDefault()
+            })
+            .FirstOrDefaultAsync();
+
+        if (obj?.Cyclist != null && obj.LatestFitness != null)
+        {
+            obj.Cyclist.Fitnesss = new List<CyclistFitness> { obj.LatestFitness };
+        }
+
+        return obj?.Cyclist.ToDomain();
     }
 
     public async Task<Entities.Cyclist?> AddAsync(Entities.Cyclist cyclist)

@@ -55,6 +55,11 @@ public class ActivityRepository : IActivityRepository
 
     public async Task<int> AddAsync(Entities.ActivityInfo activity, int cyclistId)
     {
+        // Check if cyclist exists
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId);
+        if (cyclist == null)
+            throw new NoCyclistException();
+
         var saved = await _db.ActivityInfos.AddAsync(activity.ToModel(cyclistId));
         await _db.SaveChangesAsync();
 

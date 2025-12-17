@@ -23,18 +23,32 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Relation between Activity info table and activity file table
-        //modelBuilder.Entity<Activity>()
-        //    .HasOne(a => a.ActivityFile)
-        //    .WithOne(d => d.ActivityInfo)
-        //    .HasForeignKey<Activity>(d => d.ActivityFileId);
-
         modelBuilder.Entity<CyclistInfo>().HasData(new CyclistInfo
         {
             Id = 1,
             Name = "Dummy",
             LastName = "Cyclist",
             BirthDate = DateTime.Now,
+        });
+
+        modelBuilder.Entity<CyclistFitness>().HasData(new CyclistFitness
+        {
+            Id = 1,
+            CyclistId = 1,
+            UpdateDate = DateTime.Now,
+            Height = 180,
+            Weight = 70,
+            Ftp = 250,
+            Vo2Max = 50,
+            PowerZonesRaw = @"[
+                {""lowLimit"": 0, ""highLimit"":150},
+                {""lowLimit"": 151, ""highLimit"": 200},
+                {""lowLimit"": 201, ""highLimit"": 250},
+                {""lowLimit"": 251, ""highLimit"": 300},
+                {""lowLimit"": 301, ""highLimit"": 350},
+                {""lowLimit"": 351, ""highLimit"": 400},
+                {""lowLimit"": 401, ""highLimit"": 500}
+            ]",
         });
 
         modelBuilder.Entity<ActivityInfo>().HasData(new ActivityInfo

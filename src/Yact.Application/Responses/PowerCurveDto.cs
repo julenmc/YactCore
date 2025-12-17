@@ -1,7 +1,6 @@
-﻿namespace Yact.Domain.Entities.Cyclist;
+﻿namespace Yact.Application.Responses;
 
-public class PowerCurve
+public class PowerCurveDto
 {
     public Dictionary<int, int> PowerBySeconds { get; set; } = new();
 }
-
