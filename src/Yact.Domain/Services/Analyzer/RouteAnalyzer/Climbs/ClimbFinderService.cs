@@ -275,6 +275,7 @@ public class ClimbFinderService : IClimbFinderService
                     MaxSlope = Math.Round(climb.MaxSlope, 1)
                 }
             },
+            ClimbId = 0,    // Always to 0, it will change when matching with an existing climb
             StartPointMeters = _climbStartDistance
         };
     }

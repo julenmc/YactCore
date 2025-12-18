@@ -13,6 +13,7 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
     private readonly IFileStorageService _fileStorage;
     private readonly IActivityRepository _activityRepository;
     private readonly IActivityClimbRepository _activityClimbRepository;
+    private readonly IClimbRepository _climbRepository;
     private readonly IActivityReaderService _activityReaderService;
     private readonly IRouteAnalyzerService _routeAnalyzer; 
     private readonly ILogger<UploadActivityHandler> _logger;
@@ -21,6 +22,7 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
         IFileStorageService fileStorage,
         IActivityRepository activityRepository,
         IActivityClimbRepository activityClimbRepository,
+        IClimbRepository climbRepository,
         IActivityReaderService activityReaderService,
         IRouteAnalyzerService routeAnalyzerService,
         ILogger<UploadActivityHandler> logger)
@@ -28,6 +30,7 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
         _fileStorage = fileStorage;
         _activityRepository = activityRepository;
         _activityClimbRepository = activityClimbRepository;
+        _climbRepository = climbRepository;
         _activityReaderService = activityReaderService;
         _routeAnalyzer = routeAnalyzerService;
         _logger = logger;
@@ -47,9 +50,16 @@ public class UploadActivityHandler : IRequestHandler<UploadActivityCommand, int>
         var activityClimbs = await _routeAnalyzer.AnalyzeRouteAsync(activity.RecordData);
         // var debugTrace = _routeAnalyzer.GetDebugTrace();
 
+        // Save non existing climbs
         _logger.LogInformation($"{activityClimbs.Count} climbs found:");
         foreach (var climb in activityClimbs)
         {
+            if (climb.ClimbId == 0)     // Means it wasn't matched with an existing climb
+            {
+                var newClimb = await _climbRepository.AddAsync(climb.Data);
+                newClimb.Name = "Unknown";
+                climb.MergeWith(newClimb);
+            }
             _logger.LogInformation($"{climb.Data.Metrics.DistanceMeters}m at {climb.Data.Metrics.Slope}%");
         }
 

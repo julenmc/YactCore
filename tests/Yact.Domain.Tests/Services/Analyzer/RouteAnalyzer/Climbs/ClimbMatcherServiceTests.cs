@@ -49,38 +49,6 @@ public class ClimbMatcherServiceTests
     }
 
     [Fact]
-    public async Task MatchClimbWithRepositoryAsync_WithNoClimbInRepo_CallsRepositoryAdd()
-    {
-        // Arrange
-        var climb = CreateSampleActivityClimb();
-        var newClimb = CreateRepoClimb(1);
-        _mockClimbRepository
-            .Setup(x => x.GetByCoordinatesAsync(
-                It.IsAny<float>(),
-                It.IsAny<float>(),
-                It.IsAny<float>(),
-                It.IsAny<float>()))
-            .ReturnsAsync(new List<ClimbData>());
-        _mockClimbRepository
-            .Setup(x => x.AddAsync(It.IsAny<ClimbData>()))
-            .ReturnsAsync(newClimb);
-
-        // Act
-        await _service.MatchClimbWithRepositoryAsync(climb);
-
-        // Assert
-        _mockClimbRepository.Verify(x => x.GetByCoordinatesAsync(
-            It.IsAny<float>(),
-            It.IsAny<float>(),
-            It.IsAny<float>(),
-            It.IsAny<float>()),
-            Times.Once());
-        _mockClimbRepository.Verify(x => x.AddAsync(
-            It.IsAny<ClimbData>()),
-            Times.Once);
-    }
-
-    [Fact]
     public async Task MatchClimbWithRepositoryAsync_WithClimbInRepo_ReturnsCorrectClimbId()
     {
         // Arrange
@@ -105,7 +73,7 @@ public class ClimbMatcherServiceTests
     }
 
     [Fact]
-    public async Task MatchClimbWithRepositoryAsync_WithNoClimbInRepo_ReturnsCorrectClimbId()
+    public async Task MatchClimbWithRepositoryAsync_WithNoClimbInRepo_ClimbIdIsZero()
     {
         // Arrange
         var climb = CreateSampleActivityClimb();
@@ -125,7 +93,7 @@ public class ClimbMatcherServiceTests
         await _service.MatchClimbWithRepositoryAsync(climb);
 
         // Assert
-        Assert.Equal(newClimb.Id, climb.ClimbId);
+        Assert.Equal(0, climb.ClimbId);
     }
 
     #region Helper Methods

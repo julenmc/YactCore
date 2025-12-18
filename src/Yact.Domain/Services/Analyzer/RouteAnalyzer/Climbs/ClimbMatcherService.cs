@@ -30,8 +30,8 @@ public class ClimbMatcherService : IClimbMatcherService
                 return;
             }
         }
-        var newClimb = await _repository.AddAsync(climb.Data);
-        newClimb.Name = "Unknown";
-        climb.MergeWith(newClimb);
+        //var newClimb = await _repository.AddAsync(climb.Data);
+        //newClimb.Name = "Unknown";
+        //climb.MergeWith(newClimb);
     }
 }
