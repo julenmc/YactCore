@@ -2,7 +2,7 @@
 using Yact.Domain.Entities.Climb;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
-using Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Altitude;
+using Yact.Domain.Services.Utils.Smoothers.Altitude;
 
 namespace Yact.Domain.Services.Analyzer.RouteAnalyzer;
 

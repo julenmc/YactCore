@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Entities.Smoother;
 
-namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Metrics;
+namespace Yact.Domain.Services.Utils.Smoothers.Metrics;
 
 public class MovingAveragesMetricsService : IMetricsSmootherService<List<MovingAverageMetric>>
 {

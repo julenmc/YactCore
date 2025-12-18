@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Entities.Activity;
 
-namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Smoothers.Altitude;
+namespace Yact.Domain.Services.Utils.Smoothers.Altitude;
 
 /// <summary>
 /// Smoothin with weight: nearest points have more influence.
