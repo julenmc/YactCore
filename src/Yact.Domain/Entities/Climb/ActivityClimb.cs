@@ -1,4 +1,4 @@
-﻿using Yact.Domain.Entities.Activity;
+﻿using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Domain.Entities.Climb;
 
@@ -9,7 +9,7 @@ public class ActivityClimb
     public int ClimbId { get; set; }
     public int IntervalId { get; set; }
     public required ClimbData Data { get; set; }
-    public ActivityInfo? Activity { get; set; }
+    public ActivitySummary? Activity { get; set; }
     public required double StartPointMeters { get; set; }
     public double EndPointMeters => StartPointMeters + Data.Metrics.DistanceMeters;
 

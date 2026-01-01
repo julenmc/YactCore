@@ -5,6 +5,7 @@ using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Models.Activity;
 using Yact.Infrastructure.Persistence.Mappers;
 using Yact.Domain.Exceptions.Cyclist;
+using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -17,10 +18,10 @@ public class ActivityRepository : IActivityRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<Entities.ActivityInfo>> GetAllAsync()
+    public async Task<IEnumerable<Entities.Activity>> GetAllAsync()
     {
         var objList = await _db.ActivityInfos.ToListAsync();
-        List<Entities.ActivityInfo> result = new List<Entities.ActivityInfo>();
+        List<Entities.Activity> result = new List<Entities.Activity>();
         foreach (var item in objList)
         {
             result.Add(item.ToDomain());
@@ -28,13 +29,13 @@ public class ActivityRepository : IActivityRepository
         return result;
     }
 
-    public async Task<Entities.ActivityInfo?> GetByIdAsync(int id)
+    public async Task<Entities.Activity?> GetByIdAsync(int id)
     {
         var obj = await _db.ActivityInfos.FirstOrDefaultAsync(x => x.Id == id);
         return obj?.ToDomain();
     }
 
-    public async Task<IEnumerable<Entities.ActivityInfo>> GetByCyclistIdAsync(int id)
+    public async Task<IEnumerable<Entities.Activity>> GetByCyclistIdAsync(int id)
     {
         // Check if cyclist exists
         var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == id);
@@ -45,7 +46,7 @@ public class ActivityRepository : IActivityRepository
         var objList = await _db.ActivityInfos
             .Where(a => a.CyclistId == id)
             .ToListAsync();
-        List<Entities.ActivityInfo> result = new List<Entities.ActivityInfo>();
+        List<Entities.Activity> result = new List<Entities.Activity>();
         foreach (var item in objList)
         {
             result.Add(item.ToDomain());
@@ -53,20 +54,20 @@ public class ActivityRepository : IActivityRepository
         return result;
     }
 
-    public async Task<int> AddAsync(Entities.ActivityInfo activity, int cyclistId)
+    public async Task<Entities.Activity> AddAsync(ActivitySummary summary, string path, int cyclistId)
     {
         // Check if cyclist exists
         var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId);
         if (cyclist == null)
             throw new NoCyclistException();
 
-        var saved = await _db.ActivityInfos.AddAsync(activity.ToModel(cyclistId));
+        var saved = await _db.ActivityInfos.AddAsync(summary.ToModel(path, cyclistId));
         await _db.SaveChangesAsync();
 
-        return saved.Entity.Id;
+        return saved.Entity.ToDomain();
     }
 
-    public async Task<Entities.ActivityInfo?> RemoveByIdAsync(int id)
+    public async Task<Entities.Activity?> RemoveByIdAsync(int id)
     {
         // Create aux entity just for the id
         var activity = new ActivityInfo { Id = id, CyclistId = 0, Name = "Dummy", Path = "Dummy Path" };
@@ -87,7 +88,7 @@ public class ActivityRepository : IActivityRepository
         }
     }
 
-    public async Task<Entities.ActivityInfo?> UpdateAsync(Entities.ActivityInfo activity)
+    public async Task<Entities.Activity?> UpdateAsync(Entities.Activity activity)
     {
         var updated = _db.Update(activity.ToModel());
         if (updated == null) 

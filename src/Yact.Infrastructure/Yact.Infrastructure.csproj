@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Garmin.FIT.Sdk" Version="21.171.0" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.22">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

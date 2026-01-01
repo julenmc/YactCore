@@ -1,9 +1,9 @@
-﻿using Yact.Domain.Entities.Activity;
-using Yact.Domain.Entities.Climb;
+﻿using Yact.Domain.Entities.Climb;
+using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 
-public class ClimbFinderService : IClimbFinderService
+public class ClimbFinderService
 {
     private enum Result
     {
@@ -105,7 +105,7 @@ public class ClimbFinderService : IClimbFinderService
         // If there was a climb being detected, check if its a climb and close and save it
         if (r == Result.Continue || r == Result.EndWarning)
         {
-            if (IsClimb(climb, records.Last().Slope!.Value, records.Last().Coordinates.Altitude))
+            if (IsClimb(climb, records.Last().SmoothedAltitude.Slope, records.Last().Coordinates.Altitude))
             {
                 result.Add(EndClimb(climb));
             }
@@ -119,7 +119,7 @@ public class ClimbFinderService : IClimbFinderService
         if (!_isFirstPoint)
         {
             double distDiff = record.DistanceMeters!.Value - _climbRecords.Last().DistanceMeters!.Value;
-            double slope = record.Slope!.Value;
+            double slope = record.SmoothedAltitude.Slope;
 
             if (slope < SlopeAcceptanceValue)
             {
@@ -140,15 +140,15 @@ public class ClimbFinderService : IClimbFinderService
         }
         else
         {
-            if (record.Slope!.Value > SlopeAcceptanceValue)
+            if (record.SmoothedAltitude.Slope > SlopeAcceptanceValue)
             {
                 _isFirstPoint = false;
                 _climbRecords.Add(prevRecord);
                 _climbRecords.Add(record);
                 climb.Elevation = record.Coordinates.Altitude - prevRecord.Coordinates.Altitude;
                 climb.DistanceMeters = record.DistanceMeters!.Value - prevRecord.DistanceMeters!.Value;
-                climb.Slope = record.Slope!.Value;
-                climb.MaxSlope = record.Slope!.Value;
+                climb.Slope = record.SmoothedAltitude.Slope;
+                climb.MaxSlope = record.SmoothedAltitude.Slope;
                 _climbStartDistance = prevRecord.DistanceMeters!.Value;
                 _debugTrace.Add($"New climb could start at {Math.Round(prevRecord.DistanceMeters!.Value)}");
                 return Result.Continue;
@@ -165,7 +165,7 @@ public class ClimbFinderService : IClimbFinderService
         double distDiff = record.DistanceMeters!.Value - _forcePrevDistance;
         _forcePrevDistance = record.DistanceMeters!.Value;
 
-        double slope = record.Slope!.Value;
+        double slope = record.SmoothedAltitude.Slope;
         climb.DistanceMeters += distDiff;
         if (record.Coordinates.Altitude > _climbRecords.Last().Coordinates.Altitude)
             climb.Elevation += record.Coordinates.Altitude - _climbRecords.Last().Coordinates.Altitude;
@@ -189,12 +189,12 @@ public class ClimbFinderService : IClimbFinderService
         double distDiff = record.DistanceMeters!.Value - _checkPrevDistance;
         _checkPrevDistance = record.DistanceMeters!.Value;
 
-        double slope = record.Slope!.Value; // Point slope
+        double slope = record.SmoothedAltitude.Slope; // Point slope
         double checkSlope = (record.Coordinates.Altitude - _climbRecords.Last().Coordinates.Altitude) /
             (record.DistanceMeters!.Value - _climbRecords.Last().DistanceMeters!.Value) * 100; // Slope in the sector to check
 
         bool hasToCheckAltitude = record.Coordinates.Altitude <= _climbRecords.Last().Coordinates.Altitude;
-        bool hasToCheckSlope = record.Slope < SlopeAcceptanceValue;
+        bool hasToCheckSlope = record.SmoothedAltitude.Slope < SlopeAcceptanceValue;
 
         if (!hasToCheckAltitude && !hasToCheckSlope)
         {

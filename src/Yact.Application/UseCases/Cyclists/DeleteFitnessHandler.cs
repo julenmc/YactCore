@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Yact.Application.Commands.Cyclists;
+using Yact.Application.UseCases.Cyclists.Commands;
 using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Cyclists;

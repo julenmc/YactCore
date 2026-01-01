@@ -1,7 +1,0 @@
-﻿namespace Yact.Domain.Entities.Cyclist;
-
-public class PowerCurve
-{
-    public Dictionary<int, int> PowerBySeconds { get; set; } = new();
-}
-

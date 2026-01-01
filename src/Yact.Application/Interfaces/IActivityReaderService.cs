@@ -1,8 +1,9 @@
-﻿using Yact.Domain.Entities.Activity;
+﻿using Yact.Application.DTOs.Activity;
 
 namespace Yact.Application.Interfaces;
 
 public interface IActivityReaderService
 {
-    Task<Activity> ReadActivityAsync(Stream fileStream);
+    Task<ActivityReadData> ReadActivitySummaryAsync(Stream fileStream);
+    Task<ActivityReadData> ReadFullActivityAsync(Stream fileStream);
 }

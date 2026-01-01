@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Yact.Application.Commands.Cyclists;
 using Yact.Application.Responses;
+using Yact.Application.UseCases.Cyclists.Commands;
 using Yact.Domain.Entities.Cyclist;
 using Yact.Domain.Repositories;
 

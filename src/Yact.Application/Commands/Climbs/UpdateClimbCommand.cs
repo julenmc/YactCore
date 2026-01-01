@@ -1,6 +1,0 @@
-﻿using MediatR;
-using Yact.Application.Responses;
-
-namespace Yact.Application.Commands.Climbs;
-
-public record UpdateClimbCommand(ClimbDto Climb) : IRequest<int>;

@@ -1,4 +1,7 @@
-﻿namespace Yact.Domain.Entities.Cyclist;
+﻿using Yact.Domain.ValueObjects.Common;
+using Yact.Domain.ValueObjects.Cyclist;
+
+namespace Yact.Domain.Entities.Cyclist;
 
 public class CyclistFitness
 {

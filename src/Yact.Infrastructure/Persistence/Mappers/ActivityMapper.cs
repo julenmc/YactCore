@@ -1,45 +1,52 @@
-﻿using Yact.Infrastructure.Persistence.Models.Activity;
+﻿using Yact.Domain.ValueObjects.Cyclist;
+using Yact.Infrastructure.Persistence.Models.Activity;
 using Entities = Yact.Domain.Entities.Activity;
+using VO = Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Infrastructure.Persistence.Mappers;
 
 internal static class ActivityMapper
 {
-    internal static Entities.ActivityInfo ToDomain(this ActivityInfo model)
+    internal static Entities.Activity ToDomain(this ActivityInfo model)
     {
-        return new Entities.ActivityInfo()
-        {
-            Id = model.Id,
-            CyclistId = model.CyclistId,
-            Name = model.Name,
-            Description = model.Description,
-            Path = model.Path,
-            StartDate = model.StartDate,
-            EndDate = model.EndDate,
-            DistanceMeters = model.DistanceMeters,
-            ElevationMeters = model.ElevationMeters,
-            Type = model.Type,
-            CreateDate = model.CreateDate,
-            UpdateDate = model.UpdateDate,
-        };
+        var summary = VO.ActivitySummary.CreateFromRepository(
+            name: model.Name ?? "Unknown",
+            description: model.Description ?? "",
+            startDate: model.StartDate,
+            endDate: model.EndDate,
+            distance: model.DistanceMeters,
+            elevation: model.ElevationMeters,
+            type: model.Type ?? "Unknown"
+            //createDate: model.CreateDate,
+            //updateDate: model.UpdateDate
+        );
+        return Entities.Activity.Create(
+            VO.ActivityId.From(model.Id),
+            CyclistId.From(model.CyclistId), 
+            VO.FilePath.From(model.Path ?? "Unknown"), 
+            summary);
     }
 
-    internal static ActivityInfo ToModel(this Entities.ActivityInfo entity, int? cyclistId = null)
+    internal static ActivityInfo ToModel(this VO.ActivitySummary summary, string path, int cyclistId)
     {
         return new ActivityInfo
         {
-            Id = entity.Id,
-            CyclistId = (cyclistId != null) ? (int)cyclistId : entity.CyclistId,
-            Name = entity.Name,
-            Description = entity.Description,
-            Path = entity.Path,
-            StartDate = entity.StartDate,
-            EndDate = entity.EndDate,
-            DistanceMeters = entity.DistanceMeters,
-            ElevationMeters = entity.ElevationMeters,
-            Type = entity.Type,
-            CreateDate = entity.CreateDate,
-            UpdateDate = entity.UpdateDate,
+            CyclistId = (int)cyclistId,
+            Name = summary.Name,
+            Description = summary.Description,
+            Path = path,
+            StartDate = summary.StartDate,
+            EndDate = summary.EndDate,
+            DistanceMeters = summary.DistanceMeters,
+            ElevationMeters = summary.ElevationMeters,
+            Type = summary.Type,
         };
+    }
+
+    internal static ActivityInfo ToModel(this Entities.Activity entity)
+    {
+        var ret = ToModel(entity.Summary, entity.Path.Value, entity.CyclistId.Value);
+        ret.Id = entity.Id.Value;
+        return ret;
     }
 }

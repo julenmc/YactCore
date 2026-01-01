@@ -1,4 +1,4 @@
-﻿using Yact.Domain.Entities.Activity;
+﻿using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.Services.Utils.Smoothers.Altitude;
 
@@ -6,7 +6,7 @@ namespace Yact.Domain.Services.Utils.Smoothers.Altitude;
 /// Smoothin with weight: nearest points have more influence.
 /// Uses a Gaussian function for the weight.
 /// </summary>
-public class WeightedDistanceAltitudeSmoother : IAltitudeSmootherService
+public class WeightedDistanceAltitudeSmoother
 {
     private readonly double _windowDistanceMeters;
     private readonly double _sigma;
@@ -25,29 +25,32 @@ public class WeightedDistanceAltitudeSmoother : IAltitudeSmootherService
         _sigma = sigma ?? windowDistanceMeters / 3.0;
     }
 
-    public void Smooth(List<RecordData> records)
+    public IReadOnlyList<SmoothedAltitude> Smooth(
+        IReadOnlyList<Coordinates> coordinates, 
+        IReadOnlyList<float> distances)
     {
-        if (records.Count < 2)
-            return;
+        if (coordinates.Count != distances.Count)
+            throw new ArgumentException($"Coordinates {coordinates.Count} and distances {distances.Count} count must be the same.");
 
-        var originalAltitudes = records
-            .Select(r => r.Coordinates?.Altitude)
-            .ToList();
+        List<SmoothedAltitude> result = new List<SmoothedAltitude>();
+        if (coordinates.Count < 2)
+            return result;
 
         var halfWindow = _windowDistanceMeters / 2;
+        var smoothedAltitudeList = new List<SmoothedAltitude>();
 
-        for (int i = 0; i < records.Count; i++)
+        for (int i = 0; i < coordinates.Count; i++)
         {
-            if (records[i].DistanceMeters == null)
-                continue;
+            //if (distances == null)
+            //    continue;
 
-            var centerDistance = records[i].DistanceMeters!.Value;
+            var centerDistance = distances[i];
             var minDistance = Math.Max(centerDistance - halfWindow, 0);
-            var maxDistance = Math.Min(centerDistance + halfWindow, records.Last().DistanceMeters!.Value);
+            var maxDistance = Math.Min(centerDistance + halfWindow, distances.Last());
 
             // Find window range
-            var startIdx = FindFirstIndexGreaterOrEqual(records, minDistance, i);
-            var endIdx = FindLastIndexLessOrEqual(records, maxDistance, i);
+            var startIdx = FindFirstIndexGreaterOrEqual(distances, minDistance, i);
+            var endIdx = FindLastIndexLessOrEqual(distances, maxDistance, i);
 
             if (startIdx == -1 || endIdx == -1 || startIdx > endIdx)
                 continue;
@@ -57,32 +60,39 @@ public class WeightedDistanceAltitudeSmoother : IAltitudeSmootherService
 
             for (int j = startIdx; j <= endIdx; j++)
             {
-                if (records[j].DistanceMeters == null)
-                    continue;
+                //if (distances[j] == null)
+                //    continue;
 
-                var pointDistance = records[j].DistanceMeters!.Value;
+                var pointDistance = distances[j];
                 var distanceFromCenter = Math.Abs(pointDistance - centerDistance);
 
                 // Peso gaussiano
                 var weight = Math.Exp(-(distanceFromCenter * distanceFromCenter) /
                                      (2 * _sigma * _sigma));
 
-                weightedSum += originalAltitudes[j]!.Value * weight;
+                weightedSum += coordinates[j].Altitude * weight;
                 totalWeight += weight;
             }
 
             if (totalWeight > 0)
             {
-                records[i].Coordinates.Altitude = weightedSum / totalWeight;
+                double smoothedAlt = weightedSum / totalWeight;
+                float slope = 0;
                 if (i > 0)
                 {
-                    records[i].Slope = (float)(records[i].Coordinates.Altitude - records[i - 1].Coordinates.Altitude) / (records[i].DistanceMeters - records[i - 1].DistanceMeters) * 100;
+                    slope = (float)(coordinates[i].Altitude - coordinates[i - 1].Altitude) / (distances[i] - distances[i - 1]) * 100;
                 }
+                smoothedAltitudeList.Add(new SmoothedAltitude() { Altitude = smoothedAlt, Slope = slope });
             }
         }
+
+        return smoothedAltitudeList;
     }
 
-    private int FindFirstIndexGreaterOrEqual(List<RecordData> records, double distance, int currentIndex)
+    private int FindFirstIndexGreaterOrEqual(
+        IReadOnlyList<float> distancesList,
+        double distance, 
+        int currentIndex)
     {
         if (currentIndex == 0) return 0;
 
@@ -91,7 +101,7 @@ public class WeightedDistanceAltitudeSmoother : IAltitudeSmootherService
 
         while (left >= 0)
         {
-            if (records[left].DistanceMeters != null && records[left].DistanceMeters <= distance)
+            if (distancesList[left] <= distance)
             {
                 result = left;
                 break;
@@ -102,16 +112,19 @@ public class WeightedDistanceAltitudeSmoother : IAltitudeSmootherService
         return result;
     }
 
-    private int FindLastIndexLessOrEqual(List<RecordData> records, double distance, int currentIndex)
+    private int FindLastIndexLessOrEqual(
+        IReadOnlyList<float> distancesList,
+        double distance,
+        int currentIndex)
     {
-        if (currentIndex == records.Count - 1) return currentIndex;
+        if (currentIndex == distancesList.Count - 1) return currentIndex;
 
         int right = currentIndex + 1;
         int result = -1;
 
-        while (right < records.Count)
+        while (right < distancesList.Count)
         {
-            if (records[right].DistanceMeters != null && records[right].DistanceMeters >= distance)
+            if (distancesList[right] >= distance)
             {
                 result = right;
                 break;

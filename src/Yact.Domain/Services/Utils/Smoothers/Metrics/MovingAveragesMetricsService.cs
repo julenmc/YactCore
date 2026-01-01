@@ -2,7 +2,7 @@
 
 namespace Yact.Domain.Services.Utils.Smoothers.Metrics;
 
-public class MovingAveragesMetricsService : IMetricsSmootherService<List<MovingAverageMetric>>
+public class MovingAveragesMetricsService
 {
     /// <summary>
     /// Calculates a moving average and related metrics for a sequence of numeric records using a sliding window.

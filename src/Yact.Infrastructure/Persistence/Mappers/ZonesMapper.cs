@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Yact.Domain.Entities.Cyclist;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Infrastructure.Persistence.Mappers;
 

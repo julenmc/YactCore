@@ -3,10 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Yact.Application.Interfaces;
 using Yact.Domain.Repositories;
-using Yact.Domain.Services.Analyzer.RouteAnalyzer;
-using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
-using Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
-using Yact.Domain.Services.Utils.Smoothers.Altitude;
 using Yact.Infrastructure.FileStorage;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Repositories;
@@ -23,6 +19,10 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        // MediatR
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(AppDbContext).Assembly));
+
         // Repositories
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<ICyclistRepository, CyclistRepository>();
@@ -35,13 +35,6 @@ public static class DependencyInjection
             configuration.GetSection(FileStorageConfiguration.SectionName));
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<IActivityReaderService, ActivityReaderService>();
-
-        // Domain Services
-        services.AddScoped<IDistanceCalculator, HarversineDistanceCalculatorService>();
-        services.AddScoped<IAltitudeSmootherService, WeightedDistanceAltitudeSmoother>();
-        services.AddScoped<IClimbFinderService, ClimbFinderService>();
-        services.AddScoped<IClimbMatcherService, ClimbMatcherService>();
-        services.AddScoped<IRouteAnalyzerService, RouteAnalyzerService>();
 
         return services;
     }

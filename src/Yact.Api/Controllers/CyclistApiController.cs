@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Yact.Application.Commands.Cyclists;
-using Yact.Application.Queries.Cyclists;
 using Yact.Application.Responses;
+using Yact.Application.UseCases.Cyclists.Commands;
+using Yact.Application.UseCases.Cyclists.Queries;
 
 namespace Yact.Api.Controllers;
 

@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using Yact.Domain.ValueObjects.Common;
+using Yact.Domain.ValueObjects.Cyclist;
 using Yact.Infrastructure.Persistence.Models.Cyclist;
 using Entities = Yact.Domain.Entities.Cyclist;
 
@@ -8,19 +10,19 @@ internal static class CyclistFitnessMapper
 {
     internal static Entities.CyclistFitness ToDomain(this CyclistFitness model)
     {
-        Entities.PowerCurve? powerCurve = null;
-        Dictionary<int, Entities.Zone>? powerZones = null;
-        Dictionary<int, Entities.Zone>? hrZones = null;
+        PowerCurve? powerCurve = null;
+        Dictionary<int, Zone>? powerZones = null;
+        Dictionary<int, Zone>? hrZones = null;
 
         if (model.PowerCurveJson != null)
         {
             var powerData = JsonSerializer.Deserialize<Dictionary<int, int>>(model.PowerCurveJson)
             ?? new Dictionary<int, int>();
 
-            powerCurve = new Entities.PowerCurve()
-            {
-                PowerBySeconds = powerData
-            };
+            powerCurve = new PowerCurve
+            (
+                PowerBySeconds: powerData
+            );
         }
         if (model.PowerZonesRaw != null)
         {

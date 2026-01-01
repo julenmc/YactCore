@@ -3,7 +3,7 @@ using Yact.Domain.Repositories;
 
 namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 
-public class ClimbMatcherService : IClimbMatcherService
+public class ClimbMatcherService
 {
     private const float CoordinatesDelta = 0.01f;
 

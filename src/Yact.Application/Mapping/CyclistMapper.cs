@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Yact.Application.Responses;
 using Yact.Domain.Entities.Cyclist;
+using Yact.Domain.ValueObjects.Common;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.Mapping;
 

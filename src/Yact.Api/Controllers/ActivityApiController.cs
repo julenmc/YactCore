@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Yact.Application.Commands.Activities;
-using Yact.Application.Queries.Activities;
 using Yact.Application.Responses;
+using Yact.Application.UseCases.Activities.Commands;
+using Yact.Application.UseCases.Activities.Queries;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Exceptions.Cyclist;
 

@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Yact.Application.Common;
+using Yact.Domain.Entities;
+using Yact.Domain.Events;
 using Yact.Infrastructure.Persistence.Models.Activity;
 using Yact.Infrastructure.Persistence.Models.Analytics;
 using Yact.Infrastructure.Persistence.Models.Climb;
@@ -8,8 +12,13 @@ namespace Yact.Infrastructure.Persistence.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    private readonly IMediator _mediator;
+
+    public AppDbContext(
+        DbContextOptions<AppDbContext> options,
+        IMediator mediator) : base(options)
     {
+        _mediator = mediator;
     }
 
     public DbSet<CyclistInfo> CyclistInfos { get; set; }
@@ -18,6 +27,20 @@ public class AppDbContext : DbContext
     public DbSet<ClimbInfo> Climbs { get; set; }
     public DbSet<Interval> Intervals { get; set; }
     public DbSet<ActivityClimb> ActivityClimbs { get; set; }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
+    {
+        // 1. Get events before saving
+        var domainEvents = GetDomainEvents();
+
+        // 2. Save in DB
+        var result = await base.SaveChangesAsync(ct);
+
+        // 3. If all good, publish events
+        await PublishDomainEvents(domainEvents, ct);
+
+        return result;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,14 +51,14 @@ public class AppDbContext : DbContext
             Id = 1,
             Name = "Dummy",
             LastName = "Cyclist",
-            BirthDate = DateTime.Now,
+            BirthDate = DateTime.UtcNow,
         });
 
         modelBuilder.Entity<CyclistFitness>().HasData(new CyclistFitness
         {
             Id = 1,
             CyclistId = 1,
-            UpdateDate = DateTime.Now,
+            UpdateDate = DateTime.UtcNow,
             Height = 180,
             Weight = 70,
             Ftp = 250,
@@ -58,12 +81,12 @@ public class AppDbContext : DbContext
             Name = "Dummy Activity",
             Path = "dummy_activity.fit",
             Description = "This is a dummy activity",
-            StartDate = DateTime.Now.AddMinutes(-30),
-            EndDate = DateTime.Now,
+            StartDate = DateTime.UtcNow.AddMinutes(-30),
+            EndDate = DateTime.UtcNow,
             DistanceMeters = 10000,
             ElevationMeters = 100,
             Type = "Cycling",
-            CreateDate = DateTime.Now,
+            CreateDate = DateTime.UtcNow,
         });
 
         modelBuilder.Entity<ClimbInfo>().HasData(new ClimbInfo
@@ -81,5 +104,40 @@ public class AppDbContext : DbContext
             Elevation = 0,
             Validated = true
         });
+    }
+
+    private List<IDomainEvent> GetDomainEvents()
+    {
+        var domainEvents = new List<IDomainEvent>();
+
+        // Search entities that have events
+        var entities = ChangeTracker
+            .Entries<IEntity>() 
+            .Where(e => e.Entity.DomainEvents.Any())
+            .Select(e => e.Entity)
+            .ToList();
+
+        foreach (var entity in entities)
+        {
+            domainEvents.AddRange(entity.DomainEvents);
+            entity.ClearDomainEvents(); 
+        }
+
+        return domainEvents;
+    }
+
+    private async Task PublishDomainEvents(
+        List<IDomainEvent> domainEvents,
+        CancellationToken ct)
+    {
+        foreach (var domainEvent in domainEvents)
+        {
+            var notificationType = typeof(DomainEventNotification<>)
+                .MakeGenericType(domainEvent.GetType());
+
+            var notification = Activator.CreateInstance(notificationType, domainEvent);
+
+            await _mediator.Publish(domainEvent, ct);
+        }
     }
 }

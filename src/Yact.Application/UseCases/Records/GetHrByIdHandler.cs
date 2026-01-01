@@ -3,7 +3,7 @@ using Yact.Application.Responses;
 using Yact.Application.Interfaces;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
-using Yact.Application.Queries.Records;
+using Yact.Application.UseCases.Records.Queries;
 
 namespace Yact.Application.UseCases.Records;
 
@@ -28,7 +28,7 @@ public class GetHrByIdHandler : IRequestHandler<GetHrByIdQuery, TimeSeriesRespon
             throw new ArgumentException($"No activity found by ID {request.Id}");
 
         using var stream = File.Open(activityInfo.Path.Value, FileMode.Open);
-        var activity = await _activityReaderService.ReadActivityAsync(stream);
+        var activity = await _activityReaderService.ReadFullActivityAsync(stream);
         if (activity.Records.Count == 0)
             throw new NoDataException($"Activity with ID {request.Id} has no records");
 

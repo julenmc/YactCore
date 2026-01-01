@@ -1,38 +1,35 @@
-﻿using Yact.Domain.Entities.Activity;
+﻿using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
 
-public class HarversineDistanceCalculatorService : IDistanceCalculator
+public class HarversineDistanceCalculatorService
 {
     private const double EarthRadiusMeters = 6371000.0;
 
-    public void CalculateDistances(List<RecordData> records)
+    public List<float> CalculateDistances(IReadOnlyList<Coordinates> records)
     {
-        if (records.Count == 0) return;
+        List<float> result = new List<float>();
+        if (records.Count == 0) 
+            return result;
 
-        List<RecordData> toRemove = new List<RecordData>();
-
-        double totalDistance = 0;
-        records[0].DistanceMeters = 0;
+        float totalDistance = 0;
+        result.Add(totalDistance);
 
         for (int i = 1; i < records.Count; i++)
         {
-            RecordData curr = records[i];
-            RecordData prev = records[i - 1];
+            Coordinates curr = records[i];
+            Coordinates prev = records[i - 1];
 
-            var distance = CalculateDistanceFromToPoints(prev.Coordinates, curr.Coordinates);
+            var distance = CalculateDistanceFromToPoints(prev, curr);
             totalDistance += distance;
 
-            curr.DistanceMeters = (float)totalDistance;
+            result.Add(totalDistance);
         }
 
-        foreach (var record in toRemove)
-        {
-            records.Remove(record);
-        }
+        return result;
     }
 
-    public double CalculateDistanceFromToPoints(CoordinatesData from, CoordinatesData to)
+    public float CalculateDistanceFromToPoints(Coordinates from, Coordinates to)
     {
         if (from?.Latitude == null || from?.Longitude == null ||
             to?.Latitude == null || to?.Longitude == null)
@@ -48,7 +45,7 @@ public class HarversineDistanceCalculatorService : IDistanceCalculator
 
         var c = 2 * Math.Asin(Math.Min(1, Math.Sqrt(a)));
 
-        return EarthRadiusMeters * c;
+        return (float)(EarthRadiusMeters * c);
     }
 
     private static double ToRadians(double degrees)

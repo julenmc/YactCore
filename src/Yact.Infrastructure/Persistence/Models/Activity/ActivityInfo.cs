@@ -6,10 +6,10 @@ namespace Yact.Infrastructure.Persistence.Models.Activity;
 
 public class ActivityInfo
 {
-    public required int Id { get; set; }
-    public required string Name { get; set; }
+    public int Id { get; set; }
+    public string? Name { get; set; }
     public string? Description { get; set; }
-    public required string Path { get; set; }
+    public string? Path { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public double DistanceMeters { get; set; }
@@ -19,7 +19,7 @@ public class ActivityInfo
     public DateTime? UpdateDate { get; set; }
 
     // Foreign Key
-    public required int CyclistId { get; set; }
+    public int CyclistId { get; set; }
     public CyclistInfo? Cyclist { get; set; }
 
     // 1-N relation for climbs and intervals

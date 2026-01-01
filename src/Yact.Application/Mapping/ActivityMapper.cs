@@ -8,7 +8,7 @@ public class ActivityMapper : Profile
 {
     public ActivityMapper()
     {
-        CreateMap<ActivityInfo, ActivityInfoDto>();
-        CreateMap<ActivityInfoDto, ActivityInfo>();
+        CreateMap<Activity, ActivityInfoDto>();
+        CreateMap<ActivityInfoDto, Activity>();
     }
 }

@@ -1,6 +1,6 @@
-﻿using Yact.Domain.Entities.Activity;
-using Yact.Domain.Entities.Climb;
+﻿using Yact.Domain.Entities.Climb;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
+using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.Tests.Services.Analyzer.RouteAnalyzer.Climbs;
 
@@ -31,9 +31,9 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 } },
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 } },
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 } },
         };
 
         // Act
@@ -50,9 +50,9 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 } },
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
         };
 
         // Act
@@ -69,9 +69,9 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100, Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200, Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300, Slope = 10 }},
         };
 
         // Act
@@ -94,9 +94,9 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
         };
 
         // Act
@@ -114,9 +114,9 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
         };
 
         // Act
@@ -147,11 +147,11 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = -10 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = -10 }},
         };
 
         // Act
@@ -168,11 +168,11 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = -10 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = -10 }},
         };
 
         // Act
@@ -195,11 +195,11 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 0 }},
         };
 
         // Act
@@ -216,11 +216,11 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 0 }},
         };
 
         // Act
@@ -247,13 +247,13 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 5000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 6000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 5000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 6000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
         };
 
         // Act
@@ -270,13 +270,13 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 5000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 6000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 5000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 6000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
         };
 
         // Act
@@ -289,7 +289,7 @@ public partial class ClimbFinderServiceTest
         Assert.Equal(4000, climbList[1].StartPointMeters);
         Assert.Equal(6000, climbList[1].EndPointMeters);
         // Both climbs metrics are equal, easier to test
-        foreach (ActivityClimb climb in  climbList)
+        foreach (ActivityClimb climb in climbList)
         {
             Assert.NotNull(climb.Data.Metrics);
             Assert.Equal(2000, climb.Data.Metrics.DistanceMeters);
@@ -305,12 +305,12 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 5000, Coordinates = new CoordinatesData() { Altitude = 250 }, Slope = 15 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 5000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 250 , Slope = 15 }},
         };
 
         // Act
@@ -327,12 +327,12 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 3000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 4000, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = -10 },
-            new RecordData() { DistanceMeters = 5000, Coordinates = new CoordinatesData() { Altitude = 250 }, Slope = 15 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 3000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 4000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = -10 }},
+            new RecordData() { DistanceMeters = 5000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 250 , Slope = 15 }},
         };
 
         // Act
@@ -382,8 +382,8 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 0 }, Slope = 0 },
-            new RecordData() { DistanceMeters = distance, Coordinates = new CoordinatesData() { Altitude = distance * slope / 100 }, Slope = slope },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 }},
+            new RecordData() { DistanceMeters = distance, SmoothedAltitude = new SmoothedAltitude() { Altitude = distance * slope / 100 , Slope = slope }},
         };
 
         // Act
@@ -402,8 +402,8 @@ public partial class ClimbFinderServiceTest
         var elevation = distance * slope / 100;
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 0 }, Slope = 0 },
-            new RecordData() { DistanceMeters = distance, Coordinates = new CoordinatesData() { Altitude = elevation }, Slope = slope },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 }},
+            new RecordData() { DistanceMeters = distance, SmoothedAltitude = new SmoothedAltitude() { Altitude = elevation , Slope = slope }},
         };
 
         // Act
@@ -415,7 +415,7 @@ public partial class ClimbFinderServiceTest
         Assert.Equal(distance, climb.EndPointMeters);
         Assert.NotNull(climb.Data.Metrics);
         Assert.Equal(distance, climb.Data.Metrics.DistanceMeters);
-        Assert.Equal(elevation, climb.Data.Metrics.Elevation, 0);   
+        Assert.Equal(elevation, climb.Data.Metrics.Elevation, 0);
         Assert.Equal(slope, climb.Data.Metrics.Slope);
         Assert.Equal(slope, climb.Data.Metrics.MaxSlope);
     }
@@ -438,8 +438,8 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 0 }, Slope = 0 },
-            new RecordData() { DistanceMeters = distance, Coordinates = new CoordinatesData() { Altitude = distance * slope / 100 }, Slope = slope },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 }},
+            new RecordData() { DistanceMeters = distance, SmoothedAltitude = new SmoothedAltitude() { Altitude = distance * slope / 100 , Slope = slope }},
         };
 
         // Act
@@ -456,10 +456,10 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2100, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 0 }},
         };
 
         // Act
@@ -476,10 +476,10 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, Coordinates = new CoordinatesData() { Altitude = 100 }, Slope = 0 },
-            new RecordData() { DistanceMeters = 1000, Coordinates = new CoordinatesData() { Altitude = 200 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2000, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 10 },
-            new RecordData() { DistanceMeters = 2100, Coordinates = new CoordinatesData() { Altitude = 300 }, Slope = 0 },
+            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 100 , Slope = 0 }},
+            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 200 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 10 }},
+            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude() { Altitude = 300 , Slope = 0 }},
         };
 
         // Act

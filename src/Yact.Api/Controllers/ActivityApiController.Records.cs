@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Yact.Application.Queries.Records;
 using Yact.Application.Responses;
+using Yact.Application.UseCases.Records.Queries;
 
 namespace Yact.Api.Controllers;
 

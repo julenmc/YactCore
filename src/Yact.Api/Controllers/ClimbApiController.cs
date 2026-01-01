@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Yact.Application.Commands.Climbs;
-using Yact.Application.Queries.Climbs;
 using Yact.Application.Responses;
+using Yact.Application.UseCases.Climbs.Commands;
+using Yact.Application.UseCases.Climbs.Queries;
 
 namespace Yact.Api.Controllers;
 

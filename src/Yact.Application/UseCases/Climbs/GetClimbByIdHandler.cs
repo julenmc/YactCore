@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Yact.Application.Queries.Climbs;
 using Yact.Application.Responses;
+using Yact.Application.UseCases.Climbs.Queries;
 using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Climbs;
