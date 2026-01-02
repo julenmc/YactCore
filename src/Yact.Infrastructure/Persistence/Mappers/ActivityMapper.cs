@@ -9,7 +9,7 @@ internal static class ActivityMapper
 {
     internal static Entities.Activity ToDomain(this ActivityInfo model)
     {
-        var summary = VO.ActivitySummary.CreateFromRepository(
+        var summary = VO.ActivitySummary.Create(
             name: model.Name ?? "Unknown",
             description: model.Description ?? "",
             startDate: model.StartDate,

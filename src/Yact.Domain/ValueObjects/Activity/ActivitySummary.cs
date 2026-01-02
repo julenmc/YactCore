@@ -5,7 +5,7 @@ namespace Yact.Domain.ValueObjects.Activity;
 
 public record ActivitySummary
 {
-    public string? Name { get; init; }
+    public required string Name { get; init; }
     public string? Description { get; init; }
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }
@@ -28,7 +28,7 @@ public record ActivitySummary
         };
     }
 
-    public static ActivitySummary CreateFromRepository(
+    public static ActivitySummary Create(
         string name,
         string description,
         DateTime startDate,

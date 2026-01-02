@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Yact.Application.Mapping;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Activities.Queries;
 using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Activities;
 
-public class GetActivities : IRequestHandler<GetActivitiesQuery, IEnumerable<ActivityInfoDto>>
+public class GetActivities : IRequestHandler<GetActivitiesQuery, IEnumerable<ActivityDto>>
 {
     private readonly IActivityRepository _repository;
     private readonly IMapper _mapper;
@@ -17,9 +18,11 @@ public class GetActivities : IRequestHandler<GetActivitiesQuery, IEnumerable<Act
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ActivityInfoDto>> Handle(GetActivitiesQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ActivityDto>> Handle(GetActivitiesQuery request, CancellationToken cancellationToken)
     {
         var activities = await _repository.GetAllAsync();
-        return _mapper.Map<IEnumerable<ActivityInfoDto>>(activities);
+        return activities
+            .Select(a => a.ToModel())
+            .ToList();
     }
 }

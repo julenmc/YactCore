@@ -37,9 +37,9 @@ public partial class ActivityApiController : ControllerBase
 
     [HttpGet]
     [Route("get-by-id/{id}")]
-    [ProducesResponseType(typeof(ActivityInfoDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ActivityDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ActivityInfoDto>> Get(int id)
+    public async Task<ActionResult<ActivityDto>> Get(int id)
     {
         try
         {
@@ -61,9 +61,9 @@ public partial class ActivityApiController : ControllerBase
 
     [HttpGet]
     [Route("get-by-cyclist-id/{id}")]
-    [ProducesResponseType(typeof(IEnumerable<ActivityInfoDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<ActivityDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<ActivityInfoDto>>> GetByCyclistId(int id)
+    public async Task<ActionResult<IEnumerable<ActivityDto>>> GetByCyclistId(int id)
     {
         try
         {
@@ -136,8 +136,8 @@ public partial class ActivityApiController : ControllerBase
 
     [HttpPut]
     [Route("update")]
-    [ProducesResponseType(typeof(ActivityInfoDto), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<ActivityInfoDto>> Update([FromBody] UpdateActivityCommand command)
+    [ProducesResponseType(typeof(ActivityDto), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<ActivityDto>> Update([FromBody] UpdateActivityCommand command)
     {
         try
         {
