@@ -2,7 +2,7 @@
 
 public class ClimbDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string? Name { get; set; }
     public double LongitudeInit { get; set; }
     public double LongitudeEnd { get; set; }

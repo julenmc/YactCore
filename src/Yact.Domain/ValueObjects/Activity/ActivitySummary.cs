@@ -58,7 +58,7 @@ public record ActivitySummary
             Description = summary.Description,
             StartDate = records.Values.First().Timestamp,
             EndDate = records.Values.Last().Timestamp,
-            DistanceMeters = (double)(records.Values.Last().DistanceMeters ?? 0.0),
+            DistanceMeters = (double)records.Values.Last().DistanceMeters,
             ElevationMeters = CalculateElevation(records.Values),
         };
     }

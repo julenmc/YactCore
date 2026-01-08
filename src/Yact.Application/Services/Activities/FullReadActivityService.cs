@@ -1,5 +1,5 @@
 ﻿using Yact.Application.Interfaces;
-using Yact.Domain.Entities.Activity;
+using Yact.Domain.Entities;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.DistanceCalculator;
@@ -22,12 +22,12 @@ public class FullReadActivityService
         _activityReaderService = activityReaderService;
     }
 
-    public async Task<Activity> Execute(int activityId)
+    public async Task<Activity> Execute(ActivityId activityId)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
         if (activity == null)
         {
-            throw new ActivityNotFoundException(activityId);
+            throw new ActivityNotFoundException(activityId.Value);
         }
         var readData = await _activityReaderService.ReadFullActivityAsync(File.OpenRead(activity.Path.Value));
         if (readData.Records == null || readData.Records.Count == 0)
@@ -54,7 +54,7 @@ public class FullReadActivityService
                 DistanceMeters = distances[i],
                 SmoothedAltitude = smoothed[i]
             });
-        activity.LoadRecords(new ActivityRecords(records.ToList()));
+        activity.AddRecords(new ActivityRecords(records.ToList()));
         if (activity.Records == null || activity.Records.Values.Count == 0)
         {
             throw new NoDataException();
@@ -64,6 +64,6 @@ public class FullReadActivityService
         activity.UpdateSummary(ActivitySummary.CopyWithRecords(activity.Summary, activity.Records));
 
         // Update activity in repository
-        return await _activityRepository.UpdateAsync(activity) ?? throw new ActivityNotFoundException(activityId); ;
+        return await _activityRepository.UpdateAsync(activity) ?? throw new ActivityNotFoundException(activityId.Value); ;
     }
 }

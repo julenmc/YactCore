@@ -2,9 +2,9 @@
 
 public record RecordData
 {
-    public DateTime Timestamp { get; init; }
-    public Coordinates Coordinates { get; init; }
-    public Performance Performance { get; init; }
-    public float? DistanceMeters { get; init; }
-    public SmoothedAltitude SmoothedAltitude { get; init; }
+    public required DateTime Timestamp { get; init; }
+    public required Coordinates Coordinates { get; init; }
+    public Performance? Performance { get; init; }
+    public required float DistanceMeters { get; init; }
+    public required SmoothedAltitude SmoothedAltitude { get; init; }
 }

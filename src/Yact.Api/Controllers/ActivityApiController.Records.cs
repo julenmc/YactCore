@@ -11,7 +11,7 @@ public partial class ActivityApiController
     [Route("get-by-id/{id}/records/power")]
     [ProducesResponseType(typeof(TimeSeriesResponseDto<double>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<TimeSeriesResponseDto<double>>> GetPowerById(int id)
+    public async Task<ActionResult<TimeSeriesResponseDto<double>>> GetPowerById(Guid id)
     {
         try
         {
@@ -35,7 +35,7 @@ public partial class ActivityApiController
     [Route("get-by-id/{id}/records/heart-rate")]
     [ProducesResponseType(typeof(TimeSeriesResponseDto<int>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<TimeSeriesResponseDto<int>>> GetHrById(int id)
+    public async Task<ActionResult<TimeSeriesResponseDto<int>>> GetHrById(Guid id)
     {
         try
         {
@@ -59,7 +59,7 @@ public partial class ActivityApiController
     [Route("get-by-id/{id}/records/cadence")]
     [ProducesResponseType(typeof(TimeSeriesResponseDto<int>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<TimeSeriesResponseDto<int>>> GetCadenceById(int id)
+    public async Task<ActionResult<TimeSeriesResponseDto<int>>> GetCadenceById(Guid id)
     {
         try
         {

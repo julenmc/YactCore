@@ -4,6 +4,7 @@ using Yact.Application.Interfaces;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Application.UseCases.Records.Queries;
+using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.Records;
 
@@ -23,7 +24,7 @@ public class GetCadenceByIdHandler : IRequestHandler<GetCadenceByIdQuery, TimeSe
     public async Task<TimeSeriesResponseDto<int?>> Handle(GetCadenceByIdQuery request, CancellationToken cancellationToken)
     {
         // Get activity
-        var activity = await _repository.GetByIdAsync(request.Id);
+        var activity = await _repository.GetByIdAsync(ActivityId.From(request.Id));
         if (activity == null)
             throw new ArgumentException($"No activity found by ID {request.Id}");
 

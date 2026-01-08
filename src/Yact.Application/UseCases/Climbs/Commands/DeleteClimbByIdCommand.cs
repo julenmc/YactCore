@@ -2,4 +2,4 @@
 
 namespace Yact.Application.UseCases.Climbs.Commands;
 
-public record DeleteClimbByIdCommand(int Id) : IRequest<int>;
+public record DeleteClimbByIdCommand(Guid Id) : IRequest<Guid>;

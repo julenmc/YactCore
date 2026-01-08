@@ -23,7 +23,7 @@ public class FitnessApiController : ControllerBase
     [Route("get-by-cyclist/{id}")]
     [ProducesResponseType(typeof(IEnumerable<CyclistFitnessDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<CyclistFitnessDto>>> GetFitnessByCyclist(int id)
+    public async Task<ActionResult<IEnumerable<CyclistFitnessDto>>> GetFitnessByCyclist(Guid id)
     {
         try
         {
@@ -46,7 +46,7 @@ public class FitnessApiController : ControllerBase
     [Route("get-by-cyclist-latest/{id}")]
     [ProducesResponseType(typeof(CyclistFitnessDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<CyclistFitnessDto>> GetLatestCyclistFitness(int id)
+    public async Task<ActionResult<CyclistFitnessDto>> GetLatestCyclistFitness(Guid id)
     {
         try
         {
@@ -68,7 +68,7 @@ public class FitnessApiController : ControllerBase
     [HttpPost]
     [Route("create/{cyclistId}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> CreateFitnessData([FromBody] CyclistFitnessDto fitness, int cyclistId)
+    public async Task<ActionResult<int>> CreateFitnessData([FromBody] CyclistFitnessDto fitness, Guid cyclistId)
     {
         try
         {
@@ -87,16 +87,16 @@ public class FitnessApiController : ControllerBase
     [Route("delete/{id}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> DeleteFitnessData(int id)
+    public async Task<ActionResult<int>> DeleteFitnessData(Guid id)
     {
         try
         {
             var command = new DeleteFitnessCommand(id);
-            var deleted = await _mediator.Send(command);
-            if (deleted == null)
+            var deletedId = await _mediator.Send(command);
+            if (deletedId == Guid.Empty)
                 return NotFound($"Fitness data with ID {id} not found");
 
-            return Ok(deleted);
+            return Ok(deletedId);
         }
         catch (Exception ex)
         {

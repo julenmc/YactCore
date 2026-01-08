@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Yact.Application.Common;
 using Yact.Application.Services.Activities;
-using Yact.Domain.Events.Activity;
+using Yact.Domain.Events;
 using Yact.Domain.Exceptions.Activity;
 
 namespace Yact.Application.EventHandlers.Activity;
@@ -22,7 +22,7 @@ public class ActivityCreatedHandler
 
     public async Task Handle(DomainEventNotification<ActivityCreatedEvent> activityCreatedEvent, CancellationToken cancellationToken)
     {
-        var activity = await _reader.Execute(activityCreatedEvent.DomainEvent.ActivityId.Value);
+        var activity = await _reader.Execute(activityCreatedEvent.DomainEvent.ActivityId);
         if (activity.Records == null || activity.Records.Values.Count == 0)
         {
             throw new NoDataException();

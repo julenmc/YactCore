@@ -21,7 +21,7 @@ public class ActivityClimbApiController : ControllerBase
     [Route("get-by-activity-id/{id}")]
     [ProducesResponseType(typeof(ActivityClimbDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<List<ActivityClimbDto>>> GetActivityClimbsByActivityId(int id)
+    public async Task<ActionResult<List<ActivityClimbDto>>> GetActivityClimbsByActivityId(Guid id)
     {
         try
         {
@@ -46,7 +46,7 @@ public class ActivityClimbApiController : ControllerBase
     [Route("get-by-climb-id/{id}")]
     [ProducesResponseType(typeof(ActivityClimbDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<List<ActivityClimbDto>>> GetActivityClimbsByClimbId(int id)
+    public async Task<ActionResult<List<ActivityClimbDto>>> GetActivityClimbsByClimbId(Guid id)
     {
         try
         {

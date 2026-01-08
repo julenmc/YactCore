@@ -3,6 +3,7 @@ using MediatR;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.ActivityClimbs.Queries;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.UseCases.ActivityClimbs;
 
@@ -21,7 +22,7 @@ public class GetActivityClimbByClimbId : IRequestHandler<GetActivityClimbsByClim
 
     public async Task<List<ActivityClimbDto>> Handle (GetActivityClimbsByClimbIdQuery query, CancellationToken cancellationToken)
     {
-        var activityClimbs = await _repository.GetByClimbAsync(query.Id);
+        var activityClimbs = await _repository.GetByClimbAsync(ClimbId.From(query.Id));
         return _mapper.Map<List<ActivityClimbDto>>(activityClimbs);
     }
 }

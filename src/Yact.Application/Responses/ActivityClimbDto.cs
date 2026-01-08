@@ -2,7 +2,7 @@
 
 public class ActivityClimbDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public ClimbDto? Data { get; set; }
     public ActivityDto? Activity { get; set; }
 }

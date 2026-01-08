@@ -5,6 +5,7 @@ using Yact.Application.Responses;
 using Yact.Application.UseCases.Activities.Queries;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.Activities;
 
@@ -21,7 +22,7 @@ public class GetActivityById : IRequestHandler<GetActivityByIdQuery, ActivityDto
 
     public async Task<ActivityDto> Handle(GetActivityByIdQuery request, CancellationToken cancellation)
     {
-        var activity = await _repository.GetByIdAsync(request.Id);
+        var activity = await _repository.GetByIdAsync(ActivityId.From(request.Id));
         if (activity == null)
         {
             throw new ActivityNotFoundException(request.Id);

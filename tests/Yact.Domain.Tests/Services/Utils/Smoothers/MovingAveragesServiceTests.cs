@@ -1,5 +1,4 @@
-﻿using Yact.Domain.Entities.Smoother;
-using Yact.Domain.Services.Utils.Smoothers.Metrics;
+﻿using Yact.Domain.Services.Utils.Smoothers.Metrics;
 
 namespace Yact.Domain.Tests.Services.Utils.Smoothers;
 

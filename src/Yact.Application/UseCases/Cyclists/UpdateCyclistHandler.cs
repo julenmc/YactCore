@@ -2,7 +2,7 @@
 using MediatR;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Cyclists.Commands;
-using Yact.Domain.Entities.Cyclist;
+using Yact.Domain.Entities;
 using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Cyclists;

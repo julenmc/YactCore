@@ -3,4 +3,4 @@ using Yact.Application.Responses;
 
 namespace Yact.Application.UseCases.Records.Queries;
 
-public record GetPowerByIdQuery (int Id) : IRequest<TimeSeriesResponseDto<double?>>;
+public record GetPowerByIdQuery (Guid Id) : IRequest<TimeSeriesResponseDto<double?>>;

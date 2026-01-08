@@ -3,5 +3,5 @@
 public class ActivityNotFoundException : Exception
 {
     public ActivityNotFoundException() { }
-    public ActivityNotFoundException(int id) : base($"ID: {id}") { }
+    public ActivityNotFoundException(Guid id) : base($"ID: {id}") { }
 }

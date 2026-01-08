@@ -2,8 +2,8 @@
 
 public class ActivityDto
 {
-    public int Id { get; set; }
-    public int CyclistId { get; set; }
+    public Guid Id { get; set; }
+    public Guid CyclistId { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required string Path { get; set; }

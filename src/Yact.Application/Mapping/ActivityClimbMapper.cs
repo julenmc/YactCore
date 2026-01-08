@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Yact.Application.Responses;
-using Yact.Domain.Entities.Climb;
+using Yact.Domain.Entities;
 
 namespace Yact.Application.Mapping;
 

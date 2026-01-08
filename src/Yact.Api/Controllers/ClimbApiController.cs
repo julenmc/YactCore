@@ -38,7 +38,7 @@ public class ClimbApiController : ControllerBase
     [Route("get-by-id/{id}")]
     [ProducesResponseType(typeof(ClimbDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ClimbDto>> GetById(int id)
+    public async Task<ActionResult<ClimbDto>> GetById(Guid id)
     {
         try
         {
@@ -100,7 +100,7 @@ public class ClimbApiController : ControllerBase
         try
         {
             var id = await _mediator.Send(command);
-            if (id == -1)
+            if (id == Guid.Empty)
             {
                 return NotFound();
             }
@@ -116,13 +116,13 @@ public class ClimbApiController : ControllerBase
     [Route("delete")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> DeleteClimb(int id)
+    public async Task<ActionResult<int>> DeleteClimb(Guid id)
     {
         try
         {
             var command = new DeleteClimbByIdCommand(id);
             var climbId = await _mediator.Send(command);
-            if (id == -1)
+            if (id == Guid.Empty)
             {
                 return NotFound();
             }

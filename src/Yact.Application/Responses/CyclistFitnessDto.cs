@@ -2,8 +2,8 @@
 
 public class CyclistFitnessDto
 {
-    public int Id { get; set; }
-    public int CyclistId { get; set; }
+    public Guid Id { get; set; }
+    public Guid CyclistId { get; set; }
     public DateTime UpdateDate { get; set; }
     public ushort Height { get; set; }
     public float Weight { get; set; }

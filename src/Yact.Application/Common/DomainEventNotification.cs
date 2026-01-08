@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Yact.Domain.Events;
+using Yact.Domain.Primitives;
 
 namespace Yact.Application.Common;
 

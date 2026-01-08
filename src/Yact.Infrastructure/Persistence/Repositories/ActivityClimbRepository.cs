@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Yact.Domain.Entities;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Mappers;
-using Entities = Yact.Domain.Entities.Climb;
+using Yact.Domain.ValueObjects.Activity;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -15,14 +17,14 @@ public class ActivityClimbRepository : IActivityClimbRepository
         _db = db;
     }
 
-    public async Task<List<Entities.ActivityClimb>> GetByActivityAsync(int activityId)
+    public async Task<List<ActivityClimb>> GetByActivityAsync(ActivityId activityId)
     {
         var climbs = await _db.ActivityClimbs
-            .Where(a => a.ActivityId == activityId)
+            .Where(a => a.ActivityId == activityId.Value)
             .Include(a => a.Climb)
             .ToListAsync();
 
-        var ret = new List<Entities.ActivityClimb>();
+        var ret = new List<ActivityClimb>();
         foreach (var climb in climbs)
         {
             ret.Add(climb.ToDomain());
@@ -30,14 +32,14 @@ public class ActivityClimbRepository : IActivityClimbRepository
         return ret;
     }
 
-    public async Task<List<Entities.ActivityClimb>> GetByClimbAsync(int climbId)
+    public async Task<List<ActivityClimb>> GetByClimbAsync(ClimbId climbId)
     {
         var climbs = await _db.ActivityClimbs
-            .Where(a => a.ClimbId == climbId)
+            .Where(a => a.ClimbId == climbId.Value)
             .Include(a => a.Activity)
             .ToListAsync();
 
-        var ret = new List<Entities.ActivityClimb>();
+        var ret = new List<ActivityClimb>();
         foreach (var climb in climbs)
         {
             ret.Add(climb.ToDomain());
@@ -45,20 +47,9 @@ public class ActivityClimbRepository : IActivityClimbRepository
         return ret;
     }
 
-    public async Task AddAsync(Entities.ActivityClimb climb, int activityId)
+    public async Task AddAsync(ActivityClimb activityClimb)
     {
-        climb.ActivityId = activityId;
-        await _db.ActivityClimbs.AddAsync(climb.ToModel());
-        await _db.SaveChangesAsync();
-    }
-
-    public async Task AddAsync(IEnumerable<Entities.ActivityClimb> climbs, int activityId)
-    {
-        foreach (var climb in climbs)
-        {
-            climb.ActivityId = activityId;
-            await _db.ActivityClimbs.AddAsync(climb.ToModel());
-        }
+        await _db.ActivityClimbs.AddAsync(activityClimb.ToModel());
         await _db.SaveChangesAsync();
     }
 }

@@ -1,12 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Yact.Application.Common;
-using Yact.Domain.Entities;
-using Yact.Domain.Events;
-using Yact.Infrastructure.Persistence.Models.Activity;
-using Yact.Infrastructure.Persistence.Models.Analytics;
-using Yact.Infrastructure.Persistence.Models.Climb;
-using Yact.Infrastructure.Persistence.Models.Cyclist;
+using Yact.Domain.Primitives;
+using Yact.Infrastructure.Persistence.Models;
 
 namespace Yact.Infrastructure.Persistence.Data;
 
@@ -46,9 +42,14 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        var cyclistId = Guid.NewGuid();
+        var fitnessId = Guid.NewGuid();
+        var activityId = Guid.NewGuid();
+        var climbId = Guid.NewGuid();
+
         modelBuilder.Entity<CyclistInfo>().HasData(new CyclistInfo
         {
-            Id = 1,
+            Id = cyclistId,
             Name = "Dummy",
             LastName = "Cyclist",
             BirthDate = DateTime.UtcNow,
@@ -56,8 +57,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<CyclistFitness>().HasData(new CyclistFitness
         {
-            Id = 1,
-            CyclistId = 1,
+            Id = fitnessId,
+            CyclistId = cyclistId,
             UpdateDate = DateTime.UtcNow,
             Height = 180,
             Weight = 70,
@@ -76,8 +77,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ActivityInfo>().HasData(new ActivityInfo
         {
-            Id = 1,
-            CyclistId = 1,
+            Id = activityId,
+            CyclistId = cyclistId,
             Name = "Dummy Activity",
             Path = "dummy_activity.fit",
             Description = "This is a dummy activity",
@@ -91,7 +92,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ClimbInfo>().HasData(new ClimbInfo
         {
-            Id = 1,
+            Id = climbId,
             Name = "Unknown",
             LongitudeInit = 0,
             LongitudeEnd = 0,

@@ -4,6 +4,7 @@ using Yact.Application.Interfaces;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Application.UseCases.Records.Queries;
+using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.Records;
 
@@ -23,7 +24,7 @@ public class GetHrByIdHandler : IRequestHandler<GetHrByIdQuery, TimeSeriesRespon
     public async Task<TimeSeriesResponseDto<int?>> Handle(GetHrByIdQuery request, CancellationToken cancellationToken)
     {
         // Get activity
-        var activityInfo = await _repository.GetByIdAsync(request.Id);
+        var activityInfo = await _repository.GetByIdAsync(ActivityId.From(request.Id));
         if (activityInfo == null)
             throw new ArgumentException($"No activity found by ID {request.Id}");
 

@@ -1,4 +1,4 @@
-﻿using Yact.Domain.Entities.Smoother;
+﻿using Yact.Domain.ValueObjects.Common;
 
 namespace Yact.Domain.Services.Utils.Smoothers.Metrics;
 

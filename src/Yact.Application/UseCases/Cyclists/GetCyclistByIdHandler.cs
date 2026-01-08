@@ -3,6 +3,7 @@ using MediatR;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Cyclists.Queries;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Cyclists;
 
@@ -21,7 +22,7 @@ public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, Cyclis
 
     public async Task<CyclistDto> Handle(GetCyclistByIdQuery query, CancellationToken cancellationToken)
     {
-        var cyclist = await _repository.GetByIdAsync(query.Id);
+        var cyclist = await _repository.GetByIdAsync(CyclistId.From(query.Id));
         return _mapper.Map<CyclistDto>(cyclist);
     }
 }

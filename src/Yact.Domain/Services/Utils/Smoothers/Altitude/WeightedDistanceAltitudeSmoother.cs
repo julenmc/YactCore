@@ -32,9 +32,19 @@ public class WeightedDistanceAltitudeSmoother
         if (coordinates.Count != distances.Count)
             throw new ArgumentException($"Coordinates {coordinates.Count} and distances {distances.Count} count must be the same.");
 
-        List<SmoothedAltitude> result = new List<SmoothedAltitude>();
         if (coordinates.Count < 2)
-            return result;
+        {
+            var res = new List<SmoothedAltitude>();
+            for (int i = 0; i < coordinates.Count; i++)
+            {
+                res.Add(new SmoothedAltitude()
+                {
+                    Altitude = coordinates[i].Altitude,
+                    Slope = (float)coordinates[i].Altitude / distances[i] * 100.0f
+                });
+            }
+            return res;
+        }
 
         var halfWindow = _windowDistanceMeters / 2;
         var smoothedAltitudeList = new List<SmoothedAltitude>();

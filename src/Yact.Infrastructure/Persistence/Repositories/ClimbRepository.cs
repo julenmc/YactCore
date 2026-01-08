@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Yact.Domain.Entities.Climb;
+using Yact.Domain.Entities;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Mappers;
-using Yact.Infrastructure.Persistence.Models.Climb;
+using Yact.Infrastructure.Persistence.Models;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -16,10 +17,10 @@ public class ClimbRepository : IClimbRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<ClimbData>> GetAllAsync()
+    public async Task<IEnumerable<Climb>> GetAllAsync()
     {
         var climbList = await _db.Climbs.ToListAsync();
-        List<ClimbData> result = new List<ClimbData>();
+        List<Climb> result = new List<Climb>();
         foreach (var climb in climbList)
         {
             result.Add(climb.ToDomain());
@@ -27,13 +28,13 @@ public class ClimbRepository : IClimbRepository
         return result;
     }
 
-    public async Task<ClimbData?> GetByIdAsync(int id)
+    public async Task<Climb?> GetByIdAsync(ClimbId id)
     {
-        var climb = await _db.Climbs.FirstOrDefaultAsync(c => c.Id == id);
+        var climb = await _db.Climbs.FirstOrDefaultAsync(c => c.Id == id.Value);
         return climb?.ToDomain();
     }
 
-    public async Task<IEnumerable<ClimbData>> GetByCoordinatesAsync(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
+    public async Task<IEnumerable<Climb>> GetByCoordinatesAsync(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
     {
         var actualLatMin = Math.Min(latitudeMin, latitudeMax);
         var actualLatMax = Math.Max(latitudeMin, latitudeMax);
@@ -45,7 +46,7 @@ public class ClimbRepository : IClimbRepository
                         c.LongitudeInit >= actualLonMin && c.LongitudeInit <= actualLonMax)
             .ToListAsync();
 
-        List<ClimbData> result = new List<ClimbData>();
+        List<Climb> result = new List<Climb>();
         foreach (var climb in climbList)
         {
             result.Add(climb.ToDomain());
@@ -53,7 +54,7 @@ public class ClimbRepository : IClimbRepository
         return result;
     }
 
-    public async Task<ClimbData> AddAsync(ClimbData climb)
+    public async Task<Climb> AddAsync(Climb climb)
     {
         var newClimb = await _db.Climbs.AddAsync(climb.ToModel());
         await _db.SaveChangesAsync();
@@ -61,10 +62,10 @@ public class ClimbRepository : IClimbRepository
         return newClimb.Entity.ToDomain();
     }
 
-    public async Task<ClimbData?> RemoveByIdAsync(int id)
+    public async Task<Climb?> RemoveByIdAsync(ClimbId id)
     {
         // Create aux entity just for the id
-        var climb = new ClimbInfo { Id = id };
+        var climb = new ClimbInfo { Id = id.Value };
 
         try
         {
@@ -82,7 +83,7 @@ public class ClimbRepository : IClimbRepository
         }
     }
 
-    public async Task<ClimbData?> UpdateAsync(ClimbData climb)
+    public async Task<Climb?> UpdateAsync(Climb climb)
     {
         var updated = _db.Update(climb.ToModel());
         if (updated == null)
@@ -91,5 +92,4 @@ public class ClimbRepository : IClimbRepository
         var rowsAffected = await _db.SaveChangesAsync();
         return rowsAffected > 0 ? updated.Entity.ToDomain() : null;
     }
-
 }

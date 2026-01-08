@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Entities = Yact.Domain.Entities.Activity;
+using Entities = Yact.Domain.Entities;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
-using Yact.Infrastructure.Persistence.Models.Activity;
 using Yact.Infrastructure.Persistence.Mappers;
 using Yact.Domain.Exceptions.Cyclist;
+using Yact.Infrastructure.Persistence.Models;
 using Yact.Domain.ValueObjects.Activity;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -29,22 +30,22 @@ public class ActivityRepository : IActivityRepository
         return result;
     }
 
-    public async Task<Entities.Activity?> GetByIdAsync(int id)
+    public async Task<Entities.Activity?> GetByIdAsync(ActivityId id)
     {
-        var obj = await _db.ActivityInfos.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _db.ActivityInfos.FirstOrDefaultAsync(x => x.Id == id.Value);
         return obj?.ToDomain();
     }
 
-    public async Task<IEnumerable<Entities.Activity>> GetByCyclistIdAsync(int id)
+    public async Task<IEnumerable<Entities.Activity>> GetByCyclistIdAsync(CyclistId id)
     {
         // Check if cyclist exists
-        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == id);
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == id.Value);
         if (cyclist == null)
             throw new NoCyclistException();
 
         // Get activities
         var objList = await _db.ActivityInfos
-            .Where(a => a.CyclistId == id)
+            .Where(a => a.CyclistId == id.Value)
             .ToListAsync();
         List<Entities.Activity> result = new List<Entities.Activity>();
         foreach (var item in objList)
@@ -54,23 +55,23 @@ public class ActivityRepository : IActivityRepository
         return result;
     }
 
-    public async Task<Entities.Activity> AddAsync(ActivitySummary summary, string path, int cyclistId)
+    public async Task<Entities.Activity> AddAsync(Entities.Activity activity)
     {
         // Check if cyclist exists
-        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId);
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == activity.CyclistId.Value);
         if (cyclist == null)
             throw new NoCyclistException();
 
-        var saved = await _db.ActivityInfos.AddAsync(summary.ToModel(path, cyclistId));
+        var saved = await _db.ActivityInfos.AddAsync(activity.ToModel());
         await _db.SaveChangesAsync();
 
         return saved.Entity.ToDomain();
     }
 
-    public async Task<Entities.Activity?> RemoveByIdAsync(int id)
+    public async Task<Entities.Activity?> RemoveByIdAsync(ActivityId id)
     {
         // Create aux entity just for the id
-        var activity = new ActivityInfo { Id = id, CyclistId = 0, Name = "Dummy", Path = "Dummy Path" };
+        var activity = new ActivityInfo { Id = id.Value, CyclistId = Guid.Empty, Name = "Dummy", Path = "Dummy Path" };
 
         try
         {

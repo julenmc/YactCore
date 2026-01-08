@@ -10,12 +10,10 @@ namespace Yact.Application.UseCases.Activities;
 public class GetActivities : IRequestHandler<GetActivitiesQuery, IEnumerable<ActivityDto>>
 {
     private readonly IActivityRepository _repository;
-    private readonly IMapper _mapper;
 
     public GetActivities(IActivityRepository repository, IMapper mapper)
     {
         _repository = repository;
-        _mapper = mapper;
     }
 
     public async Task<IEnumerable<ActivityDto>> Handle(GetActivitiesQuery request, CancellationToken cancellationToken)

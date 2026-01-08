@@ -3,4 +3,4 @@ using Yact.Application.Responses;
 
 namespace Yact.Application.UseCases.Cyclists.Queries;
 
-public record GetCyclistByIdQuery(int Id) : IRequest<CyclistDto>;
+public record GetCyclistByIdQuery(Guid Id) : IRequest<CyclistDto>;

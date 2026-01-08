@@ -2,8 +2,9 @@
 using Yact.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Yact.Infrastructure.Persistence.Mappers;
-using Yact.Infrastructure.Persistence.Models.Cyclist;
 using Yact.Domain.Repositories;
+using Yact.Infrastructure.Persistence.Models;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -16,10 +17,10 @@ public class CyclistRepository : ICyclistRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<Entities.Cyclist>> GetAllAsync()
+    public async Task<IEnumerable<Domain.Entities.Cyclist>> GetAllAsync()
     {
         var objList = await _db.CyclistInfos.ToListAsync();
-        List<Entities.Cyclist> result = new List<Entities.Cyclist>();
+        List<Domain.Entities.Cyclist> result = new List<Domain.Entities.Cyclist>();
         foreach (var item in objList)
         {
             result.Add(item.ToDomain());
@@ -27,10 +28,10 @@ public class CyclistRepository : ICyclistRepository
         return result;
     }
 
-    public async Task<Entities.Cyclist?> GetByIdAsync(int id)
+    public async Task<Domain.Entities.Cyclist?> GetByIdAsync(CyclistId id)
     {
         var obj = await _db.CyclistInfos
-            .Where(x => x.Id == id)
+            .Where(x => x.Id == id.Value)
             .Select(c => new
             {
                 Cyclist = c,
@@ -48,17 +49,17 @@ public class CyclistRepository : ICyclistRepository
         return obj?.Cyclist.ToDomain();
     }
 
-    public async Task<Entities.Cyclist?> AddAsync(Entities.Cyclist cyclist)
+    public async Task<Domain.Entities.Cyclist?> AddAsync(Domain.Entities.Cyclist cyclist)
     {
         var saved = await _db.CyclistInfos.AddAsync(cyclist.ToModel());
         await _db.SaveChangesAsync();
         return saved.Entity.ToDomain();
     }
 
-    public async Task<Entities.Cyclist?> RemoveByIdAsync(int id)
+    public async Task<Domain.Entities.Cyclist?> RemoveByIdAsync(CyclistId id)
     {
         // Create aux entity just for the id
-        var cyclist = new CyclistInfo { Id = id, Name = "dummy", LastName = "dummy" };
+        var cyclist = new CyclistInfo { Id = id.Value, Name = "dummy", LastName = "dummy" };
 
         try
         {
@@ -76,7 +77,7 @@ public class CyclistRepository : ICyclistRepository
         }
     }
 
-    public async Task<Entities.Cyclist?> UpdateAsync(Entities.Cyclist cyclist)
+    public async Task<Domain.Entities.Cyclist?> UpdateAsync(Domain.Entities.Cyclist cyclist)
     {
         var updated = _db.Update(cyclist.ToModel());
         if (updated == null)

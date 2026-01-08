@@ -2,4 +2,4 @@
 
 namespace Yact.Application.UseCases.Cyclists.Commands;
 
-public record DeleteFitnessCommand(int Id) : IRequest<int?>;
+public record DeleteFitnessCommand(Guid Id) : IRequest<Guid>;

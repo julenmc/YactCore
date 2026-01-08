@@ -37,7 +37,7 @@ public class CyclistApiController : ControllerBase
     [Route("get-by-id/{id}")]
     [ProducesResponseType(typeof(CyclistDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<CyclistDto>> GetById(int id)
+    public async Task<ActionResult<CyclistDto>> GetById(Guid id)
     {
         try
         {
@@ -76,7 +76,7 @@ public class CyclistApiController : ControllerBase
     [HttpDelete]
     [Route("delete/{id}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> DeleteCyclist(int id)
+    public async Task<ActionResult<int>> DeleteCyclist(Guid id)
     {
         try
         {

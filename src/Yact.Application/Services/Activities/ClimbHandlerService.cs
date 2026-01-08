@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using Yact.Domain.Entities.Activity;
+using Yact.Domain.Entities;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
+using Yact.Domain.ValueObjects.ActivityClimb;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.Services.Activities;
 
@@ -31,33 +33,26 @@ public class ClimbHandlerService
 
         // Search for climbs
         ClimbFinderService finder = new ClimbFinderService();
-        var climbs = finder.FindClimbs(activity.Records.Values.ToList());
+        var climbsDetails = finder.FindClimbs(activity.Records.Values.ToList());
         //var debugTrace = _climbFinderService.GetDebugTrace();
+        _logger.LogInformation($"{climbsDetails.Count} climbs found:");
 
         // Check if found climbs already exist in the repository
         ClimbMatcherService matcher = new ClimbMatcherService(_repository); 
-        foreach (var climb in climbs)
+        foreach (var climbDetails in climbsDetails)
         {
-            await matcher.MatchClimbWithRepositoryAsync(climb);
-        } 
-
-        // Save non existing climbs
-        _logger.LogInformation($"{climbs.Count} climbs found:");
-        foreach (var climb in climbs)
-        {
-            if (climb.ClimbId == 0)     // Means it wasn't matched with an existing climb
+            var climb = await matcher.MatchClimbWithRepositoryAsync(climbDetails);
+            if (climb == null)   
             {
-                var newClimb = await _repository.AddAsync(climb.Data);
-                newClimb.Name = "Unknown";
-                climb.MergeWith(newClimb);
+                // Climb doesn't exist
+                climb = Climb.Create(ClimbId.NewId(), climbDetails, new ClimbSummary("Unknown"));
+                await _repository.AddAsync(climb);
             }
-            _logger.LogInformation($"{climb.Data.Metrics.DistanceMeters}m at {climb.Data.Metrics.Slope}%");
-        }
+            _logger.LogInformation($"{climbDetails.Metrics.DistanceMeters}m at {climbDetails.Metrics.Slope}%");
 
-        // Save activity climbs
-        foreach (var climb in climbs)
-        {
-            await _activityClimbRepository.AddAsync(climbs, activity.Id.Value);
-        }
+            // Save activity climb
+            var activityClimb = ActivityClimb.Create(ActivityClimbId.NewId(), activity.Id, climb.Id, climbDetails.StartPointMeters);
+            await _activityClimbRepository.AddAsync(activityClimb);
+        } 
     }
 }

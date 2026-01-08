@@ -5,4 +5,4 @@ namespace Yact.Application.UseCases.Cyclists.Commands;
 
 public record CreateFitnessCommand(
     CyclistFitnessDto Fitness,
-    int CyclistId) : IRequest<int>;
+    Guid CyclistId) : IRequest<Guid>;

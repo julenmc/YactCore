@@ -1,12 +1,13 @@
-﻿using Yact.Domain.Entities.Cyclist;
+﻿using Yact.Domain.Entities;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Domain.Repositories;
 
 public interface ICyclistRepository
 {
     Task<IEnumerable<Cyclist>> GetAllAsync();
-    Task<Cyclist?> GetByIdAsync(int id);
+    Task<Cyclist?> GetByIdAsync(CyclistId id);
     Task<Cyclist?> AddAsync(Cyclist activity);
-    Task<Cyclist?> RemoveByIdAsync(int id);
+    Task<Cyclist?> RemoveByIdAsync(CyclistId id);
     Task<Cyclist?> UpdateAsync(Cyclist activity);
 }

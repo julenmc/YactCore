@@ -9,7 +9,7 @@ public class TimeSeriesRecordDto<T>
 
 public class TimeSeriesResponseDto<T>
 {
-    public required int ActivityId { get; set; }
+    public required Guid ActivityId { get; set; }
     public required string Metric { get; set; }
     public required string Unit { get; set; }
     public List<TimeSeriesRecordDto<T>> Records { get; set; } = new();

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.ActivityClimbs.Queries;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.ActivityClimbs;
 
@@ -25,14 +26,7 @@ public class GetActivityClimbByActivityId : IRequestHandler<GetActivityClimbsByA
 
     public async Task<List<ActivityClimbDto>> Handle(GetActivityClimbsByActivityIdQuery query, CancellationToken cancellationToken)
     {
-        var activityClimbs = await _repository.GetByActivityAsync(query.Id);
-
-        // If there's at least one unknown climb, the activity should be read to get the climbs metrics
-        if (activityClimbs.Any(a => a.Data.Name == "Unknown" || a.ClimbId == 1))
-        {
-            _logger.LogDebug($"There's an unknown climb in the activity with ID {query.Id}");
-        }
-
+        var activityClimbs = await _repository.GetByActivityAsync(ActivityId.From(query.Id));
         return _mapper.Map<List<ActivityClimbDto>>(activityClimbs);
     }
 }

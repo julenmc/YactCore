@@ -1,10 +1,8 @@
-﻿using Yact.Domain.Entities.Cyclist;
-
-namespace Yact.Application.Responses;
+﻿namespace Yact.Application.Responses;
 
 public class CyclistDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string? Name { get; set; }
     public string? LastName { get; set; }
     public string? FullName => $"{Name} {LastName}";

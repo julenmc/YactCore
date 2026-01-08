@@ -1,7 +1,8 @@
 ﻿using Moq;
-using Yact.Domain.Entities.Climb;
+using Yact.Domain.Entities;
 using Yact.Domain.Repositories;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Domain.Tests.Services.Analyzer.RouteAnalyzer.Climbs;
 
@@ -20,10 +21,11 @@ public class ClimbMatcherServiceTests
     public async Task MatchClimbWithRepositoryAsync_WithClimbInRepo_CallsRepositoryGet()
     {
         // Arrange
-        var climb = CreateSampleActivityClimb();
-        var climbList = new List<ClimbData>()
+        var climb = CreateSampleClimbDetails();
+        var guid = Guid.NewGuid();
+        var climbList = new List<Climb>()
         {
-            CreateRepoClimb(1)
+            CreateRepoClimb(guid)
         };
         _mockClimbRepository
             .Setup(x => x.GetByCoordinatesAsync(
@@ -44,7 +46,7 @@ public class ClimbMatcherServiceTests
             It.IsAny<float>()),
             Times.Once());
         _mockClimbRepository.Verify(x => x.AddAsync(
-            It.IsAny<ClimbData>()),
+            It.IsAny<Climb>()),
             Times.Never);
     }
 
@@ -52,10 +54,11 @@ public class ClimbMatcherServiceTests
     public async Task MatchClimbWithRepositoryAsync_WithClimbInRepo_ReturnsCorrectClimbId()
     {
         // Arrange
-        var climb = CreateSampleActivityClimb();
-        var climbList = new List<ClimbData>()
+        var climb = CreateSampleClimbDetails();
+        var guid = Guid.NewGuid();
+        var climbList = new List<Climb>()
         {
-            CreateRepoClimb(1)
+            CreateRepoClimb(guid)
         };
         _mockClimbRepository
             .Setup(x => x.GetByCoordinatesAsync(
@@ -66,87 +69,70 @@ public class ClimbMatcherServiceTests
             .ReturnsAsync(climbList);
 
         // Act
-        await _service.MatchClimbWithRepositoryAsync(climb);
+        var found = await _service.MatchClimbWithRepositoryAsync(climb);
 
         // Assert
-        Assert.Equal(climbList.First().Id, climb.ClimbId);
+        Assert.NotNull(found);
+        Assert.Equal(climbList.First().Id, found.Id);
     }
 
     [Fact]
     public async Task MatchClimbWithRepositoryAsync_WithNoClimbInRepo_ClimbIdIsZero()
     {
         // Arrange
-        var climb = CreateSampleActivityClimb();
-        var newClimb = CreateRepoClimb(1);
+        var climb = CreateSampleClimbDetails();
+        var guid = Guid.NewGuid();
+        var newClimb = CreateRepoClimb(guid);
         _mockClimbRepository
             .Setup(x => x.GetByCoordinatesAsync(
                 It.IsAny<float>(),
                 It.IsAny<float>(),
                 It.IsAny<float>(),
                 It.IsAny<float>()))
-            .ReturnsAsync(new List<ClimbData>());
+            .ReturnsAsync(new List<Climb>());
         _mockClimbRepository
-            .Setup(x => x.AddAsync(It.IsAny<ClimbData>()))
+            .Setup(x => x.AddAsync(It.IsAny<Climb>()))
             .ReturnsAsync(newClimb);
 
         // Act
-        await _service.MatchClimbWithRepositoryAsync(climb);
+        var found = await _service.MatchClimbWithRepositoryAsync(climb);
 
         // Assert
-        Assert.Equal(0, climb.ClimbId);
+        Assert.Null(found);
     }
 
     #region Helper Methods
 
-    private ActivityClimb CreateSampleActivityClimb()
+    private ClimbDetails CreateSampleClimbDetails()
     {
-        return new ActivityClimb
+        return new ClimbDetails
         {
-            Id = 0,
-            ActivityId = 0,
-            ClimbId = 0,
-            IntervalId = 0,
-            Data = new ClimbData
+            Coordinates = new ClimbCoordinates
             {
-                Id = 0,
                 LatitudeInit = 40.0,
                 LatitudeEnd = 40.1,
                 LongitudeInit = -74.0,
                 LongitudeEnd = -74.1,
                 AltitudeInit = 100,
                 AltitudeEnd = 200,
-                Metrics = new ClimbMetrics
-                {
-                    DistanceMeters = 1000,
-                    Elevation = 100,
-                    Slope = 10,
-                    MaxSlope = 12
-                }
+            },
+            Metrics = new ClimbMetrics
+            {
+                DistanceMeters = 1000,
+                NetElevationMeters = 100,
+                Slope = 10,
+                MaxSlope = 12
             },
             StartPointMeters = 0
         };
     }
 
-    private ClimbData CreateRepoClimb(int id)
+    private Climb CreateRepoClimb(Guid id)
     {
-        return new ClimbData
-        {
-            Id = id,
-            Name = $"Climb {id}",
-            LatitudeInit = 40.0,
-            LatitudeEnd = 40.1,
-            LongitudeInit = -74.0,
-            LongitudeEnd = -74.1,
-            AltitudeInit = 100,
-            AltitudeEnd = 200,
-            Metrics = new ClimbMetrics
-            {
-                DistanceMeters = 1000,
-                Elevation = 100,
-                Slope = 10,
-                MaxSlope = 12
-            }
-        };
+        return Climb.Load(
+            id: ClimbId.From(id),
+            data: CreateSampleClimbDetails(),
+            summary: new ClimbSummary($"Climb {id}"));
     }
 
     #endregion

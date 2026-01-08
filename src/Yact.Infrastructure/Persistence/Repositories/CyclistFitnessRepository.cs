@@ -3,8 +3,8 @@ using Yact.Domain.Exceptions.Cyclist;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
 using Yact.Infrastructure.Persistence.Mappers;
-using Yact.Infrastructure.Persistence.Models.Cyclist;
-using Entities = Yact.Domain.Entities.Cyclist;
+using Yact.Infrastructure.Persistence.Models;
+using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -17,57 +17,55 @@ public class CyclistFitnessRepository : ICyclistFitnessRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<Entities.CyclistFitness>> GetFitnessByCyclistIdAsync(int cyclistId)
+    public async Task<IEnumerable<Domain.Entities.CyclistFitness>> GetFitnessByCyclistIdAsync(CyclistId cyclistId)
     {
         // Check if cyclist exists
-        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId);
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId.Value);
         if (cyclist == null)
             throw new NoCyclistException();
 
-        var objList = await _db.CyclistFitnesses
-            .Where(f => f.CyclistId == cyclistId)
-            .OrderBy(f => f.UpdateDate)
+        // Get fitness data
+        var fitnessData = await _db.CyclistFitnesses
+            .Where(f => f.CyclistId == cyclistId.Value)
             .ToListAsync();
-        List<Entities.CyclistFitness> ret = new List<Entities.CyclistFitness>();
-        foreach (var obj in objList)
-        {
-            ret.Add(obj.ToDomain());
-        }
-        return ret;
+
+        return fitnessData.Select(f => f.ToDomain()).ToList();
     }
 
-    public async Task<Entities.CyclistFitness?> GetCyclistLatestFitnessAsync(int cyclistId)
+    public async Task<Domain.Entities.CyclistFitness?> GetCyclistLatestFitnessAsync(CyclistId cyclistId)
     {
         // Check if cyclist exists
-        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId);
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId.Value);
         if (cyclist == null)
             throw new NoCyclistException();
 
-        var obj = await _db.CyclistFitnesses
-            .Where(f => f.CyclistId == cyclistId)
+        // Get latest fitness
+        var fitness = await _db.CyclistFitnesses
+            .Where(f => f.CyclistId == cyclistId.Value)
             .OrderByDescending(f => f.UpdateDate)
             .FirstOrDefaultAsync();
-        return obj?.ToDomain();
+
+        return fitness?.ToDomain();
     }
 
-    public async Task<Entities.CyclistFitness> AddFitnessAsync(Entities.CyclistFitness fitness, int cyclistId)
+    public async Task<Domain.Entities.CyclistFitness> AddFitnessAsync(Domain.Entities.CyclistFitness fitness, CyclistId cyclistId)
     {
         // Check if cyclist exists
-        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId);
+        var cyclist = await _db.CyclistInfos.FirstOrDefaultAsync(c => c.Id == cyclistId.Value);
         if (cyclist == null)
             throw new NoCyclistException();
 
-        var fitnessModel = fitness.ToModel(cyclistId);
+        var fitnessModel = fitness.ToModel();
         var obj = await _db.CyclistFitnesses.AddAsync(fitnessModel);
 
         await _db.SaveChangesAsync();
         return obj.Entity.ToDomain();
     }
 
-    public async Task<Entities.CyclistFitness?> DeleteFitnessAsync(int id)
+    public async Task<Domain.Entities.CyclistFitness?> DeleteFitnessAsync(CyclistFitnessId id)
     {
         // Create aux model just for the ID
-        CyclistFitness aux = new CyclistFitness() {  Id = id , CyclistId = 0 };
+        CyclistFitness aux = new CyclistFitness() { Id = id.Value, CyclistId = Guid.Empty };
 
         try
         {

@@ -12,9 +12,21 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude { Altitude = 250, Slope = 5 } },
+            new RecordData() { 
+                DistanceMeters = 0, 
+                SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 },
+                Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 },
+                Timestamp = DateTime.Now},
+            new RecordData() { 
+                DistanceMeters = 1000, 
+                SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 },
+                Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 },
+                Timestamp = DateTime.Now },
+            new RecordData() { 
+                DistanceMeters = 2000, 
+                SmoothedAltitude = new SmoothedAltitude { Altitude = 250, Slope = 5 },
+                Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 },
+                Timestamp = DateTime.Now},
         };
 
         // Act
@@ -31,9 +43,21 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 2000, SmoothedAltitude = new SmoothedAltitude { Altitude = 250, Slope = 5 } },
+            new RecordData() { 
+                DistanceMeters = 0, 
+                SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 },
+                Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 },
+                Timestamp = DateTime.Now},
+            new RecordData() { 
+                DistanceMeters = 1000, 
+                SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 },
+                Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 },
+                Timestamp = DateTime.Now},
+            new RecordData() {
+                DistanceMeters = 2000, 
+                SmoothedAltitude = new SmoothedAltitude { Altitude = 250, Slope = 5 }, 
+                Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, 
+                Timestamp = DateTime.Now},
         };
 
         // Act
@@ -42,12 +66,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(2000, climb.EndPointMeters);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(2000, climb.Data.Metrics.DistanceMeters);
-        Assert.Equal(150, climb.Data.Metrics.Elevation);
-        Assert.Equal(7.5f, climb.Data.Metrics.Slope, 2);
-        Assert.Equal(10f, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(2000, climb.Metrics.DistanceMeters);
+        Assert.Equal(150, climb.Metrics.NetElevationMeters);
+        Assert.Equal(7.5f, climb.Metrics.Slope, 2);
+        Assert.Equal(10f, climb.Metrics.MaxSlope, 2);
     }
 
     #endregion
@@ -60,10 +83,10 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 } },
-            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -80,10 +103,10 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 } },
-            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -92,12 +115,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(2100, climb.EndPointMeters);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(2100, climb.Data.Metrics.DistanceMeters);
-        Assert.Equal(200, climb.Data.Metrics.Elevation);
-        Assert.Equal(9.5f, climb.Data.Metrics.Slope, 1);
-        Assert.Equal(10f, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(2100, climb.Metrics.DistanceMeters);
+        Assert.Equal(200, climb.Metrics.NetElevationMeters);
+        Assert.Equal(9.5f, climb.Metrics.Slope, 1);
+        Assert.Equal(10f, climb.Metrics.MaxSlope, 2);
     }
 
     [Fact]
@@ -106,10 +128,10 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 190, Slope = -10 } },
-            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 290, Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 190, Slope = -10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 290, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -126,10 +148,10 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 190, Slope = -10 } },
-            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 290, Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 190, Slope = -10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 290, Slope = 10 }, Coordinates = new Coordinates { Longitude = 10, Latitude = 10, Altitude = 10 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -138,12 +160,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(2100, climb.EndPointMeters);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(2100, climb.Data.Metrics.DistanceMeters);
-        Assert.Equal(200, climb.Data.Metrics.Elevation);
-        Assert.Equal(9.0f, climb.Data.Metrics.Slope, 1);
-        Assert.Equal(10f, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(2100, climb.Metrics.DistanceMeters);
+        Assert.Equal(200, climb.Metrics.TotalElevationMeters);
+        Assert.Equal(9.0f, climb.Metrics.Slope, 1);
+        Assert.Equal(10f, climb.Metrics.MaxSlope, 2);
     }
 
     [Fact]
@@ -152,12 +173,12 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 } },
-            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 } },
-            new RecordData() { DistanceMeters = 2200, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 0 } },
-            new RecordData() { DistanceMeters = 3200, SmoothedAltitude = new SmoothedAltitude { Altitude = 400, Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2200, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 3200, SmoothedAltitude = new SmoothedAltitude { Altitude = 400, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -174,12 +195,12 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 } },
-            new RecordData() { DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 } },
-            new RecordData() { DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 } },
-            new RecordData() { DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 } },
-            new RecordData() { DistanceMeters = 2200, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 0 } },
-            new RecordData() { DistanceMeters = 3200, SmoothedAltitude = new SmoothedAltitude { Altitude = 400, Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude { Altitude = 100, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1000, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 1100, SmoothedAltitude = new SmoothedAltitude { Altitude = 200, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2100, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 2200, SmoothedAltitude = new SmoothedAltitude { Altitude = 300, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 3200, SmoothedAltitude = new SmoothedAltitude { Altitude = 400, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -188,12 +209,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(3200, climb.EndPointMeters);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(3200, climb.Data.Metrics.DistanceMeters);
-        Assert.Equal(300, climb.Data.Metrics.Elevation);
-        Assert.Equal(9.4f, climb.Data.Metrics.Slope, 1);
-        Assert.Equal(10f, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(3200, climb.Metrics.DistanceMeters);
+        Assert.Equal(300, climb.Metrics.NetElevationMeters);
+        Assert.Equal(9.4f, climb.Metrics.Slope, 1);
+        Assert.Equal(10f, climb.Metrics.MaxSlope, 2);
     }
 
     #endregion
@@ -224,10 +244,10 @@ public partial class ClimbFinderServiceTest
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now },
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now },
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now },
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -252,10 +272,10 @@ public partial class ClimbFinderServiceTest
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -264,12 +284,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(firstSectorLen + flatDistance + secondSectorLen, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(firstSectorLen + flatDistance + secondSectorLen, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(firstSectorEle + secondSectorEle, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(totalSlope, climb.Data.Metrics.Slope, 1);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(firstSectorLen + flatDistance + secondSectorLen, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(firstSectorEle + secondSectorEle, climb.Metrics.NetElevationMeters, 0);
+        Assert.Equal(totalSlope, climb.Metrics.Slope, 1);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.MaxSlope, 2);
     }
 
     public static IEnumerable<object[]> EdgeDownData()  // Climb distance before downhill / Downhill distance. 
@@ -292,16 +311,17 @@ public partial class ClimbFinderServiceTest
         var elevationLost = downDistance * downSectorSlope / 100;
         var firstSectorLen = distanceBeforeDown;
         var firstSectorEle = firstSectorLen * climbSectorsSlope / 100;
+        var downSectorEle = firstSectorEle + elevationLost;
         var secondSectorLen = downDistance + 1000;
         var secondSectorEle = secondSectorLen * climbSectorsSlope / 100;
         var totalSlope = (firstSectorEle + secondSectorEle + elevationLost) / (firstSectorLen + downDistance + secondSectorLen) * 100;
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle, Slope = downSectorSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = climbSectorsSlope, Latitude = climbSectorsSlope, Altitude = climbSectorsSlope }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -322,16 +342,17 @@ public partial class ClimbFinderServiceTest
         var elevationLost = downDistance * downSectorSlope / 100;
         var firstSectorLen = distanceBeforeDown != 0 ? distanceBeforeDown : 1000;
         var firstSectorEle = firstSectorLen * climbSectorsSlope / 100;
+        var downSectorEle = firstSectorEle + elevationLost;
         var secondSectorLen = downDistance + 1000;
         var secondSectorEle = secondSectorLen * climbSectorsSlope / 100;
         var totalSlope = (firstSectorEle + secondSectorEle + elevationLost) / (firstSectorLen + downDistance + secondSectorLen) * 100;
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle , Slope = downSectorSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -340,12 +361,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(firstSectorLen + downDistance + secondSectorLen, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(firstSectorLen + downDistance + secondSectorLen, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(firstSectorEle + secondSectorEle, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(totalSlope, climb.Data.Metrics.Slope, 1);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(firstSectorLen + downDistance + secondSectorLen, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(firstSectorEle + secondSectorEle + elevationLost, climb.Metrics.NetElevationMeters, 0);
+        Assert.Equal(totalSlope, climb.Metrics.Slope, 1);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.MaxSlope, 2);
     }
 
     #endregion
@@ -375,10 +395,10 @@ public partial class ClimbFinderServiceTest
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -402,10 +422,10 @@ public partial class ClimbFinderServiceTest
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + flatDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -416,21 +436,19 @@ public partial class ClimbFinderServiceTest
         // First climb
         var climb = climbList[0];
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(firstSectorLen, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(firstSectorLen, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(firstSectorEle, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.Slope, 2);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(firstSectorLen, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(firstSectorEle, climb.Metrics.NetElevationMeters, 0);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.Slope, 2);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.MaxSlope, 2);
         // Second climb
         climb = climbList[1];
         Assert.Equal(firstSectorLen + flatDistance, climb.StartPointMeters, 0);
-        Assert.Equal(firstSectorLen + flatDistance + secondSectorLen, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(secondSectorLen, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(secondSectorEle, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.Slope, 2);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(secondSectorLen, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(secondSectorEle, climb.Metrics.NetElevationMeters, 0);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.Slope, 2);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.MaxSlope, 2);
     }
 
     public static IEnumerable<object[]> EdgeDownTwoClimbData()  // Climb distance before downhill / Downhill distance. 
@@ -453,15 +471,16 @@ public partial class ClimbFinderServiceTest
         var elevationLost = downDistance * downSectorSlope / 100;
         var firstSectorLen = distanceBeforeDown;
         var firstSectorEle = firstSectorLen * climbSectorsSlope / 100;
+        var downSectorEle = firstSectorEle + elevationLost;
         var secondSectorLen = downDistance + 1000;
         var secondSectorEle = secondSectorLen * climbSectorsSlope / 100;
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle, Slope = downSectorSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -482,15 +501,16 @@ public partial class ClimbFinderServiceTest
         var elevationLost = downDistance * downSectorSlope / 100;
         var firstSectorLen = distanceBeforeDown != 0 ? distanceBeforeDown : 1000;
         var firstSectorEle = firstSectorLen * climbSectorsSlope / 100;
+        var downSectorEle = firstSectorEle + elevationLost;
         var secondSectorLen = downDistance + 1000;
         var secondSectorEle = secondSectorLen * climbSectorsSlope / 100;
 
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = climbSectorsSlope } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle , Slope = 0 } },
-            new RecordData() { DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle + secondSectorEle , Slope = climbSectorsSlope } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = firstSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle, Slope = downSectorSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = firstSectorLen + downDistance + secondSectorLen, SmoothedAltitude = new SmoothedAltitude() { Altitude = downSectorEle + secondSectorEle, Slope = climbSectorsSlope }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -501,21 +521,19 @@ public partial class ClimbFinderServiceTest
         // First climb
         var climb = climbList[0];
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(firstSectorLen, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(firstSectorLen, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(firstSectorEle, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.Slope, 2);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(firstSectorLen, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(firstSectorEle, climb.Metrics.NetElevationMeters, 0);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.Slope, 2);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.MaxSlope, 2);
         // Second climb
         climb = climbList[1];
         Assert.Equal(firstSectorLen + downDistance, climb.StartPointMeters, 0);
-        Assert.Equal(firstSectorLen + downDistance + secondSectorLen, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(secondSectorLen, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(secondSectorEle, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.Slope, 2);
-        Assert.Equal(climbSectorsSlope, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(secondSectorLen, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(secondSectorEle, climb.Metrics.NetElevationMeters, 0);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.Slope, 2);
+        Assert.Equal(climbSectorsSlope, climb.Metrics.MaxSlope, 2);
     }
 
     #endregion
@@ -529,11 +547,11 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = 10000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800 , Slope = 8 } },
-            new RecordData() { DistanceMeters = 11400, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800 , Slope = 0 } },
-            new RecordData() { DistanceMeters = 11500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 792 , Slope = -10 } },
-            new RecordData() { DistanceMeters = 13500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 952 , Slope = 10 } },
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 10000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800, Slope = 8 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 11400, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 11500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 792, Slope = -10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 13500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 952, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -550,11 +568,11 @@ public partial class ClimbFinderServiceTest
         // Arrange
         List<RecordData> records = new List<RecordData>()
         {
-            new RecordData() { DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0 , Slope = 0 } },
-            new RecordData() { DistanceMeters = 10000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800 , Slope = 8 }},
-            new RecordData() { DistanceMeters = 11400, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800 , Slope = 0 }},
-            new RecordData() { DistanceMeters = 11500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 792 , Slope = -10 }},
-            new RecordData() { DistanceMeters = 13500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 952 , Slope = 10 }},
+            new RecordData() {DistanceMeters = 0, SmoothedAltitude = new SmoothedAltitude() { Altitude = 0, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 10000, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800, Slope = 8 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 11400, SmoothedAltitude = new SmoothedAltitude() { Altitude = 800, Slope = 0 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 11500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 792, Slope = -10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
+            new RecordData() {DistanceMeters = 13500, SmoothedAltitude = new SmoothedAltitude() { Altitude = 952, Slope = 10 }, Coordinates = new Coordinates { Longitude = 0, Latitude = 0, Altitude = 0 }, Timestamp = DateTime.Now},
         };
 
         // Act
@@ -563,12 +581,11 @@ public partial class ClimbFinderServiceTest
         // Assert
         Assert.NotNull(climb);
         Assert.Equal(0, climb.StartPointMeters);
-        Assert.Equal(13500, climb.EndPointMeters, 0);
-        Assert.NotNull(climb.Data.Metrics);
-        Assert.Equal(13500, climb.Data.Metrics.DistanceMeters, 0);
-        Assert.Equal(960, climb.Data.Metrics.Elevation, 0);
-        Assert.Equal(7.1f, climb.Data.Metrics.Slope, 1);
-        Assert.Equal(10, climb.Data.Metrics.MaxSlope, 2);
+        Assert.NotNull(climb.Metrics);
+        Assert.Equal(13500, climb.Metrics.DistanceMeters, 0);
+        Assert.Equal(960, climb.Metrics.TotalElevationMeters, 0);
+        Assert.Equal(7.1f, climb.Metrics.Slope, 1);
+        Assert.Equal(10, climb.Metrics.MaxSlope, 2);
     }
 
     #endregion

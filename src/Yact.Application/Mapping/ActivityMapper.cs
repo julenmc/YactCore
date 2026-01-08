@@ -1,5 +1,5 @@
 ﻿using Yact.Application.Responses;
-using Yact.Domain.Entities.Activity;
+using Yact.Domain.Entities;
 using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Cyclist;
 
@@ -9,7 +9,7 @@ internal static class ActivityMapper
 {
     internal static Activity ToDomain(this ActivityDto model)
     {
-        return Activity.Create(
+        return Activity.Load(
             ActivityId.From(model.Id),
             CyclistId.From(model.CyclistId),
             FilePath.From(model.Path),

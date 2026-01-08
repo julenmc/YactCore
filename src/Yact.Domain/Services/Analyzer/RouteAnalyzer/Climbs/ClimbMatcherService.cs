@@ -1,5 +1,6 @@
-﻿using Yact.Domain.Entities.Climb;
+﻿using Yact.Domain.Entities;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
 
@@ -14,24 +15,22 @@ public class ClimbMatcherService
         _repository = repository;
     }
 
-    public async Task MatchClimbWithRepositoryAsync(ActivityClimb climb)
+    public async Task<Climb?> MatchClimbWithRepositoryAsync(ClimbDetails climbData)
     {
-        var latitudeMin = climb.Data.LatitudeInit * (1 - CoordinatesDelta);
-        var latitudeMax = climb.Data.LatitudeInit * (1 + CoordinatesDelta);
-        var longitudeMin = climb.Data.LongitudeInit * (1 - CoordinatesDelta);
-        var longitudeMax = climb.Data.LongitudeInit * (1 + CoordinatesDelta);
+        var latitudeMin = climbData.Coordinates.LatitudeInit * (1 - CoordinatesDelta);
+        var latitudeMax = climbData.Coordinates.LatitudeInit * (1 + CoordinatesDelta);
+        var longitudeMin = climbData.Coordinates.LongitudeInit * (1 - CoordinatesDelta);
+        var longitudeMax = climbData.Coordinates.LongitudeInit * (1 + CoordinatesDelta);
 
         var repoClimbList = await _repository.GetByCoordinatesAsync((float)latitudeMin, (float)latitudeMax, (float)longitudeMin, (float)longitudeMax);
-        foreach (ClimbData item in repoClimbList)
+        foreach (var item in repoClimbList)
         {
-            if(climb.Data.Match(item))
+            if(climbData.Match(item.Data))
             {
-                climb.MergeWith(item);
-                return;
+                return item;
             }
         }
-        //var newClimb = await _repository.AddAsync(climb.Data);
-        //newClimb.Name = "Unknown";
-        //climb.MergeWith(newClimb);
+        
+        return null;
     }
 }

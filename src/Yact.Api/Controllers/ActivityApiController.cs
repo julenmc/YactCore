@@ -39,7 +39,7 @@ public partial class ActivityApiController : ControllerBase
     [Route("get-by-id/{id}")]
     [ProducesResponseType(typeof(ActivityDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ActivityDto>> Get(int id)
+    public async Task<ActionResult<ActivityDto>> Get(Guid id)
     {
         try
         {
@@ -63,7 +63,7 @@ public partial class ActivityApiController : ControllerBase
     [Route("get-by-cyclist-id/{id}")]
     [ProducesResponseType(typeof(IEnumerable<ActivityDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<ActivityDto>>> GetByCyclistId(int id)
+    public async Task<ActionResult<IEnumerable<ActivityDto>>> GetByCyclistId(Guid id)
     {
         try
         {
@@ -86,7 +86,7 @@ public partial class ActivityApiController : ControllerBase
     [Route("upload")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<int>> UploadFile(IFormFile file, int cyclistId)
+    public async Task<ActionResult<int>> UploadFile(IFormFile file, Guid cyclistId)
     {
         if (file == null)
             return BadRequest("No file uploaded");
@@ -115,14 +115,14 @@ public partial class ActivityApiController : ControllerBase
     [HttpDelete]
     [Route("delete/{id}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> DeleteById(int id)
+    public async Task<ActionResult<int>> DeleteById(Guid id)
     {
         try
         {
             var command = new DeleteActivityByIdCommand(id);
 
             var activityId = await _mediator.Send(command);
-            if (activityId == -1)
+            if (activityId == Guid.Empty)
             {
                 return StatusCode(404, $"Activity with ID {id} not found");
             }

@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using Yact.Domain.ValueObjects.Common;
 using Yact.Domain.ValueObjects.Cyclist;
-using Yact.Infrastructure.Persistence.Models.Cyclist;
-using Entities = Yact.Domain.Entities.Cyclist;
+using Yact.Infrastructure.Persistence.Models;
+using Entities = Yact.Domain.Entities;
 
 namespace Yact.Infrastructure.Persistence.Mappers;
 
@@ -33,22 +33,21 @@ internal static class CyclistFitnessMapper
             hrZones = ZonesMapper.MapFromJson(model.HrZonesRaw);
         }
 
-        return new Entities.CyclistFitness()
-        {
-            Id = model.Id,
-            CyclistId = model.CyclistId,
-            UpdateDate = model.UpdateDate,
-            Height = model.Height,
-            Weight = model.Weight,
-            Ftp = model.Ftp,
-            Vo2Max = model.Vo2Max,
-            PowerCurve = powerCurve,
-            PowerZones = powerZones,
-            HrZones = hrZones,
-        };
+        return Entities.CyclistFitness.Load(
+            id: CyclistFitnessId.From(model.Id),
+            cyclistId: CyclistId.From(model.CyclistId),
+            updateTime: model.UpdateDate,
+            height: model.Height,
+            weight: model.Weight,
+            ftp: model.Ftp,
+            vo2Max: model.Vo2Max,
+            curve: powerCurve,
+            powerZones: powerZones,
+            hrZones: hrZones
+        );
     }
 
-    internal static CyclistFitness ToModel(this Entities.CyclistFitness entity, int? cyclistID = null)
+    internal static CyclistFitness ToModel(this Entities.CyclistFitness entity)
     {
         if (entity.PowerCurve == null)
             throw new ArgumentNullException(nameof(entity.PowerCurve));
@@ -59,8 +58,8 @@ internal static class CyclistFitnessMapper
 
         return new CyclistFitness
         {
-            Id = 0,     // rewritten in DB
-            CyclistId = cyclistID != null ? (int)cyclistID : entity.CyclistId,
+            Id = entity.Id.Value,
+            CyclistId = entity.CyclistId.Value,
             UpdateDate = entity.UpdateDate,
             Height = entity.Height,
             Weight = entity.Weight,

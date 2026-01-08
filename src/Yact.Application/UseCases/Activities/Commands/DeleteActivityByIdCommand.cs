@@ -2,4 +2,4 @@
 
 namespace Yact.Application.UseCases.Activities.Commands;
 
-public record DeleteActivityByIdCommand (int Id) : IRequest<int>;
+public record DeleteActivityByIdCommand (Guid Id) : IRequest<Guid>;
