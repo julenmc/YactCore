@@ -3,4 +3,4 @@ using Yact.Application.Responses;
 
 namespace Yact.Application.UseCases.Cyclists.Queries;
 
-public record GetCyclistsQuery : IRequest<IEnumerable<CyclistDto>>;
+public record GetCyclistsQuery : IRequest<IEnumerable<CyclistResponse>>;

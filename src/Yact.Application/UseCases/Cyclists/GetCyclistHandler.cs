@@ -6,7 +6,7 @@ using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class GetCyclistHandler : IRequestHandler<GetCyclistsQuery, IEnumerable<CyclistDto>>
+public class GetCyclistHandler : IRequestHandler<GetCyclistsQuery, IEnumerable<CyclistResponse>>
 {
     private readonly ICyclistRepository _repository;
     private readonly IMapper _mapper;
@@ -19,9 +19,9 @@ public class GetCyclistHandler : IRequestHandler<GetCyclistsQuery, IEnumerable<C
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<CyclistDto>> Handle (GetCyclistsQuery query, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CyclistResponse>> Handle (GetCyclistsQuery query, CancellationToken cancellationToken)
     {
         var cyclists = await _repository.GetAllAsync();
-        return _mapper.Map<IEnumerable<CyclistDto>>(cyclists);
+        return _mapper.Map<IEnumerable<CyclistResponse>>(cyclists);
     }
 }

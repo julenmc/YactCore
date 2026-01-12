@@ -1,6 +1,6 @@
 ﻿namespace Yact.Infrastructure.Persistence.Models;
 
-public class CyclistInfo
+public class Cyclist
 {
     public required Guid Id { get; set; }
     public required string Name { get; set; }

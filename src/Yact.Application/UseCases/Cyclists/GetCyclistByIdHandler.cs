@@ -7,7 +7,7 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, CyclistDto>
+public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, CyclistResponse>
 {
     private readonly ICyclistRepository _repository;
     private readonly IMapper _mapper;
@@ -20,9 +20,9 @@ public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, Cyclis
         _mapper = mapper;
     }
 
-    public async Task<CyclistDto> Handle(GetCyclistByIdQuery query, CancellationToken cancellationToken)
+    public async Task<CyclistResponse> Handle(GetCyclistByIdQuery query, CancellationToken cancellationToken)
     {
-        var cyclist = await _repository.GetByIdAsync(CyclistId.From(query.Id));
-        return _mapper.Map<CyclistDto>(cyclist);
+        var cyclist = await _repository.GetByIdAsync(CyclistId.From(query.Id), query.GapDays);
+        return _mapper.Map<CyclistResponse>(cyclist);
     }
 }

@@ -16,7 +16,7 @@ public class ActivityInfo
 
     // Foreign Key
     public Guid CyclistId { get; set; }
-    public CyclistInfo? Cyclist { get; set; }
+    public Cyclist? Cyclist { get; set; }
 
     // 1-N relation for climbs and intervals
     public List<ActivityClimb>? Climbs { get; set; }

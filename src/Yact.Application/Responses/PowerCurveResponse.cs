@@ -1,5 +1,5 @@
 ﻿namespace Yact.Application.Responses;
 
-public record PowerCurveDto(
+public record PowerCurveResponse(
     Dictionary<int, int> PowerBySeconds
 );

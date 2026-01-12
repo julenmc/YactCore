@@ -3,5 +3,5 @@
 public class NoCyclistException : Exception
 {
     public NoCyclistException() { }
-    public NoCyclistException(string message) : base(message) { }
+    public NoCyclistException(Guid guid) : base($"{guid}") { }
 }

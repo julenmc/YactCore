@@ -1,5 +1,4 @@
-﻿using Yact.Domain.Events;
-using Yact.Domain.Primitives;
+﻿using Yact.Domain.Primitives;
 using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Domain.Entities;
@@ -11,7 +10,13 @@ public class Cyclist : AggregateRoot<CyclistId>
     public string FullName => $"{Name} {LastName}";
     public DateTime BirthDate { get; init; }
     public int Age => DateTime.UtcNow.Year - BirthDate.Year - (DateTime.UtcNow.DayOfYear < BirthDate.DayOfYear ? 1 : 0);
-    public CyclistFitness? FitnessData { get; private set; }
+    public IReadOnlyCollection<CyclistFitness> FitnessHistory =>
+        _fitnessHistory.AsReadOnly();
+    public CyclistFitness LatestFitness => _fitnessHistory
+            .OrderByDescending(f => f.UpdateDate)
+            .First();
+
+    private List<CyclistFitness> _fitnessHistory = new(); 
 
     private Cyclist(
         CyclistId id,
@@ -21,20 +26,35 @@ public class Cyclist : AggregateRoot<CyclistId>
     {
         Name = name;
         LastName = lastName;
-        BirthDate = birthDate;
+        BirthDate = birthDate;        
     }
 
     public static Cyclist Create(
+        CyclistId id,
         string name,
         string lastName,
-        DateTime birthDate)
+        DateTime birthDate,
+        Size size,
+        ushort? ftp = null,
+        float? vo2Max = null,
+        IDictionary<int, int>? powerCurve = null,
+        IDictionary<int, Zone>? hrZones = null,
+        IDictionary<int, Zone>? powerZones = null)
     {
         var cyclist = new Cyclist(
-            CyclistId.NewId(),
+            id,
             name,
             lastName,
             birthDate);
-        // Add domain event
+
+        // After first creation, a minimum fitness must be created
+        cyclist.CreateFitness(
+            size,
+            ftp,
+            vo2Max,
+            powerCurve,
+            hrZones,
+            powerZones);
 
         return cyclist;
     }
@@ -50,28 +70,49 @@ public class Cyclist : AggregateRoot<CyclistId>
             name,
             lastName,
             birthDate);
-        cyclist.AddDomainEvent(new CyclistLoadedEvent(id));
 
         return cyclist;
     }
 
-    public void AddFitness(CyclistFitness fitness)
+    private CyclistFitnessId CreateFitness(
+        Size size,
+        ushort? ftp = null,
+        float? vo2Max = null,
+        IDictionary<int, int>? powerCurve = null,
+        IDictionary<int, Zone>? hrZones = null,
+        IDictionary<int, Zone>? powerZones = null)
     {
-        if (fitness.CyclistId.Equals(Id) == false)
-        {
-            throw new ArgumentException("Fitness cyclist ID reference must equal the ID of the cyclist", nameof(fitness.CyclistId));
-        }
-        FitnessData = fitness;
+        var fitness = CyclistFitness.Create(
+            this.Id,
+            size,
+            ftp,
+            vo2Max,
+            powerCurve,
+            hrZones,
+            powerZones);
+
+        _fitnessHistory.Add(fitness);
+        return fitness.Id;
     }
 
-    public void UpdateFitness(CyclistFitness fitness)
+    public CyclistFitnessId UpdateFitness(
+        Size? size,
+        ushort? ftp = null,
+        float? vo2Max = null,
+        IDictionary<int, int>? powerCurve = null,
+        IDictionary<int, Zone>? hrZones = null,
+        IDictionary<int, Zone>? powerZones = null)
     {
-        //ushort? height = null,
-        //float? weight = null,
-        //ushort? ftp = null,
-        //float? vo2Max = null,
-        //PowerCurve? curve = null,
-        //Dictionary<int, Zone>? hrZones = null,
-        //Dictionary< int, Zone >? powerZones = null)
+        var fitness = CyclistFitness.CreateFromOld(
+            LatestFitness,
+            size,
+            ftp,
+            vo2Max,
+            powerCurve,
+            hrZones,
+            powerZones);
+
+        _fitnessHistory.Add(fitness);
+        return fitness.Id;
     }
 }

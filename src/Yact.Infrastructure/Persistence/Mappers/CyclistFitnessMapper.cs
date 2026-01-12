@@ -10,19 +10,14 @@ internal static class CyclistFitnessMapper
 {
     internal static Entities.CyclistFitness ToDomain(this CyclistFitness model)
     {
-        PowerCurve? powerCurve = null;
+        Dictionary<int, int>? powerCurve = null;
         Dictionary<int, Zone>? powerZones = null;
         Dictionary<int, Zone>? hrZones = null;
 
         if (model.PowerCurveJson != null)
         {
-            var powerData = JsonSerializer.Deserialize<Dictionary<int, int>>(model.PowerCurveJson)
+            powerCurve = JsonSerializer.Deserialize<Dictionary<int, int>>(model.PowerCurveJson)
             ?? new Dictionary<int, int>();
-
-            powerCurve = new PowerCurve
-            (
-                PowerBySeconds: powerData
-            );
         }
         if (model.PowerZonesRaw != null)
         {
@@ -37,8 +32,7 @@ internal static class CyclistFitnessMapper
             id: CyclistFitnessId.From(model.Id),
             cyclistId: CyclistId.From(model.CyclistId),
             updateTime: model.UpdateDate,
-            height: model.Height,
-            weight: model.Weight,
+            size: new Size(model.Height, model.Weight),
             ftp: model.Ftp,
             vo2Max: model.Vo2Max,
             curve: powerCurve,
@@ -61,11 +55,11 @@ internal static class CyclistFitnessMapper
             Id = entity.Id.Value,
             CyclistId = entity.CyclistId.Value,
             UpdateDate = entity.UpdateDate,
-            Height = entity.Height,
-            Weight = entity.Weight,
+            Height = entity.Size.HeightCm,
+            Weight = entity.Size.WeightKg,
             Ftp = entity.Ftp,
             Vo2Max = entity.Vo2Max,
-            PowerCurveJson = JsonSerializer.Serialize(entity.PowerCurve.PowerBySeconds),
+            PowerCurveJson = JsonSerializer.Serialize(entity.PowerCurve),
             PowerZonesRaw = ZonesMapper.MapToJson(entity.PowerZones),
             HrZonesRaw = ZonesMapper.MapToJson(entity.HrZones)
         };

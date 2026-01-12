@@ -14,5 +14,5 @@ public class CyclistFitness
 
     // Foreing Key
     public required Guid CyclistId { get; set; }
-    public CyclistInfo? Cyclist { get; set; }
+    public Cyclist? Cyclist { get; set; }
 }

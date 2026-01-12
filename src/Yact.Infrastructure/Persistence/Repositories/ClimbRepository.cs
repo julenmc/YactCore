@@ -19,68 +19,73 @@ public class ClimbRepository : IClimbRepository
 
     public async Task<IEnumerable<Climb>> GetAllAsync()
     {
-        var climbList = await _db.Climbs.ToListAsync();
-        List<Climb> result = new List<Climb>();
-        foreach (var climb in climbList)
-        {
-            result.Add(climb.ToDomain());
-        }
-        return result;
+        //var climbList = await _db.Climbs.ToListAsync();
+        //List<Climb> result = new List<Climb>();
+        //foreach (var climb in climbList)
+        //{
+        //    result.Add(climb.ToDomain());
+        //}
+        //return result;
+        throw new NotImplementedException();
     }
 
     public async Task<Climb?> GetByIdAsync(ClimbId id)
     {
-        var climb = await _db.Climbs.FirstOrDefaultAsync(c => c.Id == id.Value);
-        return climb?.ToDomain();
+        //var climb = await _db.Climbs.FirstOrDefaultAsync(c => c.Id == id.Value);
+        //return climb?.ToDomain();
+        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<Climb>> GetByCoordinatesAsync(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax)
     {
-        var actualLatMin = Math.Min(latitudeMin, latitudeMax);
-        var actualLatMax = Math.Max(latitudeMin, latitudeMax);
-        var actualLonMin = Math.Min(longitudeMin, longitudeMax);
-        var actualLonMax = Math.Max(longitudeMin, longitudeMax);
+        //var actualLatMin = Math.Min(latitudeMin, latitudeMax);
+        //var actualLatMax = Math.Max(latitudeMin, latitudeMax);
+        //var actualLonMin = Math.Min(longitudeMin, longitudeMax);
+        //var actualLonMax = Math.Max(longitudeMin, longitudeMax);
 
-        var climbList = await _db.Climbs
-            .Where(c => c.LatitudeInit >= actualLatMin && c.LatitudeInit <= actualLatMax &&
-                        c.LongitudeInit >= actualLonMin && c.LongitudeInit <= actualLonMax)
-            .ToListAsync();
+        //var climbList = await _db.Climbs
+        //    .Where(c => c.LatitudeInit >= actualLatMin && c.LatitudeInit <= actualLatMax &&
+        //                c.LongitudeInit >= actualLonMin && c.LongitudeInit <= actualLonMax)
+        //    .ToListAsync();
 
-        List<Climb> result = new List<Climb>();
-        foreach (var climb in climbList)
-        {
-            result.Add(climb.ToDomain());
-        }
-        return result;
+        //List<Climb> result = new List<Climb>();
+        //foreach (var climb in climbList)
+        //{
+        //    result.Add(climb.ToDomain());
+        //}
+        //return result;
+        throw new NotImplementedException();
     }
 
     public async Task<Climb> AddAsync(Climb climb)
     {
-        var newClimb = await _db.Climbs.AddAsync(climb.ToModel());
-        await _db.SaveChangesAsync();
+        //var newClimb = await _db.Climbs.AddAsync(climb.ToModel());
+        //await _db.SaveChangesAsync();
 
-        return newClimb.Entity.ToDomain();
+        //return newClimb.Entity.ToDomain();
+        throw new NotImplementedException();
     }
 
     public async Task<Climb?> RemoveByIdAsync(ClimbId id)
     {
         // Create aux entity just for the id
-        var climb = new ClimbInfo { Id = id.Value };
+        //var climb = new ClimbInfo { Id = id.Value };
 
-        try
-        {
-            var deleted = _db.Climbs.Remove(climb);
-            if (deleted == null)
-                return null;
+        //try
+        //{
+        //    var deleted = _db.Climbs.Remove(climb);
+        //    if (deleted == null)
+        //        return null;
 
-            var rowsAffected = await _db.SaveChangesAsync();
-            return rowsAffected > 0 ? deleted.Entity.ToDomain() : null;
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            // Entity didn't exist
-            return null;
-        }
+        //    var rowsAffected = await _db.SaveChangesAsync();
+        //    return rowsAffected > 0 ? deleted.Entity.ToDomain() : null;
+        //}
+        //catch (DbUpdateConcurrencyException)
+        //{
+        //    // Entity didn't exist
+        //    return null;
+        //}
+        throw new NotImplementedException();
     }
 
     public async Task<Climb?> UpdateAsync(Climb climb)

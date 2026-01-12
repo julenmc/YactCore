@@ -35,7 +35,7 @@ internal class ZonesMapper
         }
     }
 
-    internal static string MapToJson(Dictionary<int, Zone>? zones)
+    internal static string MapToJson(IDictionary<int, Zone>? zones)
     {
         if (zones == null)
             return "[]";

@@ -7,16 +7,15 @@ namespace Yact.Application.UseCases.Cyclists;
 
 public class DeleteFitnessHandler : IRequestHandler<DeleteFitnessCommand, Guid>
 {
-    private readonly ICyclistFitnessRepository _repository;
+    private readonly ICyclistRepository _repository;
 
-    public DeleteFitnessHandler(ICyclistFitnessRepository repository)
+    public DeleteFitnessHandler(ICyclistRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Guid> Handle (DeleteFitnessCommand command, CancellationToken cancellationToken)
     {
-        var obj = await _repository.DeleteFitnessAsync(CyclistFitnessId.From(command.Id));
-        return obj?.Id.Value ?? Guid.Empty;
+        throw new NotImplementedException();
     }
 }

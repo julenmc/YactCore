@@ -19,37 +19,40 @@ public class ActivityClimbRepository : IActivityClimbRepository
 
     public async Task<List<ActivityClimb>> GetByActivityAsync(ActivityId activityId)
     {
-        var climbs = await _db.ActivityClimbs
-            .Where(a => a.ActivityId == activityId.Value)
-            .Include(a => a.Climb)
-            .ToListAsync();
+        //var climbs = await _db.ActivityClimbs
+        //    .Where(a => a.ActivityId == activityId.Value)
+        //    .Include(a => a.Climb)
+        //    .ToListAsync();
 
-        var ret = new List<ActivityClimb>();
-        foreach (var climb in climbs)
-        {
-            ret.Add(climb.ToDomain());
-        }
-        return ret;
+        //var ret = new List<ActivityClimb>();
+        //foreach (var climb in climbs)
+        //{
+        //    ret.Add(climb.ToDomain());
+        //}
+        //return ret;
+        throw new NotImplementedException();
     }
 
     public async Task<List<ActivityClimb>> GetByClimbAsync(ClimbId climbId)
     {
-        var climbs = await _db.ActivityClimbs
-            .Where(a => a.ClimbId == climbId.Value)
-            .Include(a => a.Activity)
-            .ToListAsync();
+        //var climbs = await _db.ActivityClimbs
+        //    .Where(a => a.ClimbId == climbId.Value)
+        //    .Include(a => a.Activity)
+        //    .ToListAsync();
 
-        var ret = new List<ActivityClimb>();
-        foreach (var climb in climbs)
-        {
-            ret.Add(climb.ToDomain());
-        }
-        return ret;
+        //var ret = new List<ActivityClimb>();
+        //foreach (var climb in climbs)
+        //{
+        //    ret.Add(climb.ToDomain());
+        //}
+        //return ret;
+        throw new NotImplementedException();
     }
 
     public async Task AddAsync(ActivityClimb activityClimb)
     {
-        await _db.ActivityClimbs.AddAsync(activityClimb.ToModel());
-        await _db.SaveChangesAsync();
+        //await _db.ActivityClimbs.AddAsync(activityClimb.ToModel());
+        //await _db.SaveChangesAsync();
+        throw new NotImplementedException();
     }
 }
