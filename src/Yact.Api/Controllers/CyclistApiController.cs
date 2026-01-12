@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Yact.Api.Requests.Cyclists;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Cyclists.Commands;
 using Yact.Application.UseCases.Cyclists.Queries;
@@ -39,11 +40,11 @@ public class CyclistApiController : ControllerBase
     [Route("get-by-id/{id}")]
     [ProducesResponseType(typeof(CyclistResponse), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<CyclistResponse>> GetById(Guid id, int? gapDays)
+    public async Task<ActionResult<CyclistResponse>> GetById(Guid id)
     {
         try
         {
-            var query = new GetCyclistByIdQuery(id, gapDays);
+            var query = new GetCyclistByIdQuery(id);
             var cyclist = await _mediator.Send(query);
 
             if (cyclist == null)
@@ -64,7 +65,7 @@ public class CyclistApiController : ControllerBase
     [Route("get-by-last-name/{lastName}")]
     [ProducesResponseType(typeof(CyclistResponse), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<CyclistResponse>>> GetById(string lastName)
+    public async Task<ActionResult<IEnumerable<CyclistResponse>>> GetByLastName(string lastName)
     {
         try
         {
@@ -121,12 +122,21 @@ public class CyclistApiController : ControllerBase
     }
 
     [HttpPut]
-    [Route("update-fitness")]
+    [Route("update-fitness/{cyclistId}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> CreateFitnessData([FromBody] UpdateFitnessCommand command)
+    public async Task<ActionResult<int>> CreateFitnessData(Guid cyclistId, [FromBody] UpdateFitnessRequest request)
     {
         try
         {
+            var command = new UpdateFitnessCommand(
+                cyclistId,
+                request.HeightCm,
+                request.WeightKg,
+                request.FtpWatts,
+                request.Vo2Max,
+                request.PowerCurveBySeconds,
+                request.HrZones,
+                request.PowerZones);
             var newData = await _mediator.Send(command);
 
             return Ok(newData);
@@ -139,17 +149,17 @@ public class CyclistApiController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("delete-fitness/{id}")]
+    [Route("delete-fitness/{cyclistId}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> DeleteFitnessData(Guid id)
+    public async Task<ActionResult<int>> DeleteFitnessData(Guid cyclistId, Guid fitnessId)
     {
         try
         {
-            var command = new DeleteFitnessCommand(id);
+            var command = new DeleteFitnessCommand(fitnessId, cyclistId);
             var deletedId = await _mediator.Send(command);
             if (deletedId == Guid.Empty)
-                return NotFound($"Fitness data with ID {id} not found");
+                return NotFound($"Fitness data with ID {command.Id} not found");
 
             return Ok(deletedId);
         }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Yact.Application.UseCases.Cyclists.Commands;
+using Yact.Domain.Exceptions.Cyclist;
 using Yact.Domain.Repositories;
 using Yact.Domain.ValueObjects.Cyclist;
 
@@ -16,6 +17,13 @@ public class DeleteFitnessHandler : IRequestHandler<DeleteFitnessCommand, Guid>
 
     public async Task<Guid> Handle (DeleteFitnessCommand command, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var cyclist = await _repository.GetByIdAsync(CyclistId.From(command.CyclistId));
+        if (cyclist == null)
+            throw new NoCyclistException(command.CyclistId);
+
+        cyclist.RemoveFitness(CyclistFitnessId.From(command.Id));
+        await _repository.UpdateAsync(cyclist);
+
+        return command.Id;
     }
 }

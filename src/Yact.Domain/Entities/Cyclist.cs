@@ -1,4 +1,5 @@
-﻿using Yact.Domain.Primitives;
+﻿using Yact.Domain.Exceptions.Cyclist;
+using Yact.Domain.Primitives;
 using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Domain.Entities;
@@ -10,13 +11,12 @@ public class Cyclist : AggregateRoot<CyclistId>
     public string FullName => $"{Name} {LastName}";
     public DateTime BirthDate { get; init; }
     public int Age => DateTime.UtcNow.Year - BirthDate.Year - (DateTime.UtcNow.DayOfYear < BirthDate.DayOfYear ? 1 : 0);
-    public IReadOnlyCollection<CyclistFitness> FitnessHistory =>
-        _fitnessHistory.AsReadOnly();
+    public ICollection<CyclistFitness> FitnessHistory => _fitnessHistory;
     public CyclistFitness LatestFitness => _fitnessHistory
             .OrderByDescending(f => f.UpdateDate)
             .First();
 
-    private List<CyclistFitness> _fitnessHistory = new(); 
+    private readonly List<CyclistFitness> _fitnessHistory = new();
 
     private Cyclist(
         CyclistId id,
@@ -26,7 +26,7 @@ public class Cyclist : AggregateRoot<CyclistId>
     {
         Name = name;
         LastName = lastName;
-        BirthDate = birthDate;        
+        BirthDate = birthDate;
     }
 
     public static Cyclist Create(
@@ -114,5 +114,14 @@ public class Cyclist : AggregateRoot<CyclistId>
 
         _fitnessHistory.Add(fitness);
         return fitness.Id;
+    }
+
+    public void RemoveFitness(CyclistFitnessId fitnessId)
+    {
+        var fitness = _fitnessHistory.FirstOrDefault(f => f.Id == fitnessId);
+        if (fitness == null)
+            throw new FitnessNotFoundException(fitnessId.Value);
+
+        _fitnessHistory.Remove(fitness);
     }
 }

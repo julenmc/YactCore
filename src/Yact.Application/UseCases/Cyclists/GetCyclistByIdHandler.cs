@@ -22,7 +22,7 @@ public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, Cyclis
 
     public async Task<CyclistResponse> Handle(GetCyclistByIdQuery query, CancellationToken cancellationToken)
     {
-        var cyclist = await _repository.GetByIdAsync(CyclistId.From(query.Id), query.GapDays);
+        var cyclist = await _repository.GetByIdAsync(CyclistId.From(query.Id));
         return _mapper.Map<CyclistResponse>(cyclist);
     }
 }

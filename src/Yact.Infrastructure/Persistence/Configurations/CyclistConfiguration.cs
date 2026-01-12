@@ -31,12 +31,12 @@ public class CyclistConfiguration : IEntityTypeConfiguration<Cyclist>
             .IsRequired();
 
         // Relation with CyclistFitness
-        builder.HasMany<CyclistFitness>("_fitnessHistory")
+        builder.HasMany(c => c.FitnessHistory)
             .WithOne()
             .HasForeignKey("CyclistId")
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Ignore(c => c.LatestFitness);
-        builder.Ignore(c => c.FitnessHistory);
+        //builder.Ignore(c => c.FitnessHistory);
     }
 }

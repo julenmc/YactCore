@@ -2,7 +2,6 @@
 using Yact.Domain.Repositories;
 using Yact.Domain.ValueObjects.Cyclist;
 using Yact.Infrastructure.Persistence.Data;
-using Yact.Infrastructure.Persistence.Mappers;
 using Entities = Yact.Domain.Entities;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
@@ -21,29 +20,23 @@ public class CyclistRepository : ICyclistRepository
         return await _db.Cyclists.ToListAsync();
     }
 
-    public async Task<Entities.Cyclist?> GetByIdAsync(CyclistId id, int? gapDays = null)
+    public async Task<Entities.Cyclist?> GetByIdAsync(CyclistId id)
     {
-        if (gapDays == null)
-        {
-            return await _db.Cyclists
-                .Where(c => c.Id == id)
-                .Include("_fitnessHistory")
-                .FirstOrDefaultAsync();
-        }
-        else
-        {
-            DateTime allowedDate = DateTime.UtcNow.AddDays((double)-gapDays);
-            return await _db.Cyclists
-                .Include("_fitnessHistory")
-                .FirstOrDefaultAsync(c => c.Id == id);
-        }
+        return await _db.Cyclists
+            .Where(c => c.Id == id)
+            .Include(c => c.FitnessHistory
+                .OrderByDescending(f => f.UpdateDate)
+                .Take(10))
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Entities.Cyclist>> GetByLastName(string lastName)
     {
         return await _db.Cyclists
             .Where(c => c.LastName == lastName)
-            .Include("_fitnessHistory")
+            .Include(c => c.FitnessHistory
+                .OrderByDescending(f => f.UpdateDate)
+                .Take(1))
             .ToListAsync();
     }
 
