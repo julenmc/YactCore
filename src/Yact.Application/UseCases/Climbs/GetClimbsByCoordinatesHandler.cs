@@ -6,7 +6,7 @@ using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Climbs;
 
-public class GetClimbsByCoordinatesHandler : IRequestHandler<GetClimbsByCoordinatesQuery, IEnumerable<ClimbDto>>
+public class GetClimbsByCoordinatesHandler : IRequestHandler<GetClimbsByCoordinatesQuery, IEnumerable<ClimbResponse>>
 {
     private readonly IMapper _mapper;
     private readonly IClimbRepository _repository;
@@ -19,9 +19,9 @@ public class GetClimbsByCoordinatesHandler : IRequestHandler<GetClimbsByCoordina
         _repository = repository;
     }
 
-    public async Task<IEnumerable<ClimbDto>> Handle (GetClimbsByCoordinatesQuery query, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ClimbResponse>> Handle (GetClimbsByCoordinatesQuery query, CancellationToken cancellationToken)
     {
         var climbList = await _repository.GetByCoordinatesAsync(query.LatitudeMin, query.LatitudeMax, query.LongitudeMin, query.LongitudeMax);
-        return _mapper.Map<IEnumerable<ClimbDto>>(climbList);
+        return _mapper.Map<IEnumerable<ClimbResponse>>(climbList);
     }
 }

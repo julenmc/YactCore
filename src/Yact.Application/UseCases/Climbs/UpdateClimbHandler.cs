@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using Yact.Application.UseCases.Climbs.Commands;
-using Yact.Domain.Entities;
+using Yact.Domain.Exceptions.Climbs;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.UseCases.Climbs;
 
@@ -21,7 +22,10 @@ public class UpdateClimbHandler : IRequestHandler<UpdateClimbCommand, Guid>
 
     public async Task<Guid> Handle (UpdateClimbCommand command, CancellationToken cancellationToken)
     {
-        var climb = _mapper.Map<Climb>(command.Climb);
+        var climb = await _repository.GetByIdAsync(ClimbId.From(command.Id));
+        if (climb == null)
+            throw new ClimbNotFoundException(command.Id);
+
         var updated = await _repository.UpdateAsync(climb);
         return updated != null ? updated.Id.Value : Guid.Empty;
     }

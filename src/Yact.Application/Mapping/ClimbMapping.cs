@@ -9,17 +9,17 @@ public class ClimbMapping : Profile
 {
     public ClimbMapping()
     {
-        CreateMap<ClimbDetails, ClimbDto>()
+        CreateMap<ClimbDetails, ClimbResponse>()
             .ForMember(d => d.DistanceMeters, o => o.MapFrom(s => s.Metrics.DistanceMeters))
             .ForMember(d => d.Elevation, o => o.MapFrom(s => s.Metrics.NetElevationMeters))
             .ForMember(d => d.Slope, o => o.MapFrom(s => s.Metrics.Slope))
             .ForMember(d => d.MaxSlope, o => o.MapFrom(s => s.Metrics.MaxSlope));
 
-        CreateMap<ClimbDto, ClimbDetails>()
+        CreateMap<ClimbResponse, ClimbDetails>()
             .ForMember(d => d.Metrics, o => o.MapFrom(src => CreateMetricsFromDto(src)));
     }
 
-    private ClimbMetrics CreateMetricsFromDto(ClimbDto dto)
+    private ClimbMetrics CreateMetricsFromDto(ClimbResponse dto)
     {
         return new ClimbMetrics
         {

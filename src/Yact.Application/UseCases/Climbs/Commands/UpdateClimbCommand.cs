@@ -1,6 +1,7 @@
 ﻿using MediatR;
-using Yact.Application.Responses;
 
 namespace Yact.Application.UseCases.Climbs.Commands;
 
-public record UpdateClimbCommand(ClimbDto Climb) : IRequest<Guid>;
+public record UpdateClimbCommand(
+    Guid Id,
+    string Name) : IRequest<Guid>;

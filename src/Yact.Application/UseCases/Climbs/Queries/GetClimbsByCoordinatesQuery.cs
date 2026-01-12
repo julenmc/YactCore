@@ -7,4 +7,4 @@ public record GetClimbsByCoordinatesQuery(
     float LatitudeMin,
     float LatitudeMax,
     float LongitudeMin,
-    float LongitudeMax) : IRequest<IEnumerable<ClimbDto>>;
+    float LongitudeMax) : IRequest<IEnumerable<ClimbResponse>>;

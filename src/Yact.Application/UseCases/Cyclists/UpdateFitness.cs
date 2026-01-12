@@ -24,7 +24,7 @@ public class UpdateFitness : IRequestHandler<UpdateFitnessCommand, Guid>
     {
         var cyclist = await _repository.GetByIdAsync(CyclistId.From(command.CyclistId));
         if (cyclist == null)
-            throw new NoCyclistException(command.CyclistId);
+            throw new CyclistNotFoundException(command.CyclistId);
 
         var fitnessId = cyclist.UpdateFitness(
             (command.HeightCm != null && command.WeightKg != null) ? 

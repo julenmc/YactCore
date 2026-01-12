@@ -7,7 +7,7 @@ using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.UseCases.Climbs;
 
-public class GetClimbByIdHandler : IRequestHandler<GetClimbByIdQuery, ClimbDto>
+public class GetClimbByIdHandler : IRequestHandler<GetClimbByIdQuery, ClimbResponse>
 {
     private readonly IMapper _mapper;
     private readonly IClimbRepository _repository;
@@ -20,9 +20,9 @@ public class GetClimbByIdHandler : IRequestHandler<GetClimbByIdQuery, ClimbDto>
         _repository = repository;
     }
 
-    public async Task<ClimbDto> Handle (GetClimbByIdQuery query, CancellationToken cancellationToken)
+    public async Task<ClimbResponse> Handle (GetClimbByIdQuery query, CancellationToken cancellationToken)
     {
         var climb = await _repository.GetByIdAsync(ClimbId.From(query.Id));
-        return _mapper.Map<ClimbDto>(climb);
+        return _mapper.Map<ClimbResponse>(climb);
     }
 }

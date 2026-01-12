@@ -19,7 +19,7 @@ public class DeleteFitnessHandler : IRequestHandler<DeleteFitnessCommand, Guid>
     {
         var cyclist = await _repository.GetByIdAsync(CyclistId.From(command.CyclistId));
         if (cyclist == null)
-            throw new NoCyclistException(command.CyclistId);
+            throw new CyclistNotFoundException(command.CyclistId);
 
         cyclist.RemoveFitness(CyclistFitnessId.From(command.Id));
         await _repository.UpdateAsync(cyclist);

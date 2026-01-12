@@ -3,4 +3,4 @@ using Yact.Application.Responses;
 
 namespace Yact.Application.UseCases.Climbs.Queries;
 
-public record GetClimbByIdQuery(Guid Id) : IRequest<ClimbDto>;
+public record GetClimbByIdQuery(Guid Id) : IRequest<ClimbResponse>;

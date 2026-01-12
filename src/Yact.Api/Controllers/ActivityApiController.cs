@@ -72,7 +72,7 @@ public partial class ActivityApiController : ControllerBase
 
             return Ok(activities);
         }
-        catch (NoCyclistException)
+        catch (CyclistNotFoundException)
         {
             return NotFound($"Cyclist with ID {id} doesn't exist");
         }

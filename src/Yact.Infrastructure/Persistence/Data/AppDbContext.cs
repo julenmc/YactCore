@@ -20,7 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<Domain.Entities.Cyclist> Cyclists { get; set; }
     //public DbSet<CyclistFitness> CyclistFitnesses { get; set; }
     //public DbSet<ActivityInfo> ActivityInfos { get; set; }
-    //public DbSet<ClimbInfo> Climbs { get; set; }
+    public DbSet<Domain.Entities.Climb> Climbs { get; set; }
     //public DbSet<Interval> Intervals { get; set; }
     //public DbSet<ActivityClimb> ActivityClimbs { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace Yact.Application.Responses;
 
-public class ClimbDto
+public class ClimbResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

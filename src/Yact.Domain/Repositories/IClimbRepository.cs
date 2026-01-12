@@ -5,7 +5,6 @@ namespace Yact.Domain.Repositories;
 
 public interface IClimbRepository
 {
-    Task<IEnumerable<Climb>> GetAllAsync();
     Task<Climb?> GetByIdAsync(ClimbId id);
     Task<IEnumerable<Climb>> GetByCoordinatesAsync(float latitudeMin, float latitudeMax, float longitudeMin, float longitudeMax);
     Task<Climb> AddAsync(Climb climb);

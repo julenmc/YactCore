@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Yact.Api.Requests.Climbs;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Climbs.Commands;
 using Yact.Application.UseCases.Climbs.Queries;
+using Yact.Domain.Exceptions.Climbs;
 
 namespace Yact.Api.Controllers;
 
@@ -12,33 +14,19 @@ namespace Yact.Api.Controllers;
 public class ClimbApiController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private ILogger<ClimbApiController> _logger;
 
-    public ClimbApiController(IMediator mediator)
+    public ClimbApiController(IMediator mediator, ILogger<ClimbApiController> logger)
     {
         _mediator = mediator;
-    }
-
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ClimbDto>), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<IEnumerable<ClimbDto>>> Get()
-    {
-        try
-        {
-            var query = new GetClimbsQuery();
-            var climbs = await _mediator.Send(query);
-            return Ok(climbs);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-        }
+        _logger = logger;
     }
 
     [HttpGet]
     [Route("get-by-id/{id}")]
-    [ProducesResponseType(typeof(ClimbDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ClimbResponse), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ClimbDto>> GetById(Guid id)
+    public async Task<ActionResult<ClimbResponse>> GetById(Guid id)
     {
         try
         {
@@ -51,15 +39,16 @@ public class ClimbApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while getting climb by ID: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
     [HttpGet]
     [Route("get-by-coordinates")]
-    [ProducesResponseType(typeof(IEnumerable<ClimbDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<ClimbResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<ClimbDto>>> GetByCoordinates([FromQuery] GetClimbsByCoordinatesQuery query)
+    public async Task<ActionResult<IEnumerable<ClimbResponse>>> GetByCoordinates([FromQuery] GetClimbsByCoordinatesQuery query)
     {
         try
         {
@@ -71,66 +60,58 @@ public class ClimbApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-        }
-    }
-
-    [HttpPost]
-    [Route("create")]
-    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> CreateClimb([FromQuery] CreateClimbCommand command)
-    {
-        try
-        {
-            var id = await _mediator.Send(command);
-            return Ok(id);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while getting climbs by coordinates: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
     [HttpPut]
-    [Route("update")]
+    [Route("update/{climbId}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> UpdateClimb([FromQuery] UpdateClimbCommand command)
+    public async Task<ActionResult<int>> UpdateClimb(Guid climbId, [FromQuery] UpdateClimbRequest request)
     {
         try
         {
+            var command = new UpdateClimbCommand(climbId, request.Name);
             var id = await _mediator.Send(command);
             if (id == Guid.Empty)
             {
-                return NotFound();
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Climb could not be updated");
             }
             return Ok(id);
         }
+        catch (ClimbNotFoundException)
+        {
+            return NotFound();
+        }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while updating climb: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
     [HttpDelete]
-    [Route("delete")]
+    [Route("delete/{climbId}")]
     [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> DeleteClimb(Guid id)
+    public async Task<ActionResult<int>> DeleteClimb(Guid climbId)
     {
         try
         {
-            var command = new DeleteClimbByIdCommand(id);
-            var climbId = await _mediator.Send(command);
-            if (id == Guid.Empty)
+            var command = new DeleteClimbByIdCommand(climbId);
+            var deleted = await _mediator.Send(command);
+            if (deleted == Guid.Empty)
             {
                 return NotFound();
             }
-            return Ok(id);
+            return Ok(deleted);
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while deleting climb: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 }
