@@ -1,6 +1,6 @@
 ﻿namespace Yact.Application.Responses;
 
-public class ActivityDto
+public class ActivityResponse
 {
     public Guid Id { get; set; }
     public Guid CyclistId { get; set; }

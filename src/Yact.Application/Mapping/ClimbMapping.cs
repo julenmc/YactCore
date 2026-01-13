@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Yact.Application.Responses;
 using Yact.Domain.Entities;
-using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.Mapping;
 
@@ -9,24 +8,20 @@ public class ClimbMapping : Profile
 {
     public ClimbMapping()
     {
-        CreateMap<ClimbDetails, ClimbResponse>()
-            .ForMember(d => d.DistanceMeters, o => o.MapFrom(s => s.Metrics.DistanceMeters))
-            .ForMember(d => d.Elevation, o => o.MapFrom(s => s.Metrics.NetElevationMeters))
-            .ForMember(d => d.Slope, o => o.MapFrom(s => s.Metrics.Slope))
-            .ForMember(d => d.MaxSlope, o => o.MapFrom(s => s.Metrics.MaxSlope));
-
-        CreateMap<ClimbResponse, ClimbDetails>()
-            .ForMember(d => d.Metrics, o => o.MapFrom(src => CreateMetricsFromDto(src)));
-    }
-
-    private ClimbMetrics CreateMetricsFromDto(ClimbResponse dto)
-    {
-        return new ClimbMetrics
-        {
-            DistanceMeters = dto.DistanceMeters,
-            NetElevationMeters = dto.Elevation,
-            Slope = dto.Slope,
-            MaxSlope = dto.MaxSlope
-        };
+        CreateMap<Climb, ClimbResponse>()
+            .ForMember(dest => dest.Id,
+                opt => opt.MapFrom(src => src.Id.Value))
+            .ForMember(dest => dest.Name,
+                opt => opt.MapFrom(src => src.Summary.Name))
+            .ForMember(dest => dest.DistanceMeters,
+                opt => opt.MapFrom(src => src.Data.Metrics.DistanceMeters))
+            .ForMember(dest => dest.Slope,
+                opt => opt.MapFrom(src => src.Data.Metrics.Slope))
+            .ForMember(dest => dest.MaxSlope,
+                opt => opt.MapFrom(src => src.Data.Metrics.MaxSlope))
+            .ForMember(dest => dest.NetElevationMeters,
+                opt => opt.MapFrom(src => src.Data.Metrics.NetElevationMeters))
+            .ForMember(dest => dest.TotalElevationMeters,
+                opt => opt.MapFrom(src => src.Data.Metrics.TotalElevationMeters));
     }
 }

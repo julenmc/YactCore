@@ -1,29 +1,36 @@
-﻿using MediatR;
-using Yact.Application.Mapping;
+﻿using AutoMapper;
+using MediatR;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Activities.Commands;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.Activities;
 
-public class UpdateActivity : IRequestHandler<UpdateActivityCommand, ActivityDto>
+public class UpdateActivity : IRequestHandler<UpdateActivityCommand, ActivityResponse>
 {
     private readonly IActivityRepository _repository;
+    private readonly IMapper _mapper;
 
-    public UpdateActivity(IActivityRepository repository)
+    public UpdateActivity(IActivityRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<ActivityDto> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
+    public async Task<ActivityResponse> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
     {
-        var activity = command.ActivityDto.ToDomain(); // TODO: update time
-        var updated = await _repository.UpdateAsync(activity);
-        if (updated == null)
-        {
-            throw new ActivityNotFoundException(command.ActivityDto.Id);
-        }
-        return updated.ToModel();
+        var activity = await _repository.GetByIdAsync(ActivityId.From(command.Id));
+        if (activity == null) 
+            throw new ActivityNotFoundException(command.Id);
+
+        if (command.Name != null) 
+            activity.UpdateName(command.Name);
+        if (command.Description != null)
+            activity.UpdateDescription(command.Description);
+
+        await _repository.UpdateAsync(activity);
+        return _mapper.Map<ActivityResponse>(activity);
     }
 }

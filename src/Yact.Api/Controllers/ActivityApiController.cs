@@ -15,11 +15,11 @@ namespace Yact.Api.Controllers;
 public partial class ActivityApiController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILogger _logger;
+    private readonly ILogger<ActivityApiController> _logger;
 
     public ActivityApiController(
         IMediator mediator,
-        ILogger logger)
+        ILogger<ActivityApiController> logger)
     {
         _mediator = mediator;
         _logger = logger;

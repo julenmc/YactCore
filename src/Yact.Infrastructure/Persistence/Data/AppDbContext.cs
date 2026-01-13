@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Yact.Application.Common;
+using Yact.Domain.Entities;
 using Yact.Domain.Primitives;
 using Yact.Infrastructure.Persistence.Models;
 
@@ -19,7 +20,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Domain.Entities.Cyclist> Cyclists { get; set; }
     //public DbSet<CyclistFitness> CyclistFitnesses { get; set; }
-    //public DbSet<ActivityInfo> ActivityInfos { get; set; }
+    public DbSet<Domain.Entities.Activity> Activities { get; set; }
     public DbSet<Domain.Entities.Climb> Climbs { get; set; }
     //public DbSet<Interval> Intervals { get; set; }
     //public DbSet<ActivityClimb> ActivityClimbs { get; set; }
@@ -43,70 +44,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
-
-        //var cyclistId = Guid.NewGuid();
-        //var fitnessId = Guid.NewGuid();
-        ////var activityId = Guid.NewGuid();
-        ////var climbId = Guid.NewGuid();
-
-        //modelBuilder.Entity<Cyclist>().HasData(new Cyclist
-        //{
-        //    Id = cyclistId,
-        //    Name = "Dummy",
-        //    LastName = "Cyclist",
-        //    BirthDate = DateTime.UtcNow,
-        //});
-
-        //modelBuilder.Entity<CyclistFitness>().HasData(new CyclistFitness
-        //{
-        //    Id = fitnessId,
-        //    CyclistId = cyclistId,
-        //    UpdateDate = DateTime.UtcNow,
-        //    Height = 180,
-        //    Weight = 70,
-        //    Ftp = 250,
-        //    Vo2Max = 50,
-        //    PowerZonesRaw = @"[
-        //        {""lowLimit"": 0, ""highLimit"":150},
-        //        {""lowLimit"": 151, ""highLimit"": 200},
-        //        {""lowLimit"": 201, ""highLimit"": 250},
-        //        {""lowLimit"": 251, ""highLimit"": 300},
-        //        {""lowLimit"": 301, ""highLimit"": 350},
-        //        {""lowLimit"": 351, ""highLimit"": 400},
-        //        {""lowLimit"": 401, ""highLimit"": 500}
-        //    ]",
-        //});
-
-        //modelBuilder.Entity<ActivityInfo>().HasData(new ActivityInfo
-        //{
-        //    Id = activityId,
-        //    CyclistId = cyclistId,
-        //    Name = "Dummy Activity",
-        //    Path = "dummy_activity.fit",
-        //    Description = "This is a dummy activity",
-        //    StartDate = DateTime.UtcNow.AddMinutes(-30),
-        //    EndDate = DateTime.UtcNow,
-        //    DistanceMeters = 10000,
-        //    ElevationMeters = 100,
-        //    Type = "Cycling",
-        //    CreateDate = DateTime.UtcNow,
-        //});
-
-        //modelBuilder.Entity<ClimbInfo>().HasData(new ClimbInfo
-        //{
-        //    Id = climbId,
-        //    Name = "Unknown",
-        //    LongitudeInit = 0,
-        //    LongitudeEnd = 0,
-        //    LatitudeInit = 0,
-        //    LatitudeEnd = 0,
-        //    AltitudeInit = 0,
-        //    AltitudeEnd = 0,
-        //    Slope = 0,
-        //    MaxSlope = 0,
-        //    Elevation = 0,
-        //    Validated = true
-        //});
     }
 
     private List<IDomainEvent> GetDomainEvents()

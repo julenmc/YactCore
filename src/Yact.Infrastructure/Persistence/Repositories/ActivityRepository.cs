@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Entities = Yact.Domain.Entities;
+using Yact.Domain.Entities;
+using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
-using Yact.Infrastructure.Persistence.Data;
-using Yact.Infrastructure.Persistence.Mappers;
-using Yact.Domain.Exceptions.Cyclist;
-using Yact.Infrastructure.Persistence.Models;
 using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Cyclist;
+using Yact.Infrastructure.Persistence.Data;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -19,88 +17,51 @@ public class ActivityRepository : IActivityRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<Entities.Activity>> GetAllAsync()
+    public async Task<Activity?> GetByIdAsync(ActivityId id)
     {
-        //var objList = await _db.ActivityInfos.ToListAsync();
-        //List<Entities.Activity> result = new List<Entities.Activity>();
-        //foreach (var item in objList)
-        //{
-        //    result.Add(item.ToDomain());
-        //}
-        //return result;
-        throw new NotImplementedException();
+        return await _db.Activities.FindAsync(id);
     }
 
-    public async Task<Entities.Activity?> GetByIdAsync(ActivityId id)
+    public async Task<IEnumerable<Activity>> GetByCyclistIdAsync(CyclistId id)
     {
-        //var obj = await _db.ActivityInfos.FirstOrDefaultAsync(x => x.Id == id.Value);
-        //return obj?.ToDomain();
-        throw new NotImplementedException();
+        return await _db.Activities
+            .Where(a => a.CyclistId == id)
+            .ToListAsync();
     }
 
-    public async Task<IEnumerable<Entities.Activity>> GetByCyclistIdAsync(CyclistId id)
+    public async Task<Activity> AddAsync(Activity activity)
     {
-        // Check if cyclist exists
-        //var cyclist = await _db.Cyclists.FirstOrDefaultAsync(c => c.Id == id);
-        //if (cyclist == null)
-        //    throw new NoCyclistException();
-
-        //// Get activities
-        //var objList = await _db.ActivityInfos
-        //    .Where(a => a.CyclistId == id.Value)
-        //    .ToListAsync();
-        //List<Entities.Activity> result = new List<Entities.Activity>();
-        //foreach (var item in objList)
-        //{
-        //    result.Add(item.ToDomain());
-        //}
-        //return result;
-        throw new NotImplementedException();
+        var entry = await _db.Activities.AddAsync(activity);
+        await _db.SaveChangesAsync();
+        return entry.Entity;
     }
 
-    public async Task<Entities.Activity> AddAsync(Entities.Activity activity)
+    public async Task<Activity?> RemoveByIdAsync(ActivityId id)
     {
-        // Check if cyclist exists
-        //var cyclist = await _db.Cyclists.FirstOrDefaultAsync(c => c.Id == activity.CyclistId);
-        //if (cyclist == null)
-        //    throw new NoCyclistException();
+        try
+        {
+            var activity = await _db.Activities.FindAsync(id);
+            if (activity == null)
+                throw new ActivityNotFoundException(id.Value);
 
-        //var saved = await _db.ActivityInfos.AddAsync(activity.ToModel());
-        //await _db.SaveChangesAsync();
-
-        //return saved.Entity.ToDomain();
-        throw new NotImplementedException();
+            _db.Activities.Remove(activity);
+            var rowsAffected = await _db.SaveChangesAsync();
+            return rowsAffected > 0 ? activity : null;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Entity didn't exist
+            return null;
+        }
     }
 
-    public async Task<Entities.Activity?> RemoveByIdAsync(ActivityId id)
+    public async Task<Activity?> UpdateAsync(Activity activity)
     {
-        // Create aux entity just for the id
-        //var activity = new ActivityInfo { Id = id.Value, CyclistId = Guid.Empty, Name = "Dummy", Path = "Dummy Path" };
-
-        //try
-        //{
-        //    var deleted = _db.ActivityInfos.Remove(activity);
-        //    if (deleted == null)
-        //        return null;
-
-        //    var rowsAffected = await _db.SaveChangesAsync();
-        //    return rowsAffected > 0 ? deleted.Entity.ToDomain() : null; 
-        //}
-        //catch (DbUpdateConcurrencyException)
-        //{
-        //    // Entity didn't exist
-        //    return null;
-        //}
-        throw new NotImplementedException();
-    }
-
-    public async Task<Entities.Activity?> UpdateAsync(Entities.Activity activity)
-    {
-        var updated = _db.Update(activity.ToModel());
+        var updated = _db.Update(activity);
         if (updated == null) 
             return null;
 
         var rowsAffected = await _db.SaveChangesAsync();
-        return rowsAffected > 0 ? updated.Entity.ToDomain() : null;
+        return rowsAffected > 0 ? updated.Entity : null;
     }
 }

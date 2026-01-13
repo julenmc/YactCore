@@ -8,21 +8,21 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Activities;
 
-public class GetActivitiesByCyclistId : IRequestHandler<GetActivitiesByCyclisIdQuery, IEnumerable<ActivityDto>>
+public class GetActivitiesByCyclistId : IRequestHandler<GetActivitiesByCyclisIdQuery, IEnumerable<ActivityResponse>>
 {
     private readonly IActivityRepository _repository;
+    private readonly IMapper _mapper;
 
     public GetActivitiesByCyclistId(
-        IActivityRepository repository)
+        IActivityRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ActivityDto>> Handle (GetActivitiesByCyclisIdQuery query, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ActivityResponse>> Handle (GetActivitiesByCyclisIdQuery query, CancellationToken cancellationToken)
     {
         var activityList = await _repository.GetByCyclistIdAsync(CyclistId.From(query.Id));
-        return activityList
-            .Select(a => a.ToModel())
-            .ToList();
+        return _mapper.Map<IEnumerable<ActivityResponse>>(activityList);
     }
 }

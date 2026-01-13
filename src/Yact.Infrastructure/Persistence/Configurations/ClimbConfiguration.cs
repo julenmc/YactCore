@@ -21,47 +21,34 @@ public class ClimbConfiguration : IEntityTypeConfiguration<Climb>
             .HasColumnName("Id")
             .IsRequired();
 
-        builder.Property(c => c.Summary.Name)
+        builder.OwnsOne(c => c.Summary, summary =>
+        {
+            summary.Property(s => s.Name)
             .HasMaxLength(200)
             .HasColumnName("Name")
             .IsRequired();
+        });
 
-        // Metrics
-        builder.Property(c => c.Data.Metrics.DistanceMeters)
-            .HasColumnName("DistanceMeters")
-            .IsRequired();
-        builder.Property(c => c.Data.Metrics.Slope)
-            .HasColumnName("Slope")
-            .IsRequired();
-        builder.Property(c => c.Data.Metrics.MaxSlope)
-            .HasColumnName("MaxSlope")
-            .IsRequired();
-        builder.Property(c => c.Data.Metrics.NetElevationMeters)
-            .HasColumnName("NetElevationMeters")
-            .IsRequired();
-        builder.Property(c => c.Data.Metrics.TotalElevationMeters)
-            .HasColumnName("TotalElevationMeters")
-            .IsRequired();
-
-        // Coordinates
-        builder.Property(c => c.Data.Coordinates.LongitudeInit)
-            .HasColumnName("LongitudeInit")
-            .IsRequired();
-        builder.Property(c => c.Data.Coordinates.LongitudeEnd)
-            .HasColumnName("LongitudeEnd")
-            .IsRequired();
-        builder.Property(c => c.Data.Coordinates.LatitudeInit)
-            .HasColumnName("LatitudeInit")
-            .IsRequired();
-        builder.Property(c => c.Data.Coordinates.LatitudeEnd)
-            .HasColumnName("LatitudeEnd")
-            .IsRequired();
-        builder.Property(c => c.Data.Coordinates.AltitudeInit)
-            .HasColumnName("AltitudeInit")
-            .IsRequired();
-        builder.Property(c => c.Data.Coordinates.AltitudeEnd)
-            .HasColumnName("AltitudeEnd")
-            .IsRequired();
-
+        builder.OwnsOne(c => c.Data, data =>
+        {
+            data.OwnsOne(d => d.Metrics, metrics =>
+            {
+                metrics.Property(m => m.DistanceMeters).HasColumnName("DistanceMeters").IsRequired();
+                metrics.Property(m => m.Slope).HasColumnName("Slope").IsRequired();
+                metrics.Property(m => m.MaxSlope).HasColumnName("MaxSlope").IsRequired();
+                metrics.Property(m => m.NetElevationMeters).HasColumnName("NetElevationMeters").IsRequired();
+                metrics.Property(m => m.TotalElevationMeters).HasColumnName("TotalElevationMeters").IsRequired();
+            });
+            data.OwnsOne(d => d.Coordinates, coordinates =>
+            {
+                coordinates.Property(c => c.LongitudeInit).HasColumnName("LongitudeInit").IsRequired();
+                coordinates.Property(c => c.LongitudeEnd).HasColumnName("LongitudeEnd").IsRequired();
+                coordinates.Property(c => c.LatitudeInit).HasColumnName("LatitudeInit").IsRequired();
+                coordinates.Property(c => c.LatitudeEnd).HasColumnName("LatitudeEnd").IsRequired();
+                coordinates.Property(c => c.AltitudeInit).HasColumnName("AltitudeInit").IsRequired();
+                coordinates.Property(c => c.AltitudeEnd).HasColumnName("AltitudeEnd").IsRequired();
+            });
+            data.Property(d => d.StartPointMeters).HasColumnName("StartPointMeters");
+        });    
     }
 }

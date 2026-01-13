@@ -1,6 +1,7 @@
 ﻿using Dynastream.Fit;
 using Yact.Application.DTOs.Activity;
 using Yact.Application.Interfaces;
+using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Infrastructure.FileStorage;
@@ -9,7 +10,7 @@ public class ActivityReaderService : IActivityReaderService
 {
     private const double Semicircles = 2147483648.0;
 
-    public async Task<ActivityReadData> ReadActivitySummaryAsync(Stream fileStream)
+    public async Task<ActivitySummary> ReadActivitySummaryAsync(Stream fileStream)
     {
         using var ms = new MemoryStream();
         await fileStream.CopyToAsync(ms);
@@ -21,12 +22,19 @@ public class ActivityReaderService : IActivityReaderService
 
         string name = "Unknown";
         string? type = "Unknown";
+        System.DateTime start = System.DateTime.Now;
+        System.DateTime end = System.DateTime.Now;
+        double distance = 0;
+        
         broadcaster.SessionMesgEvent += (s, e) =>
         {
             var m = (SessionMesg)e.mesg;
 
             name = m.Name;
             type = m.GetSport()?.ToString();
+            start = m.GetStartTime().GetDateTime();
+            end = start.Add(TimeSpan.FromSeconds((double)(m.GetTotalElapsedTime() ?? 0)));
+            distance = (double)(m.GetTotalDistance() ?? 0);
         };
 
         if (!decode.IsFIT(ms) || !decode.CheckIntegrity(ms))
@@ -37,10 +45,12 @@ public class ActivityReaderService : IActivityReaderService
 
         decode.Read(ms);
 
-        return new ActivityReadData(
-            Name: name,
-            Type: type,
-            Records: recordData
+        return ActivitySummary.Create(
+            name: name,
+            type: type,
+            start: start,
+            end: end,
+            create: System.DateTime.Now
         );
     }
 

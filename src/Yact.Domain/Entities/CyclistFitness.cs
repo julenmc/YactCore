@@ -15,11 +15,11 @@ public class CyclistFitness : Entity<CyclistFitnessId>
     public IDictionary<int, Zone>? PowerZones { get; private set; }
 
     /// <summary>
-    /// EF Core constructor
+    /// Empty constructor
     /// </summary>
     private CyclistFitness() : base(default!)
     {
-        // Just for EF Core
+        
     }
 
     private CyclistFitness(

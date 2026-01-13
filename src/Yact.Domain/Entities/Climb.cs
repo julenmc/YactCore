@@ -13,6 +13,8 @@ public class Climb : AggregateRoot<ClimbId>
 
     private List<ClimbRecord> _topTimes;
 
+    private Climb() : base(default!) { }
+
     private Climb(
         ClimbId id,
         ClimbDetails data,

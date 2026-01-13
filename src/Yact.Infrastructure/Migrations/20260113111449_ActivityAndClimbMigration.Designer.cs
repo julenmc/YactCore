@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Yact.Infrastructure.Persistence.Data;
 
@@ -11,9 +12,11 @@ using Yact.Infrastructure.Persistence.Data;
 namespace Yact.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260113111449_ActivityAndClimbMigration")]
+    partial class ActivityAndClimbMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,10 +126,6 @@ namespace Yact.Infrastructure.Migrations
                             b1.Property<Guid>("ActivityId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<DateTime>("CreateDate")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("CreationDate");
-
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)")
                                 .HasColumnName("Description");
@@ -155,10 +154,6 @@ namespace Yact.Infrastructure.Migrations
                             b1.Property<string>("Type")
                                 .HasColumnType("nvarchar(max)")
                                 .HasColumnName("Type");
-
-                            b1.Property<DateTime?>("UpdateDate")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("UpdateDate");
 
                             b1.HasKey("ActivityId");
 

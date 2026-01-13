@@ -1,43 +1,37 @@
-﻿using Yact.Application.Responses;
+﻿using AutoMapper;
+using Yact.Application.Responses;
 using Yact.Domain.Entities;
-using Yact.Domain.ValueObjects.Activity;
-using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.Mapping;
 
-internal static class ActivityMapper
+public class ActivityMapper : Profile
 {
-    internal static Activity ToDomain(this ActivityDto model)
+    public ActivityMapper ()
     {
-        return Activity.Load(
-            ActivityId.From(model.Id),
-            CyclistId.From(model.CyclistId),
-            FilePath.From(model.Path),
-            ActivitySummary.Create(
-                name: model.Name,
-                description: model.Description ?? "",
-                startDate: model.StartDate,
-                endDate: model.EndDate,
-                distance: model.DistanceMeters,
-                elevation: model.ElevationMeters,
-                type: model.Type ?? "Unknown")
-            );
-    }
-
-    internal static ActivityDto ToModel(this Activity entity)
-    {
-        return new ActivityDto
-        {
-            Id = entity.Id.Value,
-            CyclistId = entity.CyclistId.Value,
-            Name = entity.Summary.Name,
-            Description = entity.Summary.Description,
-            Path = entity.Path.Value,
-            StartDate = entity.Summary.StartDate,
-            EndDate = entity.Summary.EndDate,
-            DistanceMeters = entity.Summary.DistanceMeters,
-            ElevationMeters = entity.Summary.ElevationMeters,
-            Type = entity.Summary.Type
-        };
+        CreateMap<Activity, ActivityResponse>()
+            .ForMember(dest => dest.Id,
+                opt => opt.MapFrom(src => src.Id.Value))
+            .ForMember(dest => dest.CyclistId,
+                opt => opt.MapFrom(src => src.CyclistId.Value))
+            .ForMember(dest => dest.Name,
+                opt => opt.MapFrom(src => src.Summary.Name))
+            .ForMember(dest => dest.Description,
+                opt => opt.MapFrom(src => src.Summary.Description))
+            .ForMember(dest => dest.Path,
+                opt => opt.MapFrom(src => src.Path.Value))
+            .ForMember(dest => dest.StartDate,
+                opt => opt.MapFrom(src => src.Summary.StartDate))
+            .ForMember(dest => dest.EndDate,
+                opt => opt.MapFrom(src => src.Summary.EndDate))
+            .ForMember(dest => dest.DistanceMeters,
+                opt => opt.MapFrom(src => src.Summary.DistanceMeters))
+            .ForMember(dest => dest.ElevationMeters,
+                opt => opt.MapFrom(src => src.Summary.ElevationMeters))
+            .ForMember(dest => dest.Type,
+                opt => opt.MapFrom(src => src.Summary.Type))
+            .ForMember(dest => dest.CreateDate,
+                opt => opt.MapFrom(src => src.Summary.CreateDate))
+            .ForMember(dest => dest.UpdateDate,
+                opt => opt.MapFrom(src => src.Summary.UpdateDate));
     }
 }

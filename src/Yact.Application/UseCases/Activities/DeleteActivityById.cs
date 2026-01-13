@@ -10,16 +10,13 @@ public class DeleteActivityById : IRequestHandler<DeleteActivityByIdCommand, Gui
 {
     private readonly IFileStorageService _fileStorage;
     private readonly IActivityRepository _activityRepository;
-    private readonly IActivityReaderService _activityReaderService;
 
     public DeleteActivityById(
         IFileStorageService fileStorage,
-        IActivityRepository activityRepository,
-        IActivityReaderService activityReaderService)
+        IActivityRepository activityRepository)
     {
         _fileStorage = fileStorage;
         _activityRepository = activityRepository;
-        _activityReaderService = activityReaderService;
     }
 
     public async Task<Guid> Handle(DeleteActivityByIdCommand request, CancellationToken cancellationToken)

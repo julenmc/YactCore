@@ -1,4 +1,5 @@
-﻿using Yact.Domain.Events;
+﻿using System.Xml.Linq;
+using Yact.Domain.Events;
 using Yact.Domain.Primitives;
 using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Cyclist;
@@ -11,6 +12,11 @@ public class Activity : AggregateRoot<ActivityId>
     public FilePath Path { get; private set; }
     public ActivitySummary Summary { get; private set; }
     public ActivityRecords? Records { get; private set; }
+
+    private Activity() : base(default!)
+    {
+
+    }
 
     private Activity(
         ActivityId id, 
@@ -35,7 +41,7 @@ public class Activity : AggregateRoot<ActivityId>
             filePath,
             data);
 
-        activity.AddDomainEvent(new ActivityCreatedEvent(activityId, cyclistId));
+        //activity.AddDomainEvent(new ActivityCreatedEvent(activityId, cyclistId));
         return activity;
     }
 
@@ -57,6 +63,22 @@ public class Activity : AggregateRoot<ActivityId>
         ArgumentNullException.ThrowIfNull(summary);
 
         Summary = summary;
+    }
+
+    public void UpdateName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentNullException(nameof(name), "Name can't be empty");
+            
+        Summary = Summary with { Name = name };
+    }
+
+    public void UpdateDescription(string description)
+    {
+        if (string.IsNullOrEmpty(description))
+            throw new ArgumentNullException(nameof(description), "Description can't be empty");
+
+        Summary = Summary with { Description = description };
     }
 
     public void AddRecords(ActivityRecords records)

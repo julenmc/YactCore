@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using Yact.Domain.ValueObjects.Activity.Records;
+﻿using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.ValueObjects.Activity;
 
@@ -12,12 +11,15 @@ public record ActivitySummary
     public double DistanceMeters { get; init; }
     public double ElevationMeters { get; init; }
     public string? Type { get; init; }
+    public DateTime CreateDate { get; init; }
+    public DateTime? UpdateDate { get; init; }
 
     public static ActivitySummary Create(
         string name,
         string type,
         DateTime start,
-        DateTime end)
+        DateTime end,
+        DateTime create)
     {
         return new ActivitySummary
         {
@@ -25,6 +27,7 @@ public record ActivitySummary
             Type = type,
             StartDate = start,
             EndDate = end,
+            CreateDate = create
         };
     }
 
@@ -35,7 +38,8 @@ public record ActivitySummary
         DateTime endDate,
         double distance,
         double elevation,
-        string type)
+        string type,
+        DateTime create)
     {
         return new ActivitySummary
         {
@@ -46,6 +50,7 @@ public record ActivitySummary
             EndDate = endDate,
             DistanceMeters = distance,
             ElevationMeters = elevation,
+            CreateDate = create
         };
     }
 

@@ -27,12 +27,7 @@ public class UploadActivity : IRequestHandler<UploadActivityCommand, Guid>
     public async Task<Guid> Handle(UploadActivityCommand request, CancellationToken cancellationToken)
     {      
         // Read file
-        var readData = await _activityReaderService.ReadActivitySummaryAsync(request.FileStream);
-        var summary = ActivitySummary.Create(
-            readData.Name,
-            readData.Type,
-            readData.Records.First().DateTime,
-            readData.Records.Last().DateTime);
+        var summary = await _activityReaderService.ReadActivitySummaryAsync(request.FileStream);
 
         // Reset stream to read file
         request.FileStream.Position = 0;

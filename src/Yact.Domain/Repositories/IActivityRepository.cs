@@ -6,7 +6,6 @@ namespace Yact.Domain.Repositories;
 
 public interface IActivityRepository
 {
-    Task<IEnumerable<Activity>> GetAllAsync();
     Task<Activity?> GetByIdAsync(ActivityId id);
     Task<IEnumerable<Activity>> GetByCyclistIdAsync(CyclistId id);
     Task<Activity> AddAsync(Activity activity);

@@ -2,7 +2,6 @@
 using Yact.Domain.Entities;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.Persistence.Data;
-using Yact.Infrastructure.Persistence.Mappers;
 using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Climb;
 
