@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Yact.Api.Requests.Activities;
 using Yact.Application.Responses;
 using Yact.Application.UseCases.Activities.Commands;
 using Yact.Application.UseCases.Activities.Queries;
@@ -14,32 +15,21 @@ namespace Yact.Api.Controllers;
 public partial class ActivityApiController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger _logger;
 
-    public ActivityApiController(IMediator mediator)
+    public ActivityApiController(
+        IMediator mediator,
+        ILogger logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
-
-    //[HttpGet]
-    //public async Task<ActionResult<IEnumerable<ActivityInfoDto>>> Get()
-    //{
-    //    try
-    //    {
-    //        var query = new GetActivitiesQuery();
-    //        IEnumerable<ActivityInfoDto> activities = await _mediator.Send(query);
-    //        return Ok(activities);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-    //    }
-    //}
 
     [HttpGet]
     [Route("get-by-id/{id}")]
-    [ProducesResponseType(typeof(ActivityDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ActivityResponse), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ActivityDto>> Get(Guid id)
+    public async Task<ActionResult<ActivityResponse>> Get(Guid id)
     {
         try
         {
@@ -55,15 +45,16 @@ public partial class ActivityApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while getting activity by ID: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
     [HttpGet]
     [Route("get-by-cyclist-id/{id}")]
-    [ProducesResponseType(typeof(IEnumerable<ActivityDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<ActivityResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<ActivityDto>>> GetByCyclistId(Guid id)
+    public async Task<ActionResult<IEnumerable<ActivityResponse>>> GetByCyclistId(Guid id)
     {
         try
         {
@@ -78,7 +69,8 @@ public partial class ActivityApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while getting activity by cyclist ID: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
@@ -108,7 +100,8 @@ public partial class ActivityApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while uploading activity: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
@@ -130,23 +123,26 @@ public partial class ActivityApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while updating activity: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 
     [HttpPut]
-    [Route("update")]
-    [ProducesResponseType(typeof(ActivityDto), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<ActivityDto>> Update([FromBody] UpdateActivityCommand command)
+    [Route("update/{id}")]
+    [ProducesResponseType(typeof(ActivityResponse), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<ActivityResponse>> Update(Guid id, [FromBody] UpdateActivityRequest request)
     {
         try
         {
+            var command = new UpdateActivityCommand(id, request.Name, request.Description);
             var activity = await _mediator.Send(command);
             return Ok(activity);
         }
         catch (Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            _logger.LogError($"Error while getting cyclist by ID: {ex.Message}");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
 }
