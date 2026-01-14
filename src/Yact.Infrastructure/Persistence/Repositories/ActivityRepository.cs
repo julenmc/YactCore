@@ -10,9 +10,9 @@ namespace Yact.Infrastructure.Persistence.Repositories;
 
 public class ActivityRepository : IActivityRepository
 {
-    private readonly AppDbContext _db;
+    private readonly WriteDbContext _db;
 
-    public ActivityRepository(AppDbContext db)
+    public ActivityRepository(WriteDbContext db)
     {
         _db = db;
     }

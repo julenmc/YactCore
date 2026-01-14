@@ -1,6 +1,6 @@
-﻿namespace Yact.Infrastructure.Persistence.Models;
+﻿namespace Yact.Infrastructure.Persistence.ReadModels;
 
-public class ActivityInfo
+public class ActivityReadModel
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
@@ -16,9 +16,9 @@ public class ActivityInfo
 
     // Foreign Key
     public Guid CyclistId { get; set; }
-    public Cyclist? Cyclist { get; set; }
+    public CyclistReadModel? Cyclist { get; set; }
 
-    // 1-N relation for climbs and intervals
-    public List<ActivityClimb>? Climbs { get; set; }
-    public List<Interval>? Intervals { get; set; }
+    //// 1-N relation for climbs and intervals
+    //public List<ActivityClimb>? Climbs { get; set; }
+    //public List<Interval>? Intervals { get; set; }
 }

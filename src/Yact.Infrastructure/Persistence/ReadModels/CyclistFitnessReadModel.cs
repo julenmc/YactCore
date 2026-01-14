@@ -1,6 +1,6 @@
-﻿namespace Yact.Infrastructure.Persistence.Models;
+﻿namespace Yact.Infrastructure.Persistence.ReadModels;
 
-public class CyclistFitness
+public class CyclistFitnessReadModel
 {
     public required Guid Id { get; set; }
     public DateTime UpdateDate { get; set; }
@@ -14,5 +14,5 @@ public class CyclistFitness
 
     // Foreing Key
     public required Guid CyclistId { get; set; }
-    public Cyclist? Cyclist { get; set; }
+    public CyclistReadModel? Cyclist { get; set; }
 }

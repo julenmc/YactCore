@@ -8,9 +8,9 @@ namespace Yact.Infrastructure.Persistence.Repositories;
 
 public class ClimbRepository : IClimbRepository
 {
-    private readonly AppDbContext _db;
+    private readonly WriteDbContext _db;
 
-    public ClimbRepository(AppDbContext db)
+    public ClimbRepository(WriteDbContext db)
     {
         _db = db;
     }

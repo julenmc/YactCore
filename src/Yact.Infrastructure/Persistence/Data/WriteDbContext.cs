@@ -1,18 +1,16 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Yact.Application.Common;
-using Yact.Domain.Entities;
 using Yact.Domain.Primitives;
-using Yact.Infrastructure.Persistence.Models;
 
 namespace Yact.Infrastructure.Persistence.Data;
 
-public class AppDbContext : DbContext
+public class WriteDbContext : DbContext
 {
     private readonly IMediator _mediator;
 
-    public AppDbContext(
-        DbContextOptions<AppDbContext> options,
+    public WriteDbContext(
+        DbContextOptions<WriteDbContext> options,
         IMediator mediator) : base(options)
     {
         _mediator = mediator;
@@ -41,7 +39,7 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(WriteDbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -11,7 +11,7 @@ using Yact.Infrastructure.Persistence.Data;
 
 namespace Yact.Infrastructure.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(WriteDbContext))]
     [Migration("20260109121733_correctTables")]
     partial class correctTables
     {

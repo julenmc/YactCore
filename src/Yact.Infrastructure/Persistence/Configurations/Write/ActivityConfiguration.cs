@@ -4,7 +4,7 @@ using Yact.Domain.Entities;
 using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Cyclist;
 
-namespace Yact.Infrastructure.Persistence.Configurations;
+namespace Yact.Infrastructure.Persistence.Configurations.Write;
 
 public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
 {

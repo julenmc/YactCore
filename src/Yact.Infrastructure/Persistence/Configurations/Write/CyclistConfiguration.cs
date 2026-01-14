@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Yact.Domain.Entities;
 using Yact.Domain.ValueObjects.Cyclist;
 
-namespace Yact.Infrastructure.Persistence.Configurations;
+namespace Yact.Infrastructure.Persistence.Configurations.Write;
 
 public class CyclistConfiguration : IEntityTypeConfiguration<Cyclist>
 {

@@ -11,7 +11,7 @@ using Yact.Infrastructure.Persistence.Data;
 
 namespace Yact.Infrastructure.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(WriteDbContext))]
     [Migration("20260113120307_UpdateActivityTableColumns")]
     partial class UpdateActivityTableColumns
     {

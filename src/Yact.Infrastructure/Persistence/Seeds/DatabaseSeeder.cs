@@ -6,9 +6,9 @@ namespace Yact.Infrastructure.Persistence.Seeds;
 
 public class DatabaseSeeder
 {
-    private readonly AppDbContext _context;
+    private readonly WriteDbContext _context;
 
-    public DatabaseSeeder(AppDbContext context)
+    public DatabaseSeeder(WriteDbContext context)
     {
         _context = context;
     }

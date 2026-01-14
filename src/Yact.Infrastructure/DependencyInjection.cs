@@ -15,13 +15,15 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // DB context
-        services.AddDbContext<AppDbContext>(options =>
+        // DB contexts
+        services.AddDbContext<WriteDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<ReadDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         // MediatR
         services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(AppDbContext).Assembly));
+            cfg.RegisterServicesFromAssembly(typeof(WriteDbContext).Assembly));
 
         // Repositories
         services.AddScoped<IActivityRepository, ActivityRepository>();

@@ -8,9 +8,9 @@ namespace Yact.Infrastructure.Persistence.Repositories;
 
 public class CyclistRepository : ICyclistRepository
 {
-    private readonly AppDbContext _db;
+    private readonly WriteDbContext _db;
 
-    public CyclistRepository(AppDbContext db)
+    public CyclistRepository(WriteDbContext db)
     {
         _db = db;
     }
