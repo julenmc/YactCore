@@ -2,9 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Yact.Application.Interfaces.Files;
+using Yact.Application.Interfaces.Queries;
+using Yact.Application.Interfaces.Repositories;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.FileStorage;
 using Yact.Infrastructure.Persistence.Data;
+using Yact.Infrastructure.Persistence.Queries;
 using Yact.Infrastructure.Persistence.Repositories;
 
 namespace Yact.Infrastructure;
@@ -30,6 +33,11 @@ public static class DependencyInjection
         services.AddScoped<ICyclistRepository, CyclistRepository>();
         services.AddScoped<IClimbRepository, ClimbRepository>();
         services.AddScoped<IActivityClimbRepository, ActivityClimbRepository>();
+
+        // Queries
+        services.AddScoped<IActivityQueries, ActivityQueries>();
+        services.AddScoped<IClimbQueries, ClimbQueries>();
+        services.AddScoped<ICyclistQueries, CyclistQueries>();
 
         // Storage
         services.Configure<FileStorageConfiguration>(

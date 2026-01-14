@@ -14,9 +14,11 @@ public class CyclistReadConfiguration : IEntityTypeConfiguration<CyclistReadMode
 
         // Fitnesses and activities
         builder.HasMany(c => c.Fitnesses)
-            .WithOne();
+            .WithOne(f => f.Cyclist)
+            .HasForeignKey(f => f.CyclistId);
 
         builder.HasMany(c => c.Activities)
-            .WithOne();
+            .WithOne(a => a.Cyclist)
+            .HasForeignKey(a => a.CyclistId);
     }
 }

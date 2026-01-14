@@ -12,6 +12,11 @@ public class CyclistFitnessReadConfiguration : IEntityTypeConfiguration<CyclistF
 
         builder.HasKey(x => x.Id);
 
+        // Columns
+        builder.Property(f => f.HrZonesRaw).HasColumnName("HrZones");
+        builder.Property(f => f.PowerZonesRaw).HasColumnName("PowerZones");
+        builder.Property(f => f.PowerCurveJson).HasColumnName("PowerCurve");
+
         // FK of cyclist
         builder.HasOne(f => f.Cyclist)
             .WithMany()

@@ -13,7 +13,8 @@ public class ClimbReadModel
     public double DistanceMeters { get; set; }
     public double Slope { get; set; }
     public double MaxSlope { get; set; }
-    public double Elevation { get; set; }
+    public double NetElevationMeters { get; set; }
+    public double TotalElevationMeters { get; set; }
 
     // 1-N relation with efforts
     //public List<ActivityClimb>? Efforts { get; set; }

@@ -18,7 +18,10 @@ public class ReadDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ReadDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(ReadDbContext).Assembly,
+            type => type.Namespace != null &&
+                    type.Namespace.Contains("Configurations.Read"));
 
         base.OnModelCreating(modelBuilder);
     }

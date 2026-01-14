@@ -15,11 +15,6 @@ public class CyclistRepository : ICyclistRepository
         _db = db;
     }
 
-    public async Task<IEnumerable<Entities.Cyclist>> GetAllAsync()
-    {
-        return await _db.Cyclists.ToListAsync();
-    }
-
     public async Task<Entities.Cyclist?> GetByIdAsync(CyclistId id)
     {
         return await _db.Cyclists
@@ -28,16 +23,6 @@ public class CyclistRepository : ICyclistRepository
                 .OrderByDescending(f => f.UpdateDate)
                 .Take(10))
             .FirstOrDefaultAsync();
-    }
-
-    public async Task<IEnumerable<Entities.Cyclist>> GetByLastName(string lastName)
-    {
-        return await _db.Cyclists
-            .Where(c => c.LastName == lastName)
-            .Include(c => c.FitnessHistory
-                .OrderByDescending(f => f.UpdateDate)
-                .Take(1))
-            .ToListAsync();
     }
 
     public async Task<Entities.Cyclist?> AddAsync(Entities.Cyclist cyclist)

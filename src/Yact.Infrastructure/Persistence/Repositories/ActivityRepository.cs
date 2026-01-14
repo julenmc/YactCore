@@ -22,13 +22,6 @@ public class ActivityRepository : IActivityRepository
         return await _db.Activities.FindAsync(id);
     }
 
-    public async Task<IEnumerable<Activity>> GetByCyclistIdAsync(CyclistId id)
-    {
-        return await _db.Activities
-            .Where(a => a.CyclistId == id)
-            .ToListAsync();
-    }
-
     public async Task<Activity> AddAsync(Activity activity)
     {
         var entry = await _db.Activities.AddAsync(activity);

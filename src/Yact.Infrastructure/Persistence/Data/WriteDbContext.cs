@@ -39,7 +39,10 @@ public class WriteDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(WriteDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(WriteDbContext).Assembly,
+            type => type.Namespace != null &&
+                    type.Namespace.Contains("Configurations.Write"));
 
         base.OnModelCreating(modelBuilder);
     }
