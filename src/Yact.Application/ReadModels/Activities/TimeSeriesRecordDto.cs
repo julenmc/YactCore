@@ -1,4 +1,4 @@
-﻿namespace Yact.Application.Responses;
+﻿namespace Yact.Application.ReadModels.Activities;
 
 public class TimeSeriesRecordDto<T>
 {

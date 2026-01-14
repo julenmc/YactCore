@@ -1,7 +1,7 @@
 ﻿using Yact.Application.DTOs.Activity;
 using Yact.Domain.ValueObjects.Activity;
 
-namespace Yact.Application.Interfaces;
+namespace Yact.Application.Interfaces.Files;
 
 public interface IActivityReaderService
 {

@@ -1,4 +1,4 @@
-﻿using Yact.Application.Interfaces;
+﻿using Yact.Application.Interfaces.Files;
 using Yact.Domain.Entities;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;

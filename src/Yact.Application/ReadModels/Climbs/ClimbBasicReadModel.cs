@@ -1,6 +1,6 @@
-﻿namespace Yact.Application.Responses;
+﻿namespace Yact.Application.ReadModels.Climbs;
 
-public class ClimbResponse
+public record ClimbBasicReadModel
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

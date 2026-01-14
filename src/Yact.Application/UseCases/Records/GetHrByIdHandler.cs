@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Yact.Application.Responses;
-using Yact.Application.Interfaces;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Application.UseCases.Records.Queries;
 using Yact.Domain.ValueObjects.Activity;
+using Yact.Application.ReadModels.Activities;
+using Yact.Application.Interfaces.Files;
 
 namespace Yact.Application.UseCases.Records;
 

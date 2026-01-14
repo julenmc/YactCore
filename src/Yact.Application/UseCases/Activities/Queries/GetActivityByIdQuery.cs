@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Yact.Application.Responses;
+using Yact.Application.ReadModels.Activities;
 
 namespace Yact.Application.UseCases.Activities.Queries;
 
-public record GetActivityByIdQuery (Guid Id) : IRequest<ActivityResponse>;
+public record GetActivityByIdQuery (Guid Id) : IRequest<ActivityAdvancedReadModel>;

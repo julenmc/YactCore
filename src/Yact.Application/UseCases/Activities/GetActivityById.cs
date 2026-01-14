@@ -1,31 +1,27 @@
-﻿using AutoMapper;
-using MediatR;
-using Yact.Application.Responses;
+﻿using MediatR;
+using Yact.Application.Interfaces.Repositories;
+using Yact.Application.ReadModels.Activities;
 using Yact.Application.UseCases.Activities.Queries;
 using Yact.Domain.Exceptions.Activity;
-using Yact.Domain.Repositories;
-using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.Activities;
 
-public class GetActivityById : IRequestHandler<GetActivityByIdQuery, ActivityResponse>
+public class GetActivityById : IRequestHandler<GetActivityByIdQuery, ActivityAdvancedReadModel>
 {
-    private readonly IActivityRepository _repository;
-    private readonly IMapper _mapper;
+    private readonly IActivityQueries _queries;
 
-    public GetActivityById(IActivityRepository repository, IMapper mapper)
+    public GetActivityById(IActivityQueries queries)
     {
-        _repository = repository;
-        _mapper = mapper;
+        _queries = queries;
     }
 
-    public async Task<ActivityResponse> Handle(GetActivityByIdQuery request, CancellationToken cancellation)
+    public async Task<ActivityAdvancedReadModel> Handle(GetActivityByIdQuery request, CancellationToken cancellation)
     {
-        var activity = await _repository.GetByIdAsync(ActivityId.From(request.Id));
+        var activity = await _queries.GetByIdAsync(request.Id);
         if (activity == null)
         {
             throw new ActivityNotFoundException(request.Id);
         }
-        return _mapper.Map<ActivityResponse>(activity);
+        return activity;
     }
 }

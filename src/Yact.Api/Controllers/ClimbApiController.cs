@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Yact.Api.Requests.Climbs;
-using Yact.Application.Responses;
+using Yact.Application.ReadModels.Climbs;
 using Yact.Application.UseCases.Climbs.Commands;
 using Yact.Application.UseCases.Climbs.Queries;
 using Yact.Domain.Exceptions.Climbs;
@@ -24,9 +24,9 @@ public class ClimbApiController : ControllerBase
 
     [HttpGet]
     [Route("get-by-id/{id}")]
-    [ProducesResponseType(typeof(ClimbResponse), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ClimbAdvancedReadModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ClimbResponse>> GetById(Guid id)
+    public async Task<ActionResult<ClimbAdvancedReadModel>> GetById(Guid id)
     {
         try
         {
@@ -44,32 +44,11 @@ public class ClimbApiController : ControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("get-by-coordinates")]
-    [ProducesResponseType(typeof(IEnumerable<ClimbResponse>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<ClimbResponse>>> GetByCoordinates([FromQuery] GetClimbsByCoordinatesQuery query)
-    {
-        try
-        {
-            var climbs = await _mediator.Send(query);
-            if (climbs.Count() == 0) 
-                return NotFound();
-
-            return Ok(climbs);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error while getting climbs by coordinates: {ex.Message}");
-            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
-        }
-    }
-
     [HttpPut]
     [Route("update/{climbId}")]
-    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> UpdateClimb(Guid climbId, [FromQuery] UpdateClimbRequest request)
+    public async Task<ActionResult<Guid>> UpdateClimb(Guid climbId, [FromQuery] UpdateClimbRequest request)
     {
         try
         {
@@ -94,9 +73,9 @@ public class ClimbApiController : ControllerBase
 
     [HttpDelete]
     [Route("delete/{climbId}")]
-    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> DeleteClimb(Guid climbId)
+    public async Task<ActionResult<Guid>> DeleteClimb(Guid climbId)
     {
         try
         {

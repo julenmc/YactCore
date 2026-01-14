@@ -1,28 +1,23 @@
 ﻿using AutoMapper;
 using MediatR;
-using Yact.Application.Responses;
+using Yact.Application.Interfaces.Queries;
+using Yact.Application.ReadModels.Climbs;
 using Yact.Application.UseCases.Climbs.Queries;
-using Yact.Domain.Repositories;
-using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.UseCases.Climbs;
 
-public class GetClimbByIdHandler : IRequestHandler<GetClimbByIdQuery, ClimbResponse>
+public class GetClimbByIdHandler : IRequestHandler<GetClimbByIdQuery, ClimbAdvancedReadModel>
 {
-    private readonly IMapper _mapper;
-    private readonly IClimbRepository _repository;
+    private readonly IClimbQueries _queries;
 
     public GetClimbByIdHandler(
-        IMapper mapper, 
-        IClimbRepository repository)
+        IClimbQueries queries)
     {
-        _mapper = mapper;
-        _repository = repository;
+        _queries = queries;
     }
 
-    public async Task<ClimbResponse> Handle (GetClimbByIdQuery query, CancellationToken cancellationToken)
+    public async Task<ClimbAdvancedReadModel> Handle (GetClimbByIdQuery query, CancellationToken cancellationToken)
     {
-        var climb = await _repository.GetByIdAsync(ClimbId.From(query.Id));
-        return _mapper.Map<ClimbResponse>(climb);
+        return await _queries.GetByIdAsync(query.Id);
     }
 }

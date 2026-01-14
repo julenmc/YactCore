@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Yact.Application.Interfaces;
+using Yact.Application.Interfaces.Files;
 using Yact.Application.UseCases.Activities.Commands;
 using Yact.Domain.Repositories;
 using Yact.Domain.ValueObjects.Activity;

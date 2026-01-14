@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Yact.Application.Interfaces;
+using Yact.Application.Interfaces.Files;
 using Yact.Domain.Repositories;
 using Yact.Infrastructure.FileStorage;
 using Yact.Infrastructure.Persistence.Data;

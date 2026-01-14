@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Yact.Application.Responses;
+using Yact.Application.ReadModels.Activities;
 
 namespace Yact.Application.UseCases.Records.Queries;
 

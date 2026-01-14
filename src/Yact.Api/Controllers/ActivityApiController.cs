@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Yact.Api.Requests.Activities;
-using Yact.Application.Responses;
+using Yact.Application.ReadModels.Activities;
 using Yact.Application.UseCases.Activities.Commands;
 using Yact.Application.UseCases.Activities.Queries;
 using Yact.Domain.Exceptions.Activity;
@@ -27,9 +27,9 @@ public partial class ActivityApiController : ControllerBase
 
     [HttpGet]
     [Route("get-by-id/{id}")]
-    [ProducesResponseType(typeof(ActivityResponse), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ActivityAdvancedReadModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<ActivityResponse>> Get(Guid id)
+    public async Task<ActionResult<ActivityAdvancedReadModel>> Get(Guid id)
     {
         try
         {
@@ -46,30 +46,6 @@ public partial class ActivityApiController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError($"Error while getting activity by ID: {ex.Message}");
-            return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
-        }
-    }
-
-    [HttpGet]
-    [Route("get-by-cyclist-id/{id}")]
-    [ProducesResponseType(typeof(IEnumerable<ActivityResponse>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<ActivityResponse>>> GetByCyclistId(Guid id)
-    {
-        try
-        {
-            var query = new GetActivitiesByCyclisIdQuery(id);
-            var activities = await _mediator.Send(query);
-
-            return Ok(activities);
-        }
-        catch (CyclistNotFoundException)
-        {
-            return NotFound($"Cyclist with ID {id} doesn't exist");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error while getting activity by cyclist ID: {ex.Message}");
             return StatusCode((int)HttpStatusCode.InternalServerError, "Internal error");
         }
     }
@@ -130,8 +106,8 @@ public partial class ActivityApiController : ControllerBase
 
     [HttpPut]
     [Route("update/{id}")]
-    [ProducesResponseType(typeof(ActivityResponse), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<ActivityResponse>> Update(Guid id, [FromBody] UpdateActivityRequest request)
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<Guid>> Update(Guid id, [FromBody] UpdateActivityRequest request)
     {
         try
         {

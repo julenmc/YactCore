@@ -1,14 +1,14 @@
-﻿using AutoMapper;
-using Yact.Application.Responses;
-using Yact.Domain.Entities;
+﻿//using AutoMapper;
+//using Yact.Application.ReadModels.ActivityClimbs;
+//using Yact.Domain.Entities;
 
-namespace Yact.Application.Mapping;
+//namespace Yact.Application.Mapping;
 
-public class ActivityClimbMapper : Profile
-{
-    public ActivityClimbMapper()
-    {
-        CreateMap<ActivityClimb, ActivityClimbDto>();
-        CreateMap<ActivityClimbDto, ActivityClimb>();
-    }
-}
+//public class ActivityClimbMapper : Profile
+//{
+//    public ActivityClimbMapper()
+//    {
+//        CreateMap<ActivityClimb, ActivityClimbReadModel>();
+//        CreateMap<ActivityClimbReadModel, ActivityClimb>();
+//    }
+//}

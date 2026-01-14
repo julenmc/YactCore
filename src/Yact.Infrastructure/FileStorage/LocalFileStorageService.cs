@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Yact.Application.Interfaces;
+using Yact.Application.Interfaces.Files;
 
 namespace Yact.Infrastructure.FileStorage;
 

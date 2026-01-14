@@ -1,6 +1,6 @@
 ﻿using Dynastream.Fit;
 using Yact.Application.DTOs.Activity;
-using Yact.Application.Interfaces;
+using Yact.Application.Interfaces.Files;
 using Yact.Domain.ValueObjects.Activity;
 using Yact.Domain.ValueObjects.Activity.Records;
 

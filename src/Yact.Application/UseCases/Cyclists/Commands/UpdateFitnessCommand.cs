@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Yact.Application.Common;
+using Yact.Application.ReadModels.Common;
 
 namespace Yact.Application.UseCases.Cyclists.Commands;
 
@@ -10,5 +10,5 @@ public record UpdateFitnessCommand(
     ushort? FtpWatts,
     float? Vo2Max,
     Dictionary<int, int>? PowerCurveBySeconds,
-    Dictionary<string, Zone>? HrZones,
-    Dictionary<string, Zone>? PowerZones) : IRequest<Guid>;
+    Dictionary<string, ZoneReadModel>? HrZones,
+    Dictionary<string, ZoneReadModel>? PowerZones) : IRequest<Guid>;

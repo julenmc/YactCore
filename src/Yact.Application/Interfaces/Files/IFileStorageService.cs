@@ -1,4 +1,4 @@
-﻿namespace Yact.Application.Interfaces;
+﻿namespace Yact.Application.Interfaces.Files;
 
 public interface IFileStorageService
 {

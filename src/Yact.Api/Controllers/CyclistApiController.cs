@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Yact.Api.Requests.Cyclists;
-using Yact.Application.Responses;
+using Yact.Application.ReadModels.Cyclists;
 using Yact.Application.UseCases.Cyclists.Commands;
 using Yact.Application.UseCases.Cyclists.Queries;
 
@@ -21,26 +21,11 @@ public class CyclistApiController : ControllerBase
         _logger = logger;
     }
 
-    //[HttpGet]
-    //public async Task<ActionResult<IEnumerable<CyclistDto>>> Get()
-    //{
-    //    try
-    //    {
-    //        var query = new GetCyclistsQuery();
-    //        var cyclists = await _mediator.Send(query);
-    //        return Ok(cyclists);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-    //    }
-    //}
-
     [HttpGet]
     [Route("get-by-id/{id}")]
-    [ProducesResponseType(typeof(CyclistResponse), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CyclistAdvancedReadModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<CyclistResponse>> GetById(Guid id)
+    public async Task<ActionResult<CyclistAdvancedReadModel>> GetById(Guid id)
     {
         try
         {
@@ -63,9 +48,9 @@ public class CyclistApiController : ControllerBase
 
     [HttpGet]
     [Route("get-by-last-name/{lastName}")]
-    [ProducesResponseType(typeof(CyclistResponse), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CyclistBasicReadModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IEnumerable<CyclistResponse>>> GetByLastName(string lastName)
+    public async Task<ActionResult<IEnumerable<CyclistBasicReadModel>>> GetByLastName(string lastName)
     {
         try
         {
@@ -88,8 +73,8 @@ public class CyclistApiController : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    [ProducesResponseType(typeof(CyclistResponse), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<CyclistResponse>> CreateCyclist([FromBody] CreateCyclistCommand command)
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<Guid>> CreateCyclist([FromBody] CreateCyclistCommand command)
     {
         try
         {
@@ -105,8 +90,8 @@ public class CyclistApiController : ControllerBase
 
     [HttpDelete]
     [Route("delete/{id}")]
-    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> DeleteCyclist(Guid id)
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<Guid>> DeleteCyclist(Guid id)
     {
         try
         {
@@ -123,8 +108,8 @@ public class CyclistApiController : ControllerBase
 
     [HttpPut]
     [Route("update-fitness/{cyclistId}")]
-    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<int>> CreateFitnessData(Guid cyclistId, [FromBody] UpdateFitnessRequest request)
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<Guid>> CreateFitnessData(Guid cyclistId, [FromBody] UpdateFitnessRequest request)
     {
         try
         {
@@ -150,9 +135,9 @@ public class CyclistApiController : ControllerBase
 
     [HttpDelete]
     [Route("delete-fitness/{cyclistId}")]
-    [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<int>> DeleteFitnessData(Guid cyclistId, Guid fitnessId)
+    public async Task<ActionResult<Guid>> DeleteFitnessData(Guid cyclistId, Guid fitnessId)
     {
         try
         {

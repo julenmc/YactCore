@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
-using Yact.Application.Responses;
+﻿using MediatR;
 using Yact.Application.UseCases.Activities.Commands;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
@@ -8,18 +6,16 @@ using Yact.Domain.ValueObjects.Activity;
 
 namespace Yact.Application.UseCases.Activities;
 
-public class UpdateActivity : IRequestHandler<UpdateActivityCommand, ActivityResponse>
+public class UpdateActivity : IRequestHandler<UpdateActivityCommand, Guid>
 {
     private readonly IActivityRepository _repository;
-    private readonly IMapper _mapper;
 
-    public UpdateActivity(IActivityRepository repository, IMapper mapper)
+    public UpdateActivity(IActivityRepository repository)
     {
         _repository = repository;
-        _mapper = mapper;
     }
 
-    public async Task<ActivityResponse> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
     {
         var activity = await _repository.GetByIdAsync(ActivityId.From(command.Id));
         if (activity == null) 
@@ -31,6 +27,6 @@ public class UpdateActivity : IRequestHandler<UpdateActivityCommand, ActivityRes
             activity.UpdateDescription(command.Description);
 
         await _repository.UpdateAsync(activity);
-        return _mapper.Map<ActivityResponse>(activity);
+        return activity.Id.Value;
     }
 }

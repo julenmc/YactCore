@@ -1,4 +1,4 @@
-﻿using Yact.Application.Common;
+﻿using Yact.Application.ReadModels.Common;
 
 namespace Yact.Api.Requests.Cyclists;
 
@@ -8,5 +8,5 @@ public record UpdateFitnessRequest (
     ushort? FtpWatts,
     float? Vo2Max,
     Dictionary<int, int>? PowerCurveBySeconds,
-    Dictionary<string, Zone>? HrZones,
-    Dictionary<string, Zone>? PowerZones);
+    Dictionary<string, ZoneReadModel>? HrZones,
+    Dictionary<string, ZoneReadModel>? PowerZones);

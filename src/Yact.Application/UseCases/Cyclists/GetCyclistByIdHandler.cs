@@ -1,28 +1,22 @@
-﻿using AutoMapper;
-using MediatR;
-using Yact.Application.Responses;
+﻿using MediatR;
+using Yact.Application.Interfaces.Repositories;
+using Yact.Application.ReadModels.Cyclists;
 using Yact.Application.UseCases.Cyclists.Queries;
-using Yact.Domain.Repositories;
-using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, CyclistResponse>
+public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, CyclistAdvancedReadModel>
 {
-    private readonly ICyclistRepository _repository;
-    private readonly IMapper _mapper;
+    private readonly ICyclistQueries _queries;
 
     public GetCyclistByIdHandler(
-        ICyclistRepository repository, 
-        IMapper mapper)
+        ICyclistQueries queries)
     {
-        _repository = repository;
-        _mapper = mapper;
+        _queries = queries;
     }
 
-    public async Task<CyclistResponse> Handle(GetCyclistByIdQuery query, CancellationToken cancellationToken)
+    public async Task<CyclistAdvancedReadModel> Handle(GetCyclistByIdQuery query, CancellationToken cancellationToken)
     {
-        var cyclist = await _repository.GetByIdAsync(CyclistId.From(query.Id));
-        return _mapper.Map<CyclistResponse>(cyclist);
+        return await _queries.GetByIdAsync(query.Id);
     }
 }

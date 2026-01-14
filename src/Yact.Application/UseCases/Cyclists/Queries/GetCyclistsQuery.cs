@@ -1,6 +1,0 @@
-﻿using MediatR;
-using Yact.Application.Responses;
-
-namespace Yact.Application.UseCases.Cyclists.Queries;
-
-public record GetCyclistsQuery : IRequest<IEnumerable<CyclistResponse>>;

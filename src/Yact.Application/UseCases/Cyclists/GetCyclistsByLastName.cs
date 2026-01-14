@@ -1,27 +1,22 @@
-﻿using AutoMapper;
-using MediatR;
-using Yact.Application.Responses;
+﻿using MediatR;
+using Yact.Application.Interfaces.Repositories;
+using Yact.Application.ReadModels.Cyclists;
 using Yact.Application.UseCases.Cyclists.Queries;
-using Yact.Domain.Repositories;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class GetCyclistsByLastName : IRequestHandler<GetCyclistsByLastNameQuery, IEnumerable<CyclistResponse>>
+public class GetCyclistsByLastName : IRequestHandler<GetCyclistsByLastNameQuery, IEnumerable<CyclistBasicReadModel>>
 {
-    private readonly ICyclistRepository _repository;
-    private readonly IMapper _mapper;
+    private readonly ICyclistQueries _queries;
 
     public GetCyclistsByLastName(
-        ICyclistRepository repository,
-        IMapper mapper)
+        ICyclistQueries queries)
     {
-        _repository = repository;
-        _mapper = mapper;
+        _queries = queries;
     }
 
-    public async Task<IEnumerable<CyclistResponse>> Handle (GetCyclistsByLastNameQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CyclistBasicReadModel>> Handle (GetCyclistsByLastNameQuery request, CancellationToken cancellationToken)
     {
-        var list = await _repository.GetByLastName(request.LastName);
-        return _mapper.Map<IEnumerable<CyclistResponse>>(list);
+        return await _queries.GetByLastNameAsync(request.LastName);
     }
 }

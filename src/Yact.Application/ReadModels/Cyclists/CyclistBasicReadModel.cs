@@ -1,6 +1,6 @@
-﻿namespace Yact.Application.Responses;
+﻿namespace Yact.Application.ReadModels.Cyclists;
 
-public class CyclistResponse
+public record CyclistBasicReadModel
 {
     public Guid Id { get; set; }
     public required string Name { get; set; }
@@ -8,7 +8,4 @@ public class CyclistResponse
     public string FullName => $"{Name} {LastName}";
     public DateTime BirthDate { get; set; }
     public int Age => DateTime.UtcNow.Year - BirthDate.Year - (DateTime.UtcNow.DayOfYear < BirthDate.DayOfYear ? 1 : 0);
-    public required List<CyclistFitnessResponse> FitnessHistory { get; set; }
-    public CyclistFitnessResponse LatestFitness =>
-        FitnessHistory.OrderByDescending(f => f.UpdateDate).First();
 }
