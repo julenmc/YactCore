@@ -107,10 +107,12 @@ public class WeightedDistanceAltitudeSmootherTests
     {
         // Arrange
         var smoother = new WeightedDistanceAltitudeSmoother(windowDistanceMeters: 40);
+        var originalAltitude1 = 100.0;
+        var originalAltitude2 = 120.0;
         var coordinates = new List<Coordinates>
         {
-            new Coordinates{Altitude = 100, Latitude = 0, Longitude = 0},
-            new Coordinates{Altitude = 120, Latitude = 0, Longitude = 0}
+            new Coordinates{Altitude = originalAltitude1, Latitude = 0, Longitude = 0},
+            new Coordinates{Altitude = originalAltitude2, Latitude = 0, Longitude = 0}
         };
         var distances = new List<float>
         {
@@ -122,8 +124,10 @@ public class WeightedDistanceAltitudeSmootherTests
 
         // Assert
         // Both records should be smoothed with each other's influence
-        Assert.NotEqual(100.0, smoothed[0].Altitude);
-        Assert.NotEqual(120.0, smoothed[1].Altitude);
+        Assert.NotEqual(originalAltitude1, smoothed[0].Altitude);
+        Assert.NotEqual(originalAltitude2, smoothed[1].Altitude);
+        var originalSlope = originalAltitude2 - originalAltitude1; // * 100 / 100
+        Assert.NotEqual(originalSlope, smoothed[1].Slope);
     }
 
     [Fact]
@@ -150,8 +154,8 @@ public class WeightedDistanceAltitudeSmootherTests
         // Records far apart remain unchanged (outside window)
         Assert.Equal(originalAltitude1, smoothed[0].Altitude);
         Assert.Equal(originalAltitude2, smoothed[1].Altitude);
-        var expectedSlope = originalAltitude2 - originalAltitude1; // * 100 / 100
-        Assert.Equal(expectedSlope, smoothed[1].Slope);
+        var originalSlope = originalAltitude2 - originalAltitude1; // * 100 / 100
+        Assert.Equal(originalSlope, smoothed[1].Slope);
     }
 
     [Fact]

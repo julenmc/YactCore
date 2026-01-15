@@ -90,7 +90,7 @@ public class WeightedDistanceAltitudeSmoother
                 float slope = 0;
                 if (i > 0)
                 {
-                    slope = (float)(coordinates[i].Altitude - coordinates[i - 1].Altitude) / (distances[i] - distances[i - 1]) * 100;
+                    slope = (float)(smoothedAlt - smoothedAltitudeList.Last().Altitude) / (distances[i] - distances[i - 1]) * 100;
                 }
                 smoothedAltitudeList.Add(new SmoothedAltitude() { Altitude = smoothedAlt, Slope = slope });
             }
