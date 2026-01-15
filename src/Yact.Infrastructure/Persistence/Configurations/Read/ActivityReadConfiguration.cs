@@ -11,6 +11,11 @@ public class ActivityReadConfiguration : IEntityTypeConfiguration<ActivityReadMo
         builder.ToTable("Activities");
         builder.HasKey(x => x.Id);
 
+        // ActivityClimbs
+        builder.HasMany(a => a.ActivityClimbs)
+            .WithOne(x => x.Activity)
+            .HasForeignKey(x => x.ActivityId);
+
         // FK of Cyclist
         builder.HasOne(a => a.Cyclist)
             .WithMany()

@@ -1,12 +1,11 @@
 ﻿using Yact.Domain.Entities;
-using Yact.Domain.ValueObjects.Activity;
-using Yact.Domain.ValueObjects.Climb;
+using Yact.Domain.ValueObjects.ActivityClimb;
 
 namespace Yact.Domain.Repositories;
 
 public interface IActivityClimbRepository
 {
-    Task<List<ActivityClimb>> GetByActivityAsync(ActivityId activityId);
-    Task<List<ActivityClimb>> GetByClimbAsync(ClimbId climbId);
-    Task AddAsync(ActivityClimb activityClimb);
+    Task<ActivityClimb?> GetById(ActivityClimbId id);
+    Task<ActivityClimb> AddAsync(ActivityClimb activityClimb);
+    Task<ActivityClimb?> RemoveAsync(ActivityClimbId id);
 }

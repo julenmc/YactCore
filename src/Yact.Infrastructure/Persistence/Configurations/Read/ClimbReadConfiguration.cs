@@ -11,5 +11,10 @@ public class ClimbReadConfiguration : IEntityTypeConfiguration<ClimbReadModel>
         builder.ToTable("Climbs");
 
         builder.HasKey(x => x.Id);
+
+        // ActivityClimbs
+        builder.HasMany(a => a.Efforts)
+            .WithOne(x => x.Climb)
+            .HasForeignKey(x => x.ClimbId);
     }
 }

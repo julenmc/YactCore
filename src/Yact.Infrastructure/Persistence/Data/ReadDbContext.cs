@@ -14,7 +14,7 @@ public class ReadDbContext : DbContext
     //public DbSet<CyclistFitness> Fitnesses { get; set; }
     public DbSet<ActivityReadModel> Activities { get; set; }
     public DbSet<ClimbReadModel> Climbs { get; set; }
-    public DbSet<ActivityClimb> ActivityClimbs { get; set; }
+    public DbSet<ActivityClimbReadModel> ActivityClimbs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

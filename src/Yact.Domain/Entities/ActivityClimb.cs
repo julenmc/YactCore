@@ -17,12 +17,12 @@ public class ActivityClimb : AggregateRoot<ActivityClimbId>
         ActivityClimbId id,
         ActivityId activityId,
         ClimbId climbId,
-        double start)
+        double startPointMeters)
         :base (id)
     {
         ActivityId = activityId;
         ClimbId = climbId;
-        StartPointMeters = start;
+        StartPointMeters = startPointMeters;
     }
 
     public static ActivityClimb Create(

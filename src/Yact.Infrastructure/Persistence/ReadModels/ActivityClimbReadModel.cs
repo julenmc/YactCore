@@ -1,6 +1,6 @@
 ﻿namespace Yact.Infrastructure.Persistence.ReadModels;
 
-public class ActivityClimb
+public record ActivityClimbReadModel
 {
     public Guid Id { get; set; }
     public double StartPointMeters { get; set; }

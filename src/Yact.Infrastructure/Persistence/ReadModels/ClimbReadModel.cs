@@ -17,5 +17,6 @@ public class ClimbReadModel
     public double TotalElevationMeters { get; set; }
 
     // 1-N relation with efforts
-    //public List<ActivityClimb>? Efforts { get; set; }
+    public IEnumerable<ActivityClimbReadModel> Efforts { get; set; }
+        = Enumerable.Empty<ActivityClimbReadModel>();
 }

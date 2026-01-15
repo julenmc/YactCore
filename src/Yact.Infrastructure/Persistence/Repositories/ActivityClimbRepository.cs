@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yact.Domain.Entities;
+using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
+using Yact.Domain.ValueObjects.ActivityClimb;
 using Yact.Infrastructure.Persistence.Data;
-using Yact.Domain.ValueObjects.Activity;
-using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
 
@@ -16,42 +16,34 @@ public class ActivityClimbRepository : IActivityClimbRepository
         _db = db;
     }
 
-    public async Task<List<ActivityClimb>> GetByActivityAsync(ActivityId activityId)
+    public async Task<ActivityClimb?> GetById(ActivityClimbId id)
     {
-        //var climbs = await _db.ActivityClimbs
-        //    .Where(a => a.ActivityId == activityId.Value)
-        //    .Include(a => a.Climb)
-        //    .ToListAsync();
-
-        //var ret = new List<ActivityClimb>();
-        //foreach (var climb in climbs)
-        //{
-        //    ret.Add(climb.ToDomain());
-        //}
-        //return ret;
-        throw new NotImplementedException();
+        return await _db.ActivityClimbs.FindAsync(id);
     }
 
-    public async Task<List<ActivityClimb>> GetByClimbAsync(ClimbId climbId)
+    public async Task<ActivityClimb> AddAsync(ActivityClimb activityClimb)
     {
-        //var climbs = await _db.ActivityClimbs
-        //    .Where(a => a.ClimbId == climbId.Value)
-        //    .Include(a => a.Activity)
-        //    .ToListAsync();
-
-        //var ret = new List<ActivityClimb>();
-        //foreach (var climb in climbs)
-        //{
-        //    ret.Add(climb.ToDomain());
-        //}
-        //return ret;
-        throw new NotImplementedException();
+        var entry = await _db.ActivityClimbs.AddAsync(activityClimb);
+        await _db.SaveChangesAsync();
+        return entry.Entity;
     }
 
-    public async Task AddAsync(ActivityClimb activityClimb)
+    public async Task<ActivityClimb?> RemoveAsync(ActivityClimbId id)
     {
-        //await _db.ActivityClimbs.AddAsync(activityClimb.ToModel());
-        //await _db.SaveChangesAsync();
-        throw new NotImplementedException();
+        try
+        {
+            var activityClimb = await _db.ActivityClimbs.FindAsync(id);
+            if (activityClimb == null)
+                throw new ActivityNotFoundException(id.Value);
+
+            _db.ActivityClimbs.Remove(activityClimb);
+            var rowsAffected = await _db.SaveChangesAsync();
+            return rowsAffected > 0 ? activityClimb : null;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Entity didn't exist
+            return null;
+        }
     }
 }
