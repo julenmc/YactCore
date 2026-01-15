@@ -12,6 +12,9 @@ public class Activity : AggregateRoot<ActivityId>
     public FilePath Path { get; private set; }
     public ActivitySummary Summary { get; private set; }
     public ActivityRecords? Records { get; private set; }
+    public ICollection<ActivityClimb> Climbs => _activityClimbs;
+
+    private readonly List<ActivityClimb> _activityClimbs = new();
 
     private Activity() : base(default!)
     {

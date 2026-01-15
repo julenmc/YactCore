@@ -3,7 +3,6 @@ using Yact.Domain.Entities;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Domain.Services.Analyzer.RouteAnalyzer.Climbs;
-using Yact.Domain.ValueObjects.ActivityClimb;
 using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Application.Services.Activities;
@@ -11,16 +10,13 @@ namespace Yact.Application.Services.Activities;
 public class ClimbHandlerService
 {
     private readonly IClimbRepository _repository;
-    private readonly IActivityClimbRepository _activityClimbRepository;
     private readonly ILogger<ClimbHandlerService> _logger;
 
     public ClimbHandlerService(
         IClimbRepository repository,
-        IActivityClimbRepository activityClimbRepository,
         ILogger<ClimbHandlerService> logger)
     {
         _repository = repository;
-        _activityClimbRepository = activityClimbRepository;
         _logger = logger;
     }
 
@@ -51,8 +47,8 @@ public class ClimbHandlerService
             _logger.LogInformation($"{climbDetails.Metrics.DistanceMeters}m at {climbDetails.Metrics.Slope}%");
 
             // Save activity climb
-            var activityClimb = ActivityClimb.Create(ActivityClimbId.NewId(), activity.Id, climb.Id, climbDetails.StartPointMeters);
-            await _activityClimbRepository.AddAsync(activityClimb);
+            //var activityClimb = ActivityClimb.Create(ActivityClimbId.NewId(), activity.Id, climb.Id, climbDetails.StartPointMeters);
+            //await _activityClimbRepository.AddAsync(activityClimb);
         } 
     }
 }

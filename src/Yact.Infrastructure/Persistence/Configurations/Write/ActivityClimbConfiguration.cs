@@ -27,10 +27,5 @@ public class ActivityClimbConfiguration : IEntityTypeConfiguration<ActivityClimb
             .WithMany()
             .HasForeignKey(x => x.ClimbId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne<Activity>()
-            .WithMany()
-            .HasForeignKey(x => x.ActivityId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

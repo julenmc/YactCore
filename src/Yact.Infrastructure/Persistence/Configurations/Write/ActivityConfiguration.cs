@@ -47,6 +47,12 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             summary.Property(s => s.UpdateDate).HasColumnName("UpdateDate");
         });
 
+        // Relation with ActivityClimbs
+        builder.HasMany(a => a.Climbs)
+            .WithOne()
+            .HasForeignKey(x => x.ActivityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // FK
         builder.HasOne<Cyclist>()
             .WithMany()

@@ -20,8 +20,7 @@ public class WriteDbContext : DbContext
     //public DbSet<CyclistFitness> CyclistFitnesses { get; set; }
     public DbSet<Domain.Entities.Activity> Activities { get; set; }
     public DbSet<Domain.Entities.Climb> Climbs { get; set; }
-    //public DbSet<Interval> Intervals { get; set; }
-    public DbSet<Domain.Entities.ActivityClimb> ActivityClimbs { get; set; }
+    //public DbSet<Domain.Entities.ActivityClimb> ActivityClimbs { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {

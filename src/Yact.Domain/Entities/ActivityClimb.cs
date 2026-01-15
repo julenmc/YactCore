@@ -6,7 +6,7 @@ using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Domain.Entities;
 
-public class ActivityClimb : AggregateRoot<ActivityClimbId>
+public class ActivityClimb : Entity<ActivityClimbId>
 {
     public ActivityId ActivityId { get; init; }
     public ClimbId ClimbId { get; init; }
