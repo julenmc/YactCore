@@ -8,6 +8,7 @@ public class CyclistReadModel
     public DateTime BirthDate { get; set; }
 
     // 1-N relations
-    public IEnumerable<CyclistFitnessReadModel>? Fitnesses { get; set; }
-    public IEnumerable<ActivityReadModel>? Activities { get; set; }
+    public required IEnumerable<CyclistFitnessReadModel> Fitnesses { get; set; }
+    public IEnumerable<ActivityReadModel> Activities { get; set; } 
+        = Enumerable.Empty<ActivityReadModel>();
 }

@@ -28,8 +28,12 @@ public class CyclistQueries : ICyclistQueries
     {
         var cyclist = await _db.Cyclists
             .Where(c => c.Id == id)
-            .Include(c => c.Fitnesses)
-            .Include(c => c.Activities)
+            .Include(c => c.Fitnesses
+                .OrderByDescending(c => c.UpdateDate)
+                .Take(10))
+            .Include(a => a.Activities
+                .OrderByDescending(a => a.UpdateDate)
+                .Take(10))
             .FirstOrDefaultAsync();
         if (cyclist == null)
             throw new CyclistNotFoundException(id);
