@@ -3,7 +3,7 @@ using Yact.Domain.Entities;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Repositories;
 using Yact.Domain.ValueObjects.Activity;
-using Yact.Domain.ValueObjects.Cyclist;
+using Yact.Domain.ValueObjects.Climb;
 using Yact.Infrastructure.Persistence.Data;
 
 namespace Yact.Infrastructure.Persistence.Repositories;
@@ -20,6 +20,14 @@ public class ActivityRepository : IActivityRepository
     public async Task<Activity?> GetByIdAsync(ActivityId id)
     {
         return await _db.Activities.FindAsync(id);
+    }
+
+    public async Task<IEnumerable<Activity>> GetContainingClimbAsync(ClimbId id)
+    {
+        return await _db.Activities
+            .Include(a => a.Climbs
+                .Where(c => c.ClimbId == id))
+            .ToListAsync();
     }
 
     public async Task<Activity> AddAsync(Activity activity)

@@ -108,4 +108,9 @@ public class Activity : AggregateRoot<ActivityId>
 
         _activityClimbs.Add(activityClimb);
     }
+
+    public void RemoveClimb(ClimbId climbId)
+    {
+        _activityClimbs.RemoveAll(c => c.ClimbId == climbId);
+    }
 }
