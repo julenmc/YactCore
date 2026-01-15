@@ -6,11 +6,11 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class DeleteFitnessHandler : IRequestHandler<DeleteFitnessCommand, Guid>
+public class DeleteFitness : IRequestHandler<DeleteFitnessCommand, Guid>
 {
     private readonly ICyclistRepository _repository;
 
-    public DeleteFitnessHandler(ICyclistRepository repository)
+    public DeleteFitness(ICyclistRepository repository)
     {
         _repository = repository;
     }

@@ -5,11 +5,11 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class DeleteCyclistHandler : IRequestHandler<DeleteCyclistCommand, Guid>
+public class DeleteCyclist : IRequestHandler<DeleteCyclistCommand, Guid>
 {
     private readonly ICyclistRepository _repository;
 
-    public DeleteCyclistHandler(
+    public DeleteCyclist(
         ICyclistRepository repository)
     {
         _repository = repository;

@@ -10,5 +10,5 @@ public class CyclistReadModel
     // 1-N relations
     public required IEnumerable<CyclistFitnessReadModel> Fitnesses { get; set; }
     public IEnumerable<ActivityReadModel> Activities { get; set; } 
-        = Enumerable.Empty<ActivityReadModel>();
+        =new List<ActivityReadModel>();
 }

@@ -5,11 +5,11 @@ using Yact.Application.UseCases.Cyclists.Queries;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class GetCyclistByIdHandler : IRequestHandler<GetCyclistByIdQuery, CyclistAdvancedReadModel>
+public class GetCyclistById : IRequestHandler<GetCyclistByIdQuery, CyclistAdvancedReadModel>
 {
     private readonly ICyclistQueries _queries;
 
-    public GetCyclistByIdHandler(
+    public GetCyclistById(
         ICyclistQueries queries)
     {
         _queries = queries;

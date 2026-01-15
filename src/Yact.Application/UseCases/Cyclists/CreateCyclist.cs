@@ -7,11 +7,11 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Application.UseCases.Cyclists;
 
-public class CreateCyclistHandler : IRequestHandler<CreateCyclistCommand, Guid>
+public class CreateCyclist : IRequestHandler<CreateCyclistCommand, Guid>
 {
     private readonly ICyclistRepository _repository;
 
-    public CreateCyclistHandler(
+    public CreateCyclist(
         ICyclistRepository repository)
     {
         _repository = repository;
