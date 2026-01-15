@@ -1,7 +1,11 @@
-﻿using System.Xml.Linq;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using System.Xml.Linq;
 using Yact.Domain.Events;
 using Yact.Domain.Primitives;
 using Yact.Domain.ValueObjects.Activity;
+using Yact.Domain.ValueObjects.ActivityClimb;
+using Yact.Domain.ValueObjects.Climb;
 using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Domain.Entities;
@@ -92,5 +96,16 @@ public class Activity : AggregateRoot<ActivityId>
             throw new ArgumentException("Cannot load empty records");
 
         Records = records;
+    }
+
+    public void AddClimb(ClimbId climbId, double startPoint)
+    {
+        var activityClimb = ActivityClimb.Create(
+            ActivityClimbId.NewId(),
+            Id,
+            climbId,
+            startPoint);
+
+        _activityClimbs.Add(activityClimb);
     }
 }

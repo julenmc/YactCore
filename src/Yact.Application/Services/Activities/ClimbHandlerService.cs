@@ -9,14 +9,17 @@ namespace Yact.Application.Services.Activities;
 
 public class ClimbHandlerService
 {
-    private readonly IClimbRepository _repository;
+    private readonly IActivityRepository _activityRepository;
+    private readonly IClimbRepository _climbRepository;
     private readonly ILogger<ClimbHandlerService> _logger;
 
     public ClimbHandlerService(
-        IClimbRepository repository,
+        IActivityRepository activityRepository,
+        IClimbRepository climbRepository,
         ILogger<ClimbHandlerService> logger)
     {
-        _repository = repository;
+        _activityRepository = activityRepository;
+        _climbRepository = climbRepository;
         _logger = logger;
     }
 
@@ -34,7 +37,7 @@ public class ClimbHandlerService
         _logger.LogInformation($"{climbsDetails.Count} climbs found:");
 
         // Check if found climbs already exist in the repository
-        ClimbMatcherService matcher = new ClimbMatcherService(_repository); 
+        ClimbMatcherService matcher = new ClimbMatcherService(_climbRepository); 
         foreach (var climbDetails in climbsDetails)
         {
             var climb = await matcher.MatchClimbWithRepositoryAsync(climbDetails);
@@ -42,13 +45,13 @@ public class ClimbHandlerService
             {
                 // Climb doesn't exist
                 climb = Climb.Create(ClimbId.NewId(), climbDetails, new ClimbSummary("Unknown"));
-                await _repository.AddAsync(climb);
+                await _climbRepository.AddAsync(climb);
             }
             _logger.LogInformation($"{climbDetails.Metrics.DistanceMeters}m at {climbDetails.Metrics.Slope}%");
 
             // Save activity climb
-            //var activityClimb = ActivityClimb.Create(ActivityClimbId.NewId(), activity.Id, climb.Id, climbDetails.StartPointMeters);
-            //await _activityClimbRepository.AddAsync(activityClimb);
+            activity.AddClimb(climb.Id, climbDetails.StartPointMeters);
+            await _activityRepository.UpdateAsync(activity);
         } 
     }
 }
