@@ -71,11 +71,12 @@ public record ActivitySummary
     private static double CalculateElevation(IReadOnlyList<RecordData> records)
     {
         double elevation = 0.0;
-        float lastAltitude = 0.0f;
+        var lastAltitude = records[0].Coordinates.Altitude;
         for(int i = 1; i < records.Count; i++)
         {
             var currentAltitude = records[i].Coordinates.Altitude;
             float altDiff = (float)(currentAltitude - lastAltitude);
+            lastAltitude = currentAltitude;
             elevation += altDiff > 0 ? altDiff : 0;
         }
         return elevation;

@@ -20,7 +20,8 @@ internal static class ActivityMapper
             ElevationMeters = activity.ElevationMeters,
             Type = activity.Type,
             CreateDate = activity.CreationDate,
-            UpdateDate = activity.UpdateDate
+            UpdateDate = activity.UpdateDate,
+            ActivityClimbs = activity.ActivityClimbs.Select(x => x.ToModel())
         };
     }
 

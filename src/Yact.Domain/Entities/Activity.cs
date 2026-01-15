@@ -41,7 +41,7 @@ public class Activity : AggregateRoot<ActivityId>
             filePath,
             data);
 
-        //activity.AddDomainEvent(new ActivityCreatedEvent(activityId, cyclistId));
+        activity.AddDomainEvent(new ActivityCreatedEvent(activityId, cyclistId));
         return activity;
     }
 

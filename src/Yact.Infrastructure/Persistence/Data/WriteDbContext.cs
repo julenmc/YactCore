@@ -68,7 +68,7 @@ public class WriteDbContext : DbContext
     }
 
     private async Task PublishDomainEvents(
-        List<IDomainEvent> domainEvents,
+        IEnumerable<IDomainEvent> domainEvents,
         CancellationToken ct)
     {
         foreach (var domainEvent in domainEvents)
@@ -78,7 +78,7 @@ public class WriteDbContext : DbContext
 
             var notification = Activator.CreateInstance(notificationType, domainEvent);
 
-            await _mediator.Publish(domainEvent, ct);
+            await _mediator.Publish(notification!, ct);
         }
     }
 }

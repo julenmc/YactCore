@@ -1,4 +1,5 @@
-﻿using Yact.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Yact.Application.Interfaces.Repositories;
 using Yact.Application.ReadModels.Activities;
 using Yact.Domain.Exceptions.Activity;
 using Yact.Infrastructure.Persistence.Data;
@@ -17,7 +18,10 @@ public class ActivityQueries : IActivityQueries
 
     public async Task<ActivityAdvancedReadModel> GetByIdAsync(Guid id)
     {
-        var activity = await _db.Activities.FindAsync(id);
+        var activity = await _db.Activities
+            .Where(a => a.Id == id)
+            .Include(a => a.ActivityClimbs)
+            .FirstOrDefaultAsync();
         if (activity == null)
             throw new ActivityNotFoundException(id);
 

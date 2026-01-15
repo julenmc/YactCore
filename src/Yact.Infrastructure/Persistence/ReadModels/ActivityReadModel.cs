@@ -18,7 +18,7 @@ public class ActivityReadModel
     public Guid CyclistId { get; set; }
     public CyclistReadModel? Cyclist { get; set; }
 
-    //// 1-N relation for climbs and intervals
+    // 1-N relation for climbs and intervals
     public IEnumerable<ActivityClimbReadModel> ActivityClimbs { get; set; }
-        = Enumerable.Empty<ActivityClimbReadModel>();
+        = new List<ActivityClimbReadModel>();
 }

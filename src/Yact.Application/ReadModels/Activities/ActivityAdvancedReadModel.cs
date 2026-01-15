@@ -1,4 +1,6 @@
-﻿namespace Yact.Application.ReadModels.Activities;
+﻿using Yact.Application.ReadModels.ActivityClimbs;
+
+namespace Yact.Application.ReadModels.Activities;
 
 public record ActivityAdvancedReadModel
 {
@@ -16,5 +18,7 @@ public record ActivityAdvancedReadModel
     public DateTime? UpdateDate { get; set; }
 
     // Activity climbs
+    public IEnumerable<ActivityClimbFromActivityReadModel> ActivityClimbs { get; set; }
+        = Enumerable.Empty<ActivityClimbFromActivityReadModel>();
     // Intervals
 }
