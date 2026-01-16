@@ -76,12 +76,13 @@ public class ActivityReaderService : IActivityReaderService
                     Longitude = m.GetPositionLong() * 180.0 / Semicircles ?? 0,
                     Altitude = m.GetAltitude() ?? 0
                 },
-                Performance: new Performance(
-                    SpeedMps: m.GetSpeed(),
-                    HeartRate: m.GetHeartRate(),
-                    Power: m.GetPower(),
-                    Cadence: m.GetCadence()
-                )
+                Performance: new Performance
+                {
+                    SpeedMps = m.GetSpeed(),
+                    HeartRate = m.GetHeartRate(),
+                    Power = m.GetPower(),
+                    Cadence = m.GetCadence()
+                }
             ));
         };
 

@@ -1,4 +1,6 @@
 ﻿using Yact.Domain.Services.Utils.Smoothers.Metrics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Yact.Domain.Services.Utils.Smoothers.Metrics.MovingAveragesMetricsService;
 
 namespace Yact.Domain.Tests.Services.Utils.Smoothers;
 
@@ -12,7 +14,7 @@ public class MovingAveragesServiceTests
     public void Smooth_RecordsEmpty_ThrowsArgumentException()
     {
         // Arrange
-        var records = new List<float>();
+        var records = new List<SmoothInput>();
         var windowSize = 3;
 
         // Act & Assert
@@ -24,7 +26,13 @@ public class MovingAveragesServiceTests
     public void Smooth_WindowSizeGreaterThanRecords_ThrowsArgumentException()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput> 
+        { 
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+        };
         var windowSize = 5;
 
         // Act & Assert
@@ -36,7 +44,13 @@ public class MovingAveragesServiceTests
     public void Smooth_WindowSizeEqualsRecordCount_ReturnsOneMetric()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+        };
         var windowSize = 3;
 
         // Act
@@ -55,7 +69,15 @@ public class MovingAveragesServiceTests
     public void Smooth_SimpleSequence_ReturnsCorrectNumberOfMetrics()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f, 4f, 5f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+            new SmoothInput(date.AddSeconds(3), 4f),
+            new SmoothInput(date.AddSeconds(4), 5f),
+        };
         var windowSize = 3;
 
         // Act
@@ -72,7 +94,15 @@ public class MovingAveragesServiceTests
     public void Smooth_ResultContainsValidMetrics()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f, 4f, 5f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+            new SmoothInput(date.AddSeconds(3), 4f),
+            new SmoothInput(date.AddSeconds(4), 5f),
+        };
         var windowSize = 2;
 
         // Act
@@ -82,7 +112,7 @@ public class MovingAveragesServiceTests
         Assert.NotNull(result);
         foreach (var metric in result)
         {
-            Assert.True(metric.RecordIndex > 0);
+            Assert.True(metric.Timestamp > date);
             Assert.True(metric.Average >= 0);
             Assert.True(metric.Deviation >= 0);
         }
@@ -97,7 +127,15 @@ public class MovingAveragesServiceTests
     {
         // Arrange
         var constantValue = 5f;
-        var records = new List<float> { constantValue, constantValue, constantValue, constantValue };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, constantValue),
+            new SmoothInput(date.AddSeconds(1), constantValue),
+            new SmoothInput(date.AddSeconds(2), constantValue),
+            new SmoothInput(date.AddSeconds(3), constantValue),
+            new SmoothInput(date.AddSeconds(4), constantValue),
+        };
         var windowSize = 2;
 
         // Act
@@ -116,7 +154,14 @@ public class MovingAveragesServiceTests
     public void Smooth_WindowSizeOne_AverageEqualsValue()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f, 4f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+            new SmoothInput(date.AddSeconds(3), 4f),
+        };
         var windowSize = 1;
 
         // Act
@@ -127,7 +172,7 @@ public class MovingAveragesServiceTests
         Assert.Equal(4, result.Count);
         for (int i = 0; i < result.Count; i++)
         {
-            Assert.Equal(records[i], result[i].Average, 5);
+            Assert.Equal(records[i].Value, result[i].Average, 5);
             Assert.Equal(0, result[i].Deviation, 5);
         }
     }
@@ -136,7 +181,13 @@ public class MovingAveragesServiceTests
     public void Smooth_SequentialValues_CalculatesCorrectAverage()
     {
         // Arrange
-        var records = new List<float> { 10f, 20f, 30f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 10f),
+            new SmoothInput(date.AddSeconds(1), 20f),
+            new SmoothInput(date.AddSeconds(2), 30f),
+        };
         var windowSize = 3;
 
         // Act
@@ -152,7 +203,14 @@ public class MovingAveragesServiceTests
     public void Smooth_CalculatesCorrectStandardDeviation()
     {
         // Arrange
-        var records = new List<float> { 2f, 4f, 6f, 8f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 2f),
+            new SmoothInput(date.AddSeconds(1), 4f),
+            new SmoothInput(date.AddSeconds(2), 6f),
+            new SmoothInput(date.AddSeconds(3), 8f),
+        };
         var windowSize = 2;
 
         // Act
@@ -177,7 +235,15 @@ public class MovingAveragesServiceTests
     public void Smooth_RecordIndexIsCorrect()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f, 4f, 5f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+            new SmoothInput(date.AddSeconds(3), 4f),
+            new SmoothInput(date.AddSeconds(4), 5f),
+        };
         var windowSize = 3;
 
         // Act
@@ -186,9 +252,9 @@ public class MovingAveragesServiceTests
         // Assert
         Assert.NotNull(result);
         // Expected indices: 2, 3, 4 (after first window completion and sliding)
-        Assert.Equal(2, result[0].RecordIndex);
-        Assert.Equal(3, result[1].RecordIndex);
-        Assert.Equal(4, result[2].RecordIndex);
+        Assert.Equal(date.AddSeconds(2), result[0].Timestamp);
+        Assert.Equal(date.AddSeconds(3), result[1].Timestamp);
+        Assert.Equal(date.AddSeconds(4), result[2].Timestamp);
     }
 
     #endregion
@@ -199,7 +265,15 @@ public class MovingAveragesServiceTests
     public void Smooth_NegativeValues_CalculatesCorrectly()
     {
         // Arrange
-        var records = new List<float> { -5f, -3f, -1f, 1f, 3f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, -5f),
+            new SmoothInput(date.AddSeconds(1), -3f),
+            new SmoothInput(date.AddSeconds(2), -1f),
+            new SmoothInput(date.AddSeconds(3), 1f),
+            new SmoothInput(date.AddSeconds(4), 3f),
+        };
         var windowSize = 2;
 
         // Act
@@ -217,7 +291,15 @@ public class MovingAveragesServiceTests
     public void Smooth_MixedPositiveAndNegativeValues_CalculatesCorrectly()
     {
         // Arrange
-        var records = new List<float> { -2f, -1f, 0f, 1f, 2f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, -2f),
+            new SmoothInput(date.AddSeconds(1), -1f),
+            new SmoothInput(date.AddSeconds(2), 0f),
+            new SmoothInput(date.AddSeconds(3), 1f),
+            new SmoothInput(date.AddSeconds(4), 2f),
+        };
         var windowSize = 3;
 
         // Act
@@ -235,7 +317,13 @@ public class MovingAveragesServiceTests
     public void Smooth_LargeValues_CalculatesCorrectly()
     {
         // Arrange
-        var records = new List<float> { 1000000f, 2000000f, 3000000f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1000000f),
+            new SmoothInput(date.AddSeconds(1), 2000000f),
+            new SmoothInput(date.AddSeconds(2), 3000000f),
+        };
         var windowSize = 3;
 
         // Act
@@ -251,7 +339,13 @@ public class MovingAveragesServiceTests
     public void Smooth_SmallValues_CalculatesCorrectly()
     {
         // Arrange
-        var records = new List<float> { 0.001f, 0.002f, 0.003f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 0.001f),
+            new SmoothInput(date.AddSeconds(1), 0.002f),
+            new SmoothInput(date.AddSeconds(2), 0.003f),
+        };
         var windowSize = 3;
 
         // Act
@@ -271,7 +365,16 @@ public class MovingAveragesServiceTests
     public void Smooth_SlidingWindowMovesCorrectly()
     {
         // Arrange
-        var records = new List<float> { 1f, 2f, 3f, 4f, 5f, 6f };
+        var date = DateTime.Now;
+        var records = new List<SmoothInput>
+        {
+            new SmoothInput(date, 1f),
+            new SmoothInput(date.AddSeconds(1), 2f),
+            new SmoothInput(date.AddSeconds(2), 3f),
+            new SmoothInput(date.AddSeconds(3), 4f),
+            new SmoothInput(date.AddSeconds(4), 5f),
+            new SmoothInput(date.AddSeconds(5), 6f),
+        };
         var windowSize = 3;
 
         // Act

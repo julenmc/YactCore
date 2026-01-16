@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
-using System.Xml.Linq;
-using Yact.Domain.Events;
+﻿using Yact.Domain.Events;
 using Yact.Domain.Primitives;
+using Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 using Yact.Domain.ValueObjects.Activity;
-using Yact.Domain.ValueObjects.ActivityClimb;
+using Yact.Domain.ValueObjects.Activity.ActivityClimb;
 using Yact.Domain.ValueObjects.Climb;
 using Yact.Domain.ValueObjects.Cyclist;
 
@@ -17,8 +15,10 @@ public class Activity : AggregateRoot<ActivityId>
     public ActivitySummary Summary { get; private set; }
     public ActivityRecords? Records { get; private set; }
     public ICollection<ActivityClimb> Climbs => _activityClimbs;
+    public ICollection<Interval> Intervals => _intervals;
 
     private readonly List<ActivityClimb> _activityClimbs = new();
+    private readonly List<Interval> _intervals = new();
 
     private Activity() : base(default!)
     {
@@ -112,5 +112,12 @@ public class Activity : AggregateRoot<ActivityId>
     public void RemoveClimb(ClimbId climbId)
     {
         _activityClimbs.RemoveAll(c => c.ClimbId == climbId);
+    }
+
+    public void FindIntervals(IDictionary<int, Zone> zones)
+    {
+        //var finder = new IntervalsFinder();
+        ////var refiner 
+        //var intervalList = finder.Search();
     }
 }

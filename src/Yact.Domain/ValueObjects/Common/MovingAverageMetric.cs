@@ -2,7 +2,7 @@
 
 public record MovingAverageMetric
 {
-    public required int RecordIndex { get; set; }
+    public DateTime Timestamp { get; set; }
     public float Average { get; set; }
     public float Deviation { get; set; }
     public float CoefficientOfVariation => Deviation / Average;

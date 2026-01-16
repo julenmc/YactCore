@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Events;
 using Yact.Domain.Primitives;
-using Yact.Domain.ValueObjects.ActivityClimb;
+using Yact.Domain.ValueObjects.Activity.ActivityClimb;
 using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Domain.Entities;
@@ -58,16 +58,16 @@ public class Climb : AggregateRoot<ClimbId>
         _topTimes = topTimes;
     }
 
-    public void CheckIfTopTime(ActivityClimbId activityClimbId, TimeSpan time, DateTime date)
-    {
-        var record = new ClimbRecord(activityClimbId, time, date);
+    //public void CheckIfTopTime(ActivityClimbId activityClimbId, TimeSpan time, DateTime date)
+    //{
+    //    var record = new ClimbRecord(activityClimbId, time, date);
 
-        if (_topTimes.Count < TopTimesMaxCount || time < _topTimes.Max(t => t.Time))
-        {
-            _topTimes.Add(record);
-            _topTimes = _topTimes.OrderBy(t => t.Time).Take(10).ToList();
+    //    if (_topTimes.Count < TopTimesMaxCount || time < _topTimes.Max(t => t.Time))
+    //    {
+    //        _topTimes.Add(record);
+    //        _topTimes = _topTimes.OrderBy(t => t.Time).Take(10).ToList();
 
-            //AddDomainEvent(new NewTopTimeAchieved(Id, activityClimbId, time));
-        }
-    }
+    //        //AddDomainEvent(new NewTopTimeAchieved(Id, activityClimbId, time));
+    //    }
+    //}
 }

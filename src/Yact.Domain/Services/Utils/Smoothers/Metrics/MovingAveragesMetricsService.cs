@@ -4,6 +4,8 @@ namespace Yact.Domain.Services.Utils.Smoothers.Metrics;
 
 public class MovingAveragesMetricsService
 {
+    public record SmoothInput (DateTime Timestamp, float Value);
+
     /// <summary>
     /// Calculates a moving average and related metrics for a sequence of numeric records using a sliding window.
     /// </summary>
@@ -18,17 +20,19 @@ public class MovingAveragesMetricsService
     /// <returns>A list of <see cref="MovingAverageMetric"/> objects, each representing the calculated metrics for a specific
     /// window position.</returns>
     /// <exception cref="ArgumentException">Thrown if the number of elements in <paramref name="records"/> is less than <paramref name="windowSize"/>.</exception>
-    public List<MovingAverageMetric> Smooth (List<float> records, int windowSize)
+    public List<MovingAverageMetric> Smooth (List<SmoothInput> records, int windowSize)
     {
         if (records.Count < windowSize)
             throw new ArgumentException(nameof(records), $"Point count ({records.Count}) is smaller than the window size {windowSize}");
 
         var result = new List<MovingAverageMetric>();
-        var recordValues = new Queue<float>();
+        var recordValues = new Queue<SmoothInput>();
         float min = float.MaxValue;
         float max = float.MinValue;
         int index = 0;
 
+    createWindow:
+        recordValues.Clear();
         int firstPoint = index + windowSize;
         float sum = 0;
         float sumSquares = 0;
@@ -36,12 +40,12 @@ public class MovingAveragesMetricsService
         // Initialize first window
         while (index < firstPoint)
         {
-            var value = records[index];
-            recordValues.Enqueue(value);
-            sum += value;
-            sumSquares += value * value;
-            min = Math.Min(min, value);
-            max = Math.Max(max, value);
+            var record = records[index];
+            recordValues.Enqueue(record);
+            sum += record.Value;
+            sumSquares += record.Value * record.Value;
+            min = Math.Min(min, record.Value);
+            max = Math.Max(max, record.Value);
             index++;
         }
 
@@ -54,7 +58,7 @@ public class MovingAveragesMetricsService
 
             result.Add(new MovingAverageMetric
             {
-                RecordIndex = index - 1,    // index was ++ earlier 
+                Timestamp = records[index - 1].Timestamp,
                 Average = avg,
                 Deviation = stdDev,
                 MaxMinDelta = max - min
@@ -64,20 +68,28 @@ public class MovingAveragesMetricsService
         // Sliding window calculations
         while (index < records.Count)
         {
+            // Check if the session has been stopped
+            var timeDiff = (records[index].Timestamp - records[index - 1].Timestamp).TotalSeconds;
+            if (timeDiff > 1)
+            {
+                goto createWindow;
+            }
+
             // Remove the oldest value
-            var oldValue = recordValues.Dequeue();
+            var oldValue = recordValues.Dequeue().Value;
             sum -= oldValue;
             sumSquares -= oldValue * oldValue;
 
             // Add the new value
-            var newValue = records[index];
-            recordValues.Enqueue(newValue);
-            sum += newValue;
-            sumSquares += newValue * newValue;
+            var newRecord = records[index];
+            recordValues.Enqueue(newRecord);
+            sum += newRecord.Value;
+            sumSquares += newRecord.Value * newRecord.Value;
 
             // Recalculate min and max
-            min = recordValues.Min();
-            max = recordValues.Max();
+            var values = recordValues.Select(r => r.Value);
+            min = values.Min();
+            max = values.Max();
 
             // Calculate metrics
             float avg = sum / windowSize;
@@ -85,7 +97,7 @@ public class MovingAveragesMetricsService
             float stdDev = (float)Math.Sqrt(Math.Max(0, variance));
             result.Add(new MovingAverageMetric
             {
-                RecordIndex = index,
+                Timestamp = records[index].Timestamp,
                 Average = avg,
                 Deviation = stdDev,
                 MaxMinDelta = max - min

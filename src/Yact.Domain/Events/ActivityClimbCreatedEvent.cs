@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.Primitives;
 using Yact.Domain.ValueObjects.Activity;
-using Yact.Domain.ValueObjects.ActivityClimb;
+using Yact.Domain.ValueObjects.Activity.ActivityClimb;
 using Yact.Domain.ValueObjects.Climb;
 
 namespace Yact.Domain.Events;

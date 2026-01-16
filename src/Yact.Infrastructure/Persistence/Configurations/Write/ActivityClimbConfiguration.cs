@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Yact.Domain.Entities;
-using Yact.Domain.ValueObjects.ActivityClimb;
+using Yact.Domain.ValueObjects.Activity.ActivityClimb;
 
 namespace Yact.Infrastructure.Persistence.Configurations.Write;
 

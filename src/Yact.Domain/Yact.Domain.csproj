@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Analyzer\PerformanceAnalyzer\Intervals\" />
-  </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Yact.Domain.Tests" />
+	</ItemGroup>
 
 </Project>
