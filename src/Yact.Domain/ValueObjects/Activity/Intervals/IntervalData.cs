@@ -63,6 +63,12 @@ public record IntervalData
 
     public Collision CheckCollisionWithOtherInterval(IntervalData interval)
     {
+        // Check if don't collide
+        if (StartTime > interval.EndTime ||
+            EndTime < interval.StartTime)
+            return Collision.None;
+
+        // They collide
         return StartTime.CompareTo(interval.StartTime) switch
         {
             0 => EndTime.CompareTo(interval.EndTime) switch
