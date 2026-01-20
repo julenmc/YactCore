@@ -10,7 +10,6 @@ namespace Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 
 internal class IntervalsFinder
 {
-    private readonly List<string> _debugTrace = new();
     private readonly IDictionary<int, Zone> _powerZones;
     private readonly Thresholds _thresholds;
     IntervalSearchGroups _searchGroup;
@@ -18,6 +17,8 @@ internal class IntervalsFinder
     private readonly int _intervalStartMinPower;
     private readonly Zone _startThresholdPowerZone;
     private readonly IEnumerable<IntervalData> _container;
+
+    public event EventHandler<string>? LogEventHandler;
 
     internal IntervalsFinder(
         IDictionary<int, Zone> powerZones,
@@ -59,12 +60,8 @@ internal class IntervalsFinder
         }
     }
 
-    internal List<string> GetDebugTrace() => _debugTrace;
-
     internal IEnumerable<IntervalData> Search(IEnumerable<RecordData> records)
     {
-        _debugTrace.Clear();
-
         // Inicializar con valores por defecto si no se proporcionan
         List<IntervalData> result = new List<IntervalData>();
         float cvStartThr = _thresholds.CvStart;
@@ -75,17 +72,17 @@ internal class IntervalsFinder
         int minStartPower = _intervalStartMinPower;
         int maxStartPower = _startThresholdPowerZone.HighLimit;
 
-        _debugTrace.Add($"Using thresholds: cvStart={cvStartThr}, cvFollow={cvFollowThr}, range={rangeThr}, maRel={maRelThr}. minStartPower={minStartPower} maxStartPower={maxStartPower}W");
+        LogEventHandler?.Invoke(this, $"Using thresholds: cvStart={cvStartThr}, cvFollow={cvFollowThr}, range={rangeThr}, maRel={maRelThr}. minStartPower={minStartPower} maxStartPower={maxStartPower}W");
 
         // Calcular medias móviles para diferentes ventanas de tiempo
-        _debugTrace.Add("Calculating moving averages...");
+        LogEventHandler?.Invoke(this, "Calculating moving averages...");
         var calculator = new MovingAveragesMetricsService();
         var powerModels = calculator
             .Smooth(records
                 .Select(r => new SmoothInput(r.Timestamp, (float)(r.Performance?.Power ?? 0)))
                 .ToList(), 
             _windowSize);
-        _debugTrace.Add($"Generated {powerModels.Count} power models");
+        LogEventHandler?.Invoke(this, $"Generated {powerModels.Count} power models");
 
         // Buscar intervalos
         int i = 0;
@@ -104,7 +101,7 @@ internal class IntervalsFinder
             int pointCount = 0;
             bool sessionStopped = false;
             int firstUnstablePointIndex = 0;
-            _debugTrace.Add($"New interval might start at: startDate={startTime.TimeOfDay}: CV={powerModels[i].CoefficientOfVariation}. Range={powerModels[i].RangePercent}");
+            LogEventHandler?.Invoke(this, $"New interval might start at: startDate={startTime.TimeOfDay}: CV={powerModels[i].CoefficientOfVariation}. Range={powerModels[i].RangePercent}");
 
             // Seguir el intervalo mientras se mantenga estable
             int unstableCount = 0;
@@ -113,7 +110,7 @@ internal class IntervalsFinder
                 int timeDiff = (i > 0) ? (int)(powerModels[i].Timestamp - powerModels[i - 1].Timestamp).TotalSeconds : 1;
                 if (timeDiff > 1)
                 {
-                    _debugTrace.Add($"Session stopped at {powerModels[i - 1].Timestamp.TimeOfDay} for {timeDiff - _windowSize} seconds. Finishing interval");
+                    LogEventHandler?.Invoke(this, $"Session stopped at {powerModels[i - 1].Timestamp.TimeOfDay} for {timeDiff - _windowSize} seconds. Finishing interval");
                     sessionStopped = true;
                     break;
                 }
@@ -124,7 +121,7 @@ internal class IntervalsFinder
                 {
                     if (unstableCount == 0)
                     {
-                        _debugTrace.Add($"Unstable point found at {powerModels[i].Timestamp.TimeOfDay} ({i}): CV={current.CoefficientOfVariation}, Deviation={current.DeviationFromReference}");
+                        LogEventHandler?.Invoke(this, $"Unstable point found at {powerModels[i].Timestamp.TimeOfDay} ({i}): CV={current.CoefficientOfVariation}, Deviation={current.DeviationFromReference}");
                         firstUnstablePointIndex = i;
                     }
                     unstableCount++;
@@ -139,7 +136,7 @@ internal class IntervalsFinder
                 {
                     if (unstableCount != 0)
                     {
-                        _debugTrace.Add($"Unstable point ends at {powerModels[i].Timestamp.TimeOfDay} ({i}): CV={current.CoefficientOfVariation}, Deviation={current.DeviationFromReference}. Count: {unstableCount}");
+                        LogEventHandler?.Invoke(this, $"Unstable point ends at {powerModels[i].Timestamp.TimeOfDay} ({i}): CV={current.CoefficientOfVariation}, Deviation={current.DeviationFromReference}. Count: {unstableCount}");
                         unstableCount = 0;
                     }
                     pointCount++;
@@ -156,43 +153,42 @@ internal class IntervalsFinder
                 auxIndex--;
                 i++;
             }
+            else if (unstableCount != 0)
+            {
+                auxIndex = firstUnstablePointIndex - 1;
+            }
             i = (i < powerModels.Count && !sessionStopped) ? firstUnstablePointIndex + 1 : i;
             var endTime = powerModels[Math.Max(0, auxIndex)].Timestamp;
 
-            var newInterval = new IntervalData
-            {
-                StartTime = startTime,
-                EndTime = endTime,
-                AveragePower = (int)referenceAverage,
-            };
+            var newInterval = IntervalData.Create(startTime, endTime, records);
 
             // Refinar los límites del intervalo
             var refined = RefineIntervalLimits(newInterval, records.ToList());
             if (refined == null)
                 continue;
 
-            _debugTrace.Add($"Found interval: Time={refined.StartTime.TimeOfDay}-{refined.EndTime.TimeOfDay} ({refined.DurationSeconds}s), avgPower={refined.AveragePower}W");
+            LogEventHandler?.Invoke(this, $"Found interval: Time={refined.StartTime.TimeOfDay}-{refined.EndTime.TimeOfDay} ({refined.DurationSeconds}s), avgPower={refined.AveragePower}W");
 
             if (refined.DurationSeconds >= IntervalTimes.IntervalMinTimes[_searchGroup] && refined.IsConsideredAnInterval(_powerZones))
             {
                 if (_container.Any(i => i == refined))
                 {
-                    _debugTrace.Add($"Interval not saved. Already exists.");
+                    LogEventHandler?.Invoke(this, $"Interval not saved. Already exists.");
                 }
                 else
                 {
-                    _debugTrace.Add($"Saved interval: Time={refined.StartTime.TimeOfDay}-{refined.EndTime.TimeOfDay} ({refined.DurationSeconds}s), avgPower={refined.AveragePower}W");
+                    LogEventHandler?.Invoke(this, $"Saved interval: Time={refined.StartTime.TimeOfDay}-{refined.EndTime.TimeOfDay} ({refined.DurationSeconds}s), avgPower={refined.AveragePower}W");
                     result.Add(refined);
                 }
             }
-            else _debugTrace.Add($"Interval not saved. Not valid.");
+            else LogEventHandler?.Invoke(this, $"Interval not saved. Not valid.");
         }
         return result;
     }
 
     private bool IsIntervalStart(MovingAverageMetric point, float cvThreshold, float rangeThreshold, float maxAvgPower, float minAvgPower)
     {
-        //_debugTrace.Add($"Checking interval start at {point.Timestamp}: CV={point.CoefficientOfVariation}, Range={point.RangePercent}");
+        //LogEventHandler?.Invoke(this, $"Checking interval start at {point.Timestamp}: CV={point.CoefficientOfVariation}, Range={point.RangePercent}");
 
         return point.CoefficientOfVariation <= cvThreshold &&
                point.RangePercent <= rangeThreshold &&
@@ -202,7 +198,7 @@ internal class IntervalsFinder
 
     private bool IsIntervalContinuation(MovingAverageMetric point, float cvThreshold, float deviationThreshold)
     {
-        //_debugTrace.Add($"Checking interval continuation at {point.Timestamp}: CV={point.CoefficientOfVariation}, Deviation={point.DeviationFromReference}");
+        //LogEventHandler?.Invoke(this, $"Checking interval continuation at {point.Timestamp}: CV={point.CoefficientOfVariation}, Deviation={point.DeviationFromReference}");
 
         return point.CoefficientOfVariation <= cvThreshold &&
                point.DeviationFromReference <= deviationThreshold;
@@ -210,7 +206,7 @@ internal class IntervalsFinder
 
     private IntervalData? RefineIntervalLimits(IntervalData interval, List<RecordData> points)
     {
-        _debugTrace.Add("Refining interval limits");
+        LogEventHandler?.Invoke(this, "Refining interval limits");
         // Find index of the initial and final points of the interval in the list
         int intervalStartIdx = points.FindIndex(p => p.Timestamp >= interval.StartTime);
         int intervalEndIdx = points.FindLastIndex(p => p.Timestamp <= interval.EndTime);
@@ -298,24 +294,19 @@ internal class IntervalsFinder
 
             if (duration >= IntervalTimes.IntervalMinTime)
             {
-                // _debugTrace.Add($"Refined interval limits: {interval.StartTime} -> {newStartTime}, {interval.EndTime} -> {newEndTime}");
+                // LogEventHandler?.Invoke(this, $"Refined interval limits: {interval.StartTime} -> {newStartTime}, {interval.EndTime} -> {newEndTime}");
                 // Calculate new average with new time range
-                var powers = expandedPoints
-                    .Skip(startIndex)
-                    .Take(endIndex - startIndex + 1)
-                    .Select(p => p.Performance?.Power ?? 0);
-                return new IntervalData
-                {
-                    StartTime = newStartTime,
-                    EndTime = newEndTime,
-                    AveragePower = (int)powers.Average()
-                };
+                //var powers = expandedPoints
+                //    .Skip(startIndex)
+                //    .Take(endIndex - startIndex + 1)
+                //    .Select(p => p.Performance?.Power ?? 0);
+                return IntervalData.Create(newStartTime, newEndTime, expandedPoints);
             }
             return null;
         }
         else    // Means the interval is not valid, return an invalid interval so it can be refused
         {
-            _debugTrace.Add($"Invalid interval, returning nule values. Original: {interval.StartTime.TimeOfDay}-{interval.EndTime.TimeOfDay} ({interval.DurationSeconds}s) at {interval.AveragePower}W");
+            LogEventHandler?.Invoke(this, $"Invalid interval, returning nule values. Original: {interval.StartTime.TimeOfDay}-{interval.EndTime.TimeOfDay} ({interval.DurationSeconds}s) at {interval.AveragePower}W");
             return null;
         }
     }

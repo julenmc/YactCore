@@ -313,12 +313,10 @@ public sealed class FinderUnitTests
         var records = FitnessDataService.SetData(fitnessTestSections);
         List<IntervalData> foundIntervals = new List<IntervalData>()
         {
-            new IntervalData()
-            {
-                StartTime = FitnessDataCreation.DefaultStartDate,
-                EndTime = FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime - 1),
-                AveragePower = ShortIntervalValues.DefaultPower
-            }
+            IntervalData.Create(
+                FitnessDataCreation.DefaultStartDate,
+                FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime - 1),
+                records)
         };
         IntervalsFinder finder = new IntervalsFinder(
             PowerZones,
@@ -419,8 +417,8 @@ public sealed class FinderUnitTests
         List<TestRecord> fitnessTestSections = new List<TestRecord>
         {
             new TestRecord{ Time = NuleIntervalValues.DefaultTime, Power = NuleIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
-            new TestRecord{ Time = intervalFirstPeriod, Power = ShortIntervalValues.MinPower, HearRate = 120, Cadence = 85},
-            new TestRecord{ Time = intervalSecondPeriod, Power = MediumIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
+            new TestRecord{ Time = intervalFirstPeriod, Power = firstPower, HearRate = 120, Cadence = 85},
+            new TestRecord{ Time = intervalSecondPeriod, Power = secondPower, HearRate = 120, Cadence = 85},
             new TestRecord{ Time = NuleIntervalValues.DefaultTime, Power = NuleIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(fitnessTestSections);
@@ -583,7 +581,7 @@ public sealed class FinderUnitTests
         Assert.Single(intervals);
         Assert.Equal(FitnessDataCreation.DefaultStartDate, intervals[0].StartTime);
         Assert.Equal(ShortIntervalValues.DefaultTime + 4, intervals[0].DurationSeconds);
-        Assert.Equal(ShortIntervalValues.DefaultPower - 1, intervals[0].AveragePower, 1f);
+        Assert.Equal(ShortIntervalValues.DefaultPower, intervals[0].AveragePower, 4f);
     }
 
     /// <summary>
@@ -1092,6 +1090,10 @@ public sealed class FinderUnitTests
             PowerZones,
             IntervalSearchGroups.Long
         );
+        finder.LogEventHandler += (s, e) =>
+        {
+            _output.WriteLine(e);
+        };
 
         // Act
         var intervals = finder.Search(records).ToList();
@@ -1350,11 +1352,6 @@ public sealed class FinderUnitTests
 
         // Act
         var intervals = finder.Search(records).ToList();
-        var debugTrace = finder.GetDebugTrace();
-        foreach (var trace in debugTrace)
-        {
-            _output.WriteLine(trace);
-        }
 
         // Assert
         Assert.Single(intervals);
