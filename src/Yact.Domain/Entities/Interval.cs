@@ -1,4 +1,5 @@
 ﻿using Yact.Domain.Common.Activities.Intervals;
+using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Primitives;
 using Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 using Yact.Domain.ValueObjects.Activity.Intervals;
@@ -9,10 +10,11 @@ namespace Yact.Domain.Entities;
 
 public class Interval : Entity<IntervalId>
 {
-    public IntervalSummary Summary { get; }
-    public IEnumerable<RecordData>? Records { get; }
+    public IntervalSummary Summary { get; private set; }
+    public ICollection<RecordData> Records => _records;
     public ICollection<Interval> SubIntervals => _subIntervals;
 
+    private readonly List<RecordData> _records = new();
     private readonly List<Interval> _subIntervals = new();
 
     private Interval(
@@ -21,7 +23,8 @@ public class Interval : Entity<IntervalId>
         IEnumerable<RecordData>? records = null) : base(id)
     {
         Summary = summary;
-        Records = records;
+        if (records != null)
+            _records = records.ToList();
     }
 
     internal static IEnumerable<Interval> Create(
@@ -106,7 +109,29 @@ public class Interval : Entity<IntervalId>
         return Summary.CheckCollisionWithOtherInterval(data) == IntervalSummary.Collision.IsChild;
     }
 
-    private void AddSubInterval(
+    internal void Trim(
+        DateTime startTime,
+        DateTime endTime)
+    {
+        if (_records.Count == 0)
+            throw new NoDataException("Interval has no records saved");
+
+        var newStart = Summary.StartTime.CompareTo(startTime) < 0 ? startTime : Summary.StartTime;
+        var newEnd = Summary.EndTime.CompareTo(endTime) > 0 ? endTime : Summary.EndTime;
+
+        Summary = IntervalSummary.Create(newStart, newEnd, _records);
+        var trimRecords = _records
+            .Where(i => i.Timestamp >= Summary.StartTime && i.Timestamp <= Summary.EndTime)
+            .ToList();
+
+        // Trim sub-intervals
+        foreach(var interval in _subIntervals)
+        {
+            interval.Trim(newStart, newEnd);
+        }
+    }
+
+    internal void AddSubInterval(
         IntervalSummary summary,
         IEnumerable<RecordData> records)
     {
