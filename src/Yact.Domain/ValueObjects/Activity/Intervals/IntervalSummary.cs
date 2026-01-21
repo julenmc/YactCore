@@ -4,7 +4,7 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Domain.ValueObjects.Activity.Intervals;
 
-public record IntervalData
+public record IntervalSummary
 {
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
@@ -14,7 +14,7 @@ public record IntervalData
     public int AveragePower { get; private set; }
     public int AverageCadence { get; private set; }
 
-    public static IntervalData Create(
+    public static IntervalSummary Create(
         DateTime startTime,
         DateTime endTime,
         IEnumerable<RecordData> records)
@@ -23,7 +23,7 @@ public record IntervalData
             .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
             .ToList();
 
-        return new IntervalData
+        return new IntervalSummary
         {
             StartTime = startTime,
             EndTime = endTime,
@@ -61,7 +61,7 @@ public record IntervalData
         };
     }
 
-    public Collision CheckCollisionWithOtherInterval(IntervalData interval)
+    public Collision CheckCollisionWithOtherInterval(IntervalSummary interval)
     {
         // Check if don't collide
         if (StartTime > interval.EndTime ||

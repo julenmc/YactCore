@@ -14,7 +14,7 @@ internal class IntervalsMerger
         _records = records;
     }
 
-    internal void CreateAndInsertMerged(List<IntervalData> intervals)
+    internal void CreateAndInsertMerged(List<IntervalSummary> intervals)
     {
         _debugTrace.Clear();
 
@@ -27,7 +27,7 @@ internal class IntervalsMerger
             while (j < intervals.Count)
             {
                 var collision = intervals[i].CheckCollisionWithOtherInterval(intervals[j]);
-                if (collision == IntervalData.Collision.Before || collision == IntervalData.Collision.After)
+                if (collision == IntervalSummary.Collision.Before || collision == IntervalSummary.Collision.After)
                 {
                     var merged = MergeIntervals(intervals[i], intervals[j]);
                     if (merged != null)
@@ -36,7 +36,7 @@ internal class IntervalsMerger
                         j++;    // So it doesn't check with the generated one in the next iteration
                     }
                 }
-                else if (collision == IntervalData.Collision.None)
+                else if (collision == IntervalSummary.Collision.None)
                 {
                     // No collision, intervals are sorted by date, so we can move to the next interval
                     break;
@@ -46,10 +46,10 @@ internal class IntervalsMerger
         }
     }
 
-    private IntervalData? MergeIntervals(IntervalData interval1, IntervalData interval2)
+    private IntervalSummary? MergeIntervals(IntervalSummary interval1, IntervalSummary interval2)
     {
-        IntervalData firstInterval;
-        IntervalData secondInterval;
+        IntervalSummary firstInterval;
+        IntervalSummary secondInterval;
         if (interval1.StartTime < interval2.StartTime)
         {
             firstInterval = interval1;
@@ -78,7 +78,7 @@ internal class IntervalsMerger
         // Once checked proceed with merge
         DateTime startTime = firstInterval.StartTime;
         DateTime endTime = secondInterval.EndTime;
-        var merged = IntervalData.Create(startTime, endTime, _records);
+        var merged = IntervalSummary.Create(startTime, endTime, _records);
         _debugTrace.Add($"Interval has been extended to: {merged.StartTime.TimeOfDay}-{merged.EndTime.TimeOfDay} ({merged.DurationSeconds} s) at {merged.AveragePower} W");
 
         return merged;

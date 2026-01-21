@@ -28,14 +28,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.Same, collision);
+        Assert.Equal(IntervalSummary.Collision.Same, collision);
     }
 
     [Fact]
@@ -51,14 +51,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.IsParent, collision);
+        Assert.Equal(IntervalSummary.Collision.IsParent, collision);
     }
 
     [Fact]
@@ -74,14 +74,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.IsChild, collision);
+        Assert.Equal(IntervalSummary.Collision.IsChild, collision);
     }
 
     [Fact]
@@ -97,14 +97,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.IsChild, collision);
+        Assert.Equal(IntervalSummary.Collision.IsChild, collision);
     }
 
     [Fact]
@@ -120,14 +120,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.After, collision);
+        Assert.Equal(IntervalSummary.Collision.After, collision);
     }
 
     [Fact]
@@ -143,14 +143,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.IsChild, collision);
+        Assert.Equal(IntervalSummary.Collision.IsChild, collision);
     }
 
     [Fact]
@@ -166,14 +166,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.IsParent, collision);
+        Assert.Equal(IntervalSummary.Collision.IsParent, collision);
     }
 
     [Fact]
@@ -189,14 +189,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.IsParent, collision);
+        Assert.Equal(IntervalSummary.Collision.IsParent, collision);
     }
 
     [Fact]
@@ -212,14 +212,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.Before, collision);
+        Assert.Equal(IntervalSummary.Collision.Before, collision);
     }
 
     [Fact]
@@ -235,14 +235,14 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.None, collision);
+        Assert.Equal(IntervalSummary.Collision.None, collision);
     }
 
     [Fact]
@@ -258,13 +258,13 @@ public sealed class IntervalDataTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var firstInterval = IntervalData.Create(firstStart, firstEnd, records);
-        var secondInterval = IntervalData.Create(secondStart, secondEnd, records);
+        var firstInterval = IntervalSummary.Create(firstStart, firstEnd, records);
+        var secondInterval = IntervalSummary.Create(secondStart, secondEnd, records);
 
         // Act
         var collision = firstInterval.CheckCollisionWithOtherInterval(secondInterval);
 
         // Arrange
-        Assert.Equal(IntervalData.Collision.None, collision);
+        Assert.Equal(IntervalSummary.Collision.None, collision);
     }
 }

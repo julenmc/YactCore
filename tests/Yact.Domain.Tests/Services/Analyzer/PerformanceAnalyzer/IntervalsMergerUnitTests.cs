@@ -20,7 +20,7 @@ public sealed class IntervalsMergerUnitTests
     {
         // Arrange
         var records = new List<RecordData>();
-        var intervals = new List<IntervalData>();
+        var intervals = new List<IntervalSummary>();
         var merger = new IntervalsMerger(records);
 
         // Act
@@ -39,9 +39,9 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records)
@@ -66,13 +66,13 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime + NuleIntervalValues.DefaultTime),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 2 + NuleIntervalValues.DefaultTime),
                 records),
@@ -96,13 +96,13 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = MediumIntervalValues.DefaultTime, Power = MediumIntervalValues.MaxPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime + MediumIntervalValues.DefaultTime),
                 records),
@@ -126,13 +126,13 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = MediumIntervalValues.MaxPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 2),
                 records),
@@ -162,17 +162,17 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.MinPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 2),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 2),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 3),
                 records),
@@ -197,17 +197,17 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.MinPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 2),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 2),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime * 3),
                 records),
@@ -253,13 +253,13 @@ public sealed class IntervalsMergerUnitTests
             new TestRecord{ Time = LongIntervalValues.DefaultTime, Power = LongIntervalValues.DefaultTime, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var intervals = new List<IntervalData>()
+        var intervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 records),
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime),
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime + LongIntervalValues.DefaultTime),
                 records),

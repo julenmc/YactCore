@@ -311,9 +311,9 @@ public sealed class FinderUnitTests
             new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(fitnessTestSections);
-        List<IntervalData> foundIntervals = new List<IntervalData>()
+        List<IntervalSummary> foundIntervals = new List<IntervalSummary>()
         {
-            IntervalData.Create(
+            IntervalSummary.Create(
                 FitnessDataCreation.DefaultStartDate,
                 FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime - 1),
                 records)

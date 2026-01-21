@@ -16,14 +16,14 @@ internal class IntervalsFinder
     private readonly int _windowSize;
     private readonly int _intervalStartMinPower;
     private readonly Zone _startThresholdPowerZone;
-    private readonly IEnumerable<IntervalData> _container;
+    private readonly IEnumerable<IntervalSummary> _container;
 
     public event EventHandler<string>? LogEventHandler;
 
     internal IntervalsFinder(
         IDictionary<int, Zone> powerZones,
         IntervalSearchGroups searchGroup,
-        IEnumerable<IntervalData>? container = null,
+        IEnumerable<IntervalSummary>? container = null,
         Thresholds? thresholds = null)
     {
         _powerZones = powerZones;
@@ -45,7 +45,7 @@ internal class IntervalsFinder
         if (container != null)
             _container = container;
         else
-            _container = new List<IntervalData>();
+            _container = new List<IntervalSummary>();
 
         if (thresholds != null)
             _thresholds = thresholds;
@@ -60,10 +60,10 @@ internal class IntervalsFinder
         }
     }
 
-    internal IEnumerable<IntervalData> Search(IEnumerable<RecordData> records)
+    internal IEnumerable<IntervalSummary> Search(IEnumerable<RecordData> records)
     {
         // Inicializar con valores por defecto si no se proporcionan
-        List<IntervalData> result = new List<IntervalData>();
+        List<IntervalSummary> result = new List<IntervalSummary>();
         float cvStartThr = _thresholds.CvStart;
         float cvFollowThr = _thresholds.CvFollow;
         float rangeThr = _thresholds.Range;
@@ -160,7 +160,7 @@ internal class IntervalsFinder
             i = (i < powerModels.Count && !sessionStopped) ? firstUnstablePointIndex + 1 : i;
             var endTime = powerModels[Math.Max(0, auxIndex)].Timestamp;
 
-            var newInterval = IntervalData.Create(startTime, endTime, records);
+            var newInterval = IntervalSummary.Create(startTime, endTime, records);
 
             // Refinar los límites del intervalo
             var refined = RefineIntervalLimits(newInterval, records.ToList());
@@ -204,7 +204,7 @@ internal class IntervalsFinder
                point.DeviationFromReference <= deviationThreshold;
     }
 
-    private IntervalData? RefineIntervalLimits(IntervalData interval, List<RecordData> points)
+    private IntervalSummary? RefineIntervalLimits(IntervalSummary interval, List<RecordData> points)
     {
         LogEventHandler?.Invoke(this, "Refining interval limits");
         // Find index of the initial and final points of the interval in the list
@@ -300,7 +300,7 @@ internal class IntervalsFinder
                 //    .Skip(startIndex)
                 //    .Take(endIndex - startIndex + 1)
                 //    .Select(p => p.Performance?.Power ?? 0);
-                return IntervalData.Create(newStartTime, newEndTime, expandedPoints);
+                return IntervalSummary.Create(newStartTime, newEndTime, expandedPoints);
             }
             return null;
         }
