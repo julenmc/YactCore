@@ -238,12 +238,6 @@ internal class IntervalsFinder
         var expandedPoints = points.GetRange(expandedStartIdx, expandedEndIdx - expandedStartIdx + 1);
 
         float targetPower = interval.AveragePower;
-        float defaultMaRel = interval.DurationSeconds switch
-        {
-            >= IntervalTimes.LongIntervalMinTime => IntervalSearchValues.LongIntervals.Default.MaRel,
-            >= IntervalTimes.MediumIntervalMinTime => IntervalSearchValues.MediumIntervals.Default.MaRel,
-            _ => IntervalSearchValues.ShortIntervals.Default.MaRel
-        };
         float maRelThr = _thresholds.MaRel;
         float allowedDeviation = targetPower * maRelThr;
 

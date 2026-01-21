@@ -8,7 +8,7 @@ internal enum IntervalGroups
     Nule
 }
 
-internal enum IntervalSearchGroups
+public enum IntervalSearchGroups
 {
     Short,
     Medium,

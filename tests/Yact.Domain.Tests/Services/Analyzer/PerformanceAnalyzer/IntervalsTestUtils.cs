@@ -4,12 +4,12 @@ using Yact.Domain.ValueObjects.Cyclist;
 
 namespace Yact.Domain.Tests.Services.Analyzer.PerformanceAnalyzer;
 
-internal class IntervalValues
+public class IntervalValues
 {
-    internal int DefaultTime { get; set; }
-    internal int MaxPower { get; set; }
-    internal int MinPower { get; set; }
-    internal int DefaultPower { get => (MaxPower + MinPower) / 2; }
+    public int DefaultTime { get; set; }
+    public int MaxPower { get; set; }
+    public int MinPower { get; set; }
+    public int DefaultPower { get => (MaxPower + MinPower) / 2; }
 }
 
 internal static class IntervalsTestConstants
