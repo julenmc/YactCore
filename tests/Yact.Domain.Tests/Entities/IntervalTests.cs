@@ -1,9 +1,7 @@
 ﻿using Xunit.Abstractions;
 using Yact.Domain.Entities;
-using Yact.Domain.Exceptions.Activity;
 using Yact.Domain.Tests.Services.Analyzer.PerformanceAnalyzer;
 using Yact.Domain.ValueObjects.Activity.Intervals;
-using Yact.Domain.ValueObjects.Activity.Records;
 using static Yact.Domain.Tests.Services.Analyzer.PerformanceAnalyzer.IntervalsTestConstants;
 
 namespace Yact.Domain.Tests.Entities;
