@@ -1,6 +1,6 @@
 ﻿using Yact.Domain.ValueObjects.Climb;
 
-namespace Yact.Domain.Tests.ValueObjects;
+namespace Yact.Domain.Tests.ValueObjects.Climb;
 
 public class ClimbDetailsTests
 {

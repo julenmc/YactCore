@@ -3,13 +3,13 @@ using Yact.Domain.Tests.Services.Analyzer.PerformanceAnalyzer;
 using Yact.Domain.ValueObjects.Activity.Intervals;
 using static Yact.Domain.Tests.Services.Analyzer.PerformanceAnalyzer.IntervalsTestConstants;
 
-namespace Yact.Domain.Tests.ValueObjects;
+namespace Yact.Domain.Tests.ValueObjects.Activity;
 
-public sealed class IntervalDataTests
+public sealed class IntervalSummaryTests
 {
     private readonly ITestOutputHelper _output;
 
-    public IntervalDataTests(ITestOutputHelper output)
+    public IntervalSummaryTests(ITestOutputHelper output)
     {
         _output = output;
     }
