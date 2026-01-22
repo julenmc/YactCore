@@ -17,6 +17,8 @@ public sealed class FinderUnitTests
         _output = output;
     }
 
+    #region Input Tests
+
     /// <summary>
     /// Verifies whith invalid power zones an exception is thrown.
     /// </summary>
@@ -80,6 +82,47 @@ public sealed class FinderUnitTests
         // Assertions
         Assert.Empty(intervals);
     }
+
+    /// <summary>
+    /// Verifies that already saved intervals won't be saved again.
+    /// </summary>
+    /// <remarks>
+    /// When searching with short configuration in a session with one short interval,
+    /// if the found interval is already in the container, it won't be saved again.
+    /// </remarks>
+    [Fact]
+    public void Search_AlreadyFound_NotSaved()
+    {
+        // Arrange
+        List<TestRecord> fitnessTestSections = new List<TestRecord>
+        {
+            new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
+        };
+        var records = FitnessDataService.SetData(fitnessTestSections);
+        List<IntervalSummary> foundIntervals = new List<IntervalSummary>()
+        {
+            IntervalSummary.Create(
+                FitnessDataCreation.DefaultStartDate,
+                FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime - 1),
+                records)
+        };
+        IntervalsFinder finder = new IntervalsFinder(
+            PowerZones,
+            IntervalSearchGroups.Short,
+            foundIntervals,
+            ShortThresholds
+        );
+
+        // Act
+        var intervals = finder.Search(records).ToList();
+
+        // Assert
+        Assert.Empty(intervals);
+    }
+
+    #endregion // Input tests
+
+    #region Single Simple Interval
 
     public static IEnumerable<object[]> SingleIntervalWithCustomConfig()
     {
@@ -157,6 +200,53 @@ public sealed class FinderUnitTests
         Assert.Equal(values.DefaultTime, intervals[0].DurationSeconds);
         Assert.Equal(values.DefaultPower, intervals[0].AveragePower);
     }
+
+    public static IEnumerable<object[]> LowerPowerThanExpected()
+    {
+        yield return new object[] { MediumIntervalValues, ShortThresholds, IntervalSearchGroups.Short };
+        yield return new object[] { LongIntervalValues, MediumThresholds, IntervalSearchGroups.Medium };
+    }
+    /// <summary>
+    /// Verifies that an interval with lower power than expected
+    /// is not found with any configuration.
+    /// </summary>
+    /// <remarks>
+    /// Even if this interval can be found with another configuration.
+    /// For example: When searching with short configuration in a session with one medium interval,
+    /// the interval will not be found.
+    /// </remarks>
+    [Theory]
+    [MemberData(nameof(LowerPowerThanExpected))]
+    public void Search_LowerPowerThanExpected_NotFound(IntervalValues values, Thresholds thresholds, IntervalSearchGroups searchGroup)
+    {
+        // Arrange
+        List<TestRecord> fitnessTestSections = new List<TestRecord>
+        {
+            new TestRecord{ Time = NuleIntervalValues.DefaultTime, Power = NuleIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
+            new TestRecord{ Time = values.DefaultTime, Power = values.MinPower, HearRate = 120, Cadence = 85},
+            new TestRecord{ Time = NuleIntervalValues.DefaultTime, Power = NuleIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
+        };
+        var records = FitnessDataService.SetData(fitnessTestSections);
+        IntervalsFinder finder = new IntervalsFinder(
+            PowerZones,
+            searchGroup,
+            thresholds: thresholds
+        );
+        finder.LogEventHandler += (s, e) =>
+        {
+            _output.WriteLine(e);
+        };
+
+        // Act
+        var intervals = finder.Search(records).ToList();
+
+        // Assert
+        Assert.Empty(intervals);
+    }
+
+    #endregion // Single Simple Interval
+
+    #region Pauses
 
     /// <summary>
     /// Verifies that a short interval divided by a pause won't be found.
@@ -302,85 +392,9 @@ public sealed class FinderUnitTests
         Assert.Equal(ShortIntervalValues.DefaultPower, intervals[0].AveragePower);
     }
 
-    /// <summary>
-    /// Verifies that already saved intervals won't be saved again.
-    /// </summary>
-    /// <remarks>
-    /// When searching with short configuration in a session with one short interval,
-    /// if the found interval is already in the container, it won't be saved again.
-    /// </remarks>
-    [Fact]
-    public void Search_AlreadyFound_NotSaved()
-    {
-        // Arrange
-        List<TestRecord> fitnessTestSections = new List<TestRecord>
-        {
-            new TestRecord{ Time = ShortIntervalValues.DefaultTime, Power = ShortIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
-        };
-        var records = FitnessDataService.SetData(fitnessTestSections);
-        List<IntervalSummary> foundIntervals = new List<IntervalSummary>()
-        {
-            IntervalSummary.Create(
-                FitnessDataCreation.DefaultStartDate,
-                FitnessDataCreation.DefaultStartDate.AddSeconds(ShortIntervalValues.DefaultTime - 1),
-                records)
-        };
-        IntervalsFinder finder = new IntervalsFinder(
-            PowerZones,
-            IntervalSearchGroups.Short, 
-            foundIntervals,
-            ShortThresholds
-        );
+    #endregion // Pauses
 
-        // Act
-        var intervals = finder.Search(records).ToList();
-
-        // Assert
-        Assert.Empty(intervals);
-    }
-
-    public static IEnumerable<object[]> LowerPowerThanExpected()
-    {
-        yield return new object[] { MediumIntervalValues, ShortThresholds, IntervalSearchGroups.Short };
-        yield return new object[] { LongIntervalValues, MediumThresholds, IntervalSearchGroups.Medium };
-    }
-    /// <summary>
-    /// Verifies that an interval with lower power than expected
-    /// is not found with any configuration.
-    /// </summary>
-    /// <remarks>
-    /// Even if this interval can be found with another configuration.
-    /// For example: When searching with short configuration in a session with one medium interval,
-    /// the interval will not be found.
-    /// </remarks>
-    [Theory]
-    [MemberData(nameof(LowerPowerThanExpected))]
-    public void Search_LowerPowerThanExpected_NotFound(IntervalValues values, Thresholds thresholds, IntervalSearchGroups searchGroup)
-    {
-        // Arrange
-        List<TestRecord> fitnessTestSections = new List<TestRecord>
-        {
-            new TestRecord{ Time = NuleIntervalValues.DefaultTime, Power = NuleIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
-            new TestRecord{ Time = values.DefaultTime, Power = values.MinPower, HearRate = 120, Cadence = 85},
-            new TestRecord{ Time = NuleIntervalValues.DefaultTime, Power = NuleIntervalValues.DefaultPower, HearRate = 120, Cadence = 85},
-        };
-        var records = FitnessDataService.SetData(fitnessTestSections);
-        IntervalsFinder finder = new IntervalsFinder(
-            PowerZones,
-            searchGroup, 
-            thresholds: thresholds
-        );
-        finder.LogEventHandler += (s, e) =>
-        {
-            _output.WriteLine(e);
-        };
-
-        // Act
-        var intervals = finder.Search(records).ToList();
-
-        // Assert
-        Assert.Empty(intervals);
-    }
+    #region Drops and Lifts
 
     public static IEnumerable<object[]> CriticalPowerChange()
     {
@@ -531,20 +545,9 @@ public sealed class FinderUnitTests
         Assert.Equal(expectedPower, intervals[0].AveragePower, 1f);
     }
 
+    #endregion // Drops and Lifts
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #region Irregular
 
     /// <summary>
     /// Verifies that finds the exact point where the interval starts.
@@ -656,4 +659,102 @@ public sealed class FinderUnitTests
         // Assert
         Assert.Empty(intervals);
     }
+
+    #endregion // Irregular
+
+    #region Limits
+
+    public static IEnumerable<object[]> SmallStepLift()
+    {
+        yield return new object[] {
+            ShortThresholds,
+            IntervalSearchGroups.Short,
+            new int[] { MediumIntervalValues.DefaultTime, ShortIntervalValues.DefaultTime },
+            new int[] { MediumIntervalValues.MaxPower, ShortIntervalValues.DefaultPower } };
+        yield return new object[] {
+            MediumThresholds,
+            IntervalSearchGroups.Medium,
+            new int[] { LongIntervalValues.DefaultTime, MediumIntervalValues.DefaultTime },
+            new int[] { LongIntervalValues.DefaultPower, MediumIntervalValues.DefaultPower } };
+    }
+    /// <summary>
+    /// Verifies that the interval limits are correctly defined even if there's an interval
+    /// next to it.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(SmallStepLift))]
+    public void Search_SmallStepLift_StartFoundCorrectly(
+        Thresholds thresholds, 
+        IntervalSearchGroups searchGroup, int[] times, int[] powers)
+    {
+        // Arrange
+        List<TestRecord> fitnessTestSections = new List<TestRecord>
+        {
+            new TestRecord{ Time = times[0], Power = powers[0], HearRate = 120, Cadence = 85},
+            new TestRecord{ Time = times[1], Power = powers[1], HearRate = 120, Cadence = 85},
+        };
+        var records = FitnessDataService.SetData(fitnessTestSections);
+        IntervalsFinder finder = new IntervalsFinder(
+            PowerZones,
+            searchGroup,
+            thresholds: thresholds
+        );
+
+        // Act
+        var intervals = finder.Search(records).ToList();
+
+        // Assert
+        Assert.Single(intervals);
+        Assert.Equal(FitnessDataCreation.DefaultStartDate.AddSeconds(times[0]), intervals[0].StartTime);
+        Assert.Equal(times[1], intervals[0].DurationSeconds);
+        Assert.Equal(powers[1], intervals[0].AveragePower);
+    }
+
+    public static IEnumerable<object[]> SmallStepDrop()
+    {
+        yield return new object[] {
+            ShortThresholds,
+            IntervalSearchGroups.Short,
+            new int[] { ShortIntervalValues.DefaultTime, MediumIntervalValues.DefaultTime },
+            new int[] { ShortIntervalValues.DefaultPower, MediumIntervalValues.MaxPower } };
+        yield return new object[] {
+            MediumThresholds,
+            IntervalSearchGroups.Medium,
+            new int[] { MediumIntervalValues.DefaultTime, LongIntervalValues.DefaultTime },
+            new int[] { MediumIntervalValues.DefaultPower, LongIntervalValues.DefaultPower } };
+    }
+    /// <summary>
+    /// Verifies that the interval limits are correctly defined even if there's an interval
+    /// next to it.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(SmallStepDrop))]
+    public void Search_SmallStepDrop_EndFoundCorrectly(
+        Thresholds thresholds,
+        IntervalSearchGroups searchGroup, int[] times, int[] powers)
+    {
+        // Arrange
+        List<TestRecord> fitnessTestSections = new List<TestRecord>
+        {
+            new TestRecord{ Time = times[0], Power = powers[0], HearRate = 120, Cadence = 85},
+            new TestRecord{ Time = times[1], Power = powers[1], HearRate = 120, Cadence = 85},
+        };
+        var records = FitnessDataService.SetData(fitnessTestSections);
+        IntervalsFinder finder = new IntervalsFinder(
+            PowerZones,
+            searchGroup,
+            thresholds: thresholds
+        );
+
+        // Act
+        var intervals = finder.Search(records).ToList();
+
+        // Assert
+        Assert.Single(intervals);
+        Assert.Equal(FitnessDataCreation.DefaultStartDate, intervals[0].StartTime);
+        Assert.Equal(times[0], intervals[0].DurationSeconds);
+        Assert.Equal(powers[0], intervals[0].AveragePower);
+    }
+
+    #endregion // Limits
 }
