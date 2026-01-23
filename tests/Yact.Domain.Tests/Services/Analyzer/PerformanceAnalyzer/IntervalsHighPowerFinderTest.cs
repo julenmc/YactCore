@@ -14,25 +14,25 @@ public sealed class HighPowerFinderUnitTests
         _output = output;
     }
 
-    #region SearchHighPower
+    #region Search
 
     #region No Interval
 
     [Fact]
-    public void SearchHighPower_NoRecords_NoIntervalReturned()
+    public void Search_NoRecords_NoIntervalReturned()
     {
         // Arrange
-        var finder = new IntervalsHighPowerFinder(PowerZones.Create(IntervalsTestConstants.PowerZones));
+        var finder = new IntervalsHighPowerFinder(PowerZones.Create(IntervalsTestConstants.PowerZones), new List<RecordData>());
 
         // Act
-        var intervals = finder.SearchHighPower(new List<RecordData>());
+        var intervals = finder.Search();
 
         // Assert
         Assert.Empty(intervals);
     }
 
     [Fact]
-    public void SearchHighPower_MinimumTimeNotReached_NoIntervalReturned()
+    public void Search_MinimumTimeNotReached_NoIntervalReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -41,18 +41,18 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord{ Time = 29, Power = powerZones.Values[5].HighLimit, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Empty(intervals);
     }
 
     [Fact]
-    public void SearchHighPower_MinimumPowerNotReached_NoIntervalReturned()
+    public void Search_MinimumPowerNotReached_NoIntervalReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -61,11 +61,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord{ Time = 40, Power = powerZones.Values[4].HighLimit, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Empty(intervals);
@@ -76,7 +76,7 @@ public sealed class HighPowerFinderUnitTests
     #region Simple Intervals
 
     [Fact]
-    public void SearchHighPower_PowerAndDurationReached_OneIntervalReturned()
+    public void Search_PowerAndDurationReached_OneIntervalReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -85,11 +85,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord{ Time = 30, Power = powerZones.Values[5].LowLimit, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Single(intervals);
@@ -100,7 +100,7 @@ public sealed class HighPowerFinderUnitTests
     }
 
     [Fact]
-    public void SearchHighPower_HighPowerBetweenBreaks_OneIntervalReturned()
+    public void Search_HighPowerBetweenBreaks_OneIntervalReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -111,11 +111,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord{ Time = 30, Power = powerZones.Values[4].HighLimit, HearRate = 120, Cadence = 85},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Single(intervals);
@@ -127,7 +127,7 @@ public sealed class HighPowerFinderUnitTests
     }
 
     [Fact]
-    public void SearchHighPower_TwoHighPowerDividedByBreak_TwoIntervalsReturned()
+    public void Search_TwoHighPowerDividedByBreak_TwoIntervalsReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -138,11 +138,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord{ Time = 30, Power = powerZones.Values[5].LowLimit, HearRate = 125, Cadence = 90},
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Equal(2, intervals.Count());
@@ -164,7 +164,7 @@ public sealed class HighPowerFinderUnitTests
     #region Irregular
 
     [Fact]
-    public void SearchHighPower_SmallIrregularPower_OneIntervalReturned()
+    public void Search_SmallIrregularPower_OneIntervalReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -175,11 +175,11 @@ public sealed class HighPowerFinderUnitTests
             testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[5].HighLimit, HearRate = 125, Cadence = 90 });
         }
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Single(intervals);
@@ -193,7 +193,7 @@ public sealed class HighPowerFinderUnitTests
     }
 
     [Fact]
-    public void SearchHighPower_BigDeviation_NoIntervalReturned()
+    public void Search_BigDeviation_NoIntervalReturned()
     {
         // Arrange
         var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
@@ -204,11 +204,11 @@ public sealed class HighPowerFinderUnitTests
             testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[5].HighLimit, HearRate = 120, Cadence = 85 });
         }
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Empty(intervals);
@@ -250,7 +250,7 @@ public sealed class HighPowerFinderUnitTests
     }
     [Theory]
     [MemberData(nameof(SmallDrop))]
-    public void SearchHighPower_IntervalWithMiddleSmallDrop_OneIntervalReturned(float powerDropPercentage, int dropTime)
+    public void Search_IntervalWithMiddleSmallDrop_OneIntervalReturned(float powerDropPercentage, int dropTime)
     {
         // With a small drop in the middle, the interval is detected as one and will contain the drop
         // Arrange
@@ -266,11 +266,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord { Time = normalPowerDuration, Power = normalPower, HearRate = 125, Cadence = 90 }
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Single(intervals);
@@ -285,7 +285,7 @@ public sealed class HighPowerFinderUnitTests
 
     [Theory]
     [MemberData(nameof(SmallDrop))]
-    public void SearchHighPower_IntervalWithEndSmallDrop_OneIntervalReturned(float powerDropPercentage, int dropTime)
+    public void Search_IntervalWithEndSmallDrop_OneIntervalReturned(float powerDropPercentage, int dropTime)
     {
         // With a small drop in the middle, the interval won't contain the drop
         // Arrange
@@ -300,11 +300,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord { Time = dropTime, Power = dropPower, HearRate = 120, Cadence = 85 },
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Single(intervals);
@@ -342,7 +342,7 @@ public sealed class HighPowerFinderUnitTests
     }
     [Theory]
     [MemberData(nameof(BigDrop))]
-    public void SearchHighPower_IntervalWithMiddleBigDrop_TwoIntervalReturned(float powerDropPercentage, int dropTime)
+    public void Search_IntervalWithMiddleBigDrop_TwoIntervalReturned(float powerDropPercentage, int dropTime)
     {
         // With a big drop in the middle, two different intervals will be detected and none will contain the drop
         // Arrange
@@ -358,11 +358,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord { Time = normalPowerDuration, Power = normalPower, HearRate = 125, Cadence = 90 }
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Equal(2, intervals.Count());
@@ -379,7 +379,7 @@ public sealed class HighPowerFinderUnitTests
 
     [Theory]
     [MemberData(nameof(BigDrop))]
-    public void SearchHighPower_IntervalWithMiddleBigDrop_NoIntervalReturned(float powerDropPercentage, int dropTime)
+    public void Search_IntervalWithMiddleBigDrop_NoIntervalReturned(float powerDropPercentage, int dropTime)
     {
         // Interval gets divided and it's not enought for detection
         // Arrange
@@ -395,11 +395,11 @@ public sealed class HighPowerFinderUnitTests
             new TestRecord { Time = 29, Power = normalPower, HearRate = 125, Cadence = 90 }
         };
         var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsHighPowerFinder(powerZones);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
         finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
 
         // Act
-        var intervals = finder.SearchHighPower(records);
+        var intervals = finder.Search();
 
         // Assert
         Assert.Empty(intervals);
@@ -409,7 +409,7 @@ public sealed class HighPowerFinderUnitTests
 
     // Session stopped pending
 
-    #endregion // SearchHighPower
+    #endregion // Search
 
     //#region Single Simple Interval
 
@@ -443,7 +443,7 @@ public sealed class HighPowerFinderUnitTests
     //        thresholds: thresholds);
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -481,7 +481,7 @@ public sealed class HighPowerFinderUnitTests
     //        searchGroup);
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -527,7 +527,7 @@ public sealed class HighPowerFinderUnitTests
     //    };
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Empty(intervals);
@@ -562,7 +562,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Empty(intervals);
@@ -594,7 +594,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Equal(2, intervals.Count);
@@ -635,7 +635,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -672,7 +672,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -725,7 +725,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Equal(2, intervals.Count);
@@ -776,7 +776,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    int expectedPower = (values.DefaultTime * values.DefaultPower * 2 + dropTime * dropPower) / (values.DefaultTime * 2 + dropTime);
@@ -824,7 +824,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    int expectedPower = (values.DefaultTime * values.DefaultPower * 2 + dropTime * dropPower) / (values.DefaultTime * 2 + dropTime);
@@ -865,7 +865,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -902,7 +902,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -943,7 +943,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Empty(intervals);
@@ -990,7 +990,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
@@ -1036,7 +1036,7 @@ public sealed class HighPowerFinderUnitTests
     //    );
 
     //    // Act
-    //    var intervals = finder.Search(records).ToList();
+    //    var intervals = finder.Search().ToList();
 
     //    // Assert
     //    Assert.Single(intervals);
