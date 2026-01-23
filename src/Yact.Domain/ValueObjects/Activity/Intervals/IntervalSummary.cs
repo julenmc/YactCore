@@ -34,33 +34,6 @@ public record IntervalSummary
         };
     }
 
-    public bool IsConsideredAnInterval(IDictionary<int, Zone> zones)
-    {
-        var shortZone = zones[IntervalZones.IntervalMinZones[IntervalGroups.Short]];
-        if (shortZone == null)
-            throw new ArgumentException($"Couldn't find minimum zone for '{IntervalGroups.Short}' (Id = {IntervalZones.IntervalMinZones[IntervalGroups.Short]}).");
-
-        var mediumZone = zones[IntervalZones.IntervalMinZones[IntervalGroups.Medium]];
-        if (mediumZone == null)
-            throw new ArgumentException($"Couldn't find minimum zone for '{IntervalGroups.Medium}' (Id = {IntervalZones.IntervalMinZones[IntervalGroups.Medium]}).");
-
-        var longZone = zones[IntervalZones.IntervalMinZones[IntervalGroups.Long]];
-        if (longZone == null)
-            throw new ArgumentException($"Couldn't find minimum zone for '{IntervalGroups.Long}' (Id = {IntervalZones.IntervalMinZones[IntervalGroups.Long]}).");
-
-        double shortLimit = shortZone.LowLimit;
-        double mediumLimit = mediumZone.LowLimit;
-        double longLimit = longZone.LowLimit;
-
-        return DurationSeconds switch
-        {
-            >= IntervalTimes.LongIntervalMinTime => AveragePower >= longLimit,
-            >= IntervalTimes.MediumIntervalMinTime => AveragePower >= mediumLimit,
-            >= IntervalTimes.IntervalMinTime => AveragePower >= shortLimit,
-            _ => false
-        };
-    }
-
     public Collision CheckCollisionWithOtherInterval(IntervalSummary interval)
     {
         // Check if don't collide

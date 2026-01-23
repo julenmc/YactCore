@@ -112,7 +112,7 @@ public class MovingAveragesServiceTests
         Assert.NotNull(result);
         foreach (var metric in result)
         {
-            Assert.True(metric.Timestamp > date);
+            Assert.True(metric.LastPoint.Timestamp > date);
             Assert.True(metric.Average >= 0);
             Assert.True(metric.Deviation >= 0);
         }
@@ -252,9 +252,9 @@ public class MovingAveragesServiceTests
         // Assert
         Assert.NotNull(result);
         // Expected indices: 2, 3, 4 (after first window completion and sliding)
-        Assert.Equal(date.AddSeconds(2), result[0].Timestamp);
-        Assert.Equal(date.AddSeconds(3), result[1].Timestamp);
-        Assert.Equal(date.AddSeconds(4), result[2].Timestamp);
+        Assert.Equal(date.AddSeconds(2), result[0].LastPoint.Timestamp);
+        Assert.Equal(date.AddSeconds(3), result[1].LastPoint.Timestamp);
+        Assert.Equal(date.AddSeconds(4), result[2].LastPoint.Timestamp);
     }
 
     #endregion

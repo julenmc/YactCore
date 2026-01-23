@@ -20,12 +20,12 @@ public class MovingAveragesMetricsService
     /// <returns>A list of <see cref="MovingAverageMetric"/> objects, each representing the calculated metrics for a specific
     /// window position.</returns>
     /// <exception cref="ArgumentException">Thrown if the number of elements in <paramref name="records"/> is less than <paramref name="windowSize"/>.</exception>
-    public List<MovingAverageMetric> Smooth (List<SmoothInput> records, int windowSize)
+    public List<MovingAverageMetric<SmoothInput>> Smooth (List<SmoothInput> records, int windowSize)
     {
         if (records.Count < windowSize)
             throw new ArgumentException(nameof(records), $"Point count ({records.Count}) is smaller than the window size {windowSize}");
 
-        var result = new List<MovingAverageMetric>();
+        var result = new List<MovingAverageMetric<SmoothInput>>();
         var recordValues = new Queue<SmoothInput>();
         float min = float.MaxValue;
         float max = float.MinValue;
@@ -56,12 +56,13 @@ public class MovingAveragesMetricsService
             float variance = sumSquares / recordValues.Count - avg * avg;
             float stdDev = (float)Math.Sqrt(Math.Max(0, variance));
 
-            result.Add(new MovingAverageMetric
+            result.Add(new MovingAverageMetric<SmoothInput>
             {
-                Timestamp = records[index - 1].Timestamp,
+                Index = index - 1,
                 Average = avg,
                 Deviation = stdDev,
-                MaxMinDelta = max - min
+                MaxMinDelta = max - min,
+                LastPoint = records[index - 1]
             });
         }
 
@@ -95,12 +96,13 @@ public class MovingAveragesMetricsService
             float avg = sum / windowSize;
             float variance = sumSquares / windowSize - avg * avg;
             float stdDev = (float)Math.Sqrt(Math.Max(0, variance));
-            result.Add(new MovingAverageMetric
+            result.Add(new MovingAverageMetric<SmoothInput>
             {
-                Timestamp = records[index].Timestamp,
+                Index = index,
                 Average = avg,
                 Deviation = stdDev,
-                MaxMinDelta = max - min
+                MaxMinDelta = max - min,
+                LastPoint = records[index]
             });
 
             index++;

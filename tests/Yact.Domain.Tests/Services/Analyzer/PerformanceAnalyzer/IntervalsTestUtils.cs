@@ -43,13 +43,13 @@ internal static class IntervalsTestConstants
     internal const float LongAcpDelta = 0.1f;   // 10% time delta accepted for long intervals
 
     internal static readonly Dictionary<int, Zone> PowerZones = new Dictionary<int, Zone>{
-        { 1, new Zone(0, 129) },
-        { 2, new Zone(130, NuleIntervalValues.MaxPower - 1) },
-        { 3, new Zone(NuleIntervalValues.MaxPower,LongIntervalValues.MaxPower - 1)},
-        { 4, new Zone(LongIntervalValues.MaxPower, MediumIntervalValues.MaxPower - 1)},
-        { 5, new Zone(MediumIntervalValues.MaxPower, ShortIntervalValues.MaxPower - 1)},
-        { 6, new Zone(ShortIntervalValues.MaxPower, ShortIntervalValues.MaxPower + 49)},
-        { 7, new Zone(ShortIntervalValues.MaxPower + 50, 2000)}
+        { 1, Zone.Create(0, 138) },
+        { 2, Zone.Create(139, 189) },
+        { 3, Zone.Create(190, 227)},
+        { 4, Zone.Create(228, 265)},
+        { 5, Zone.Create(266, 303)},
+        { 6, Zone.Create(304, 379)},
+        { 7, Zone.Create(380, 2000)}
     };
 
     internal readonly static Thresholds ShortThresholds = new Thresholds { CvStart = 0.15f, CvFollow = 0.20f, Range = 0.20f, MaRel = 0.15f };
