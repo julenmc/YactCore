@@ -1,9 +1,7 @@
 ﻿using Yact.Domain.Exceptions.Activity;
-using Yact.Domain.Services.Utils.Smoothers.Metrics;
 using Yact.Domain.ValueObjects.Activity.Intervals;
 using Yact.Domain.ValueObjects.Activity.Records;
 using Yact.Domain.ValueObjects.Cyclist;
-using static Yact.Domain.Services.Utils.Smoothers.Metrics.MovingAveragesMetricsService;
 
 namespace Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 
@@ -18,7 +16,7 @@ internal class IntervalsHighPowerFinder : IntervalsFinder
     internal IntervalsHighPowerFinder(
         PowerZones powerZones,
         IEnumerable<RecordData> records) 
-        : base(records, powerZones, CvAllowed, DeviationAllowed, WindowSizeHighPower)
+        : base(records, powerZones, WindowSizeHighPower, CvAllowed, DeviationAllowed, 0)    // Delta allowed as 0 because isn't needed
     {
         _minPower = powerZones.Values[5].LowLimit;
     }

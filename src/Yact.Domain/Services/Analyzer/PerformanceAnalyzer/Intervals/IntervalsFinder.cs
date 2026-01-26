@@ -16,6 +16,7 @@ internal abstract class IntervalsFinder
     protected readonly int _windowSize;
     protected readonly float _cvAllowed;
     protected readonly float _deviationAllowed;
+    protected readonly float _deltaAllowed;
 
     protected List<MovingAverageMetric<SmoothInput>> _powerModels;
     protected IEnumerable<RecordData> _records;
@@ -28,9 +29,10 @@ internal abstract class IntervalsFinder
     protected IntervalsFinder(
         IEnumerable<RecordData> records,
         PowerZones powerZones,
+        int windowSize,
         float cvAllowed, 
         float deviationAllowed,
-        int windowSize)
+        float deltaAllowed)
     {
         _records = records;
         _powerZones = powerZones;
@@ -38,6 +40,7 @@ internal abstract class IntervalsFinder
         _deviationAllowed = deviationAllowed;
         _windowSize = windowSize;
         _powerModels = new();
+        _deltaAllowed = deltaAllowed;
     }
 
     internal virtual IEnumerable<IntervalSummary> Search()
