@@ -212,6 +212,32 @@ public sealed class HighPowerFinderUnitTests
         Assert.Empty(intervals);
     }
 
+    [Fact]
+    public void Search_SmoothStartThenBigDeviation_NoIntervalReturned()
+    {
+        // When the interval is too irregular, it should't be detected
+        // Arrange
+        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
+        List<TestRecord> testRecords = new List<TestRecord>()
+        {
+            new TestRecord { Time = 10, Power = powerZones.Values[5].LowLimit, HearRate = 120, Cadence = 85 }
+        };
+        for (int i = 0; i < 10; i++)
+        {
+            testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[4].LowLimit, HearRate = 120, Cadence = 85 });
+            testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[5].HighLimit, HearRate = 120, Cadence = 85 });
+        }
+        var records = FitnessDataService.SetData(testRecords);
+        var finder = new IntervalsHighPowerFinder(powerZones, records);
+        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+
+        // Act
+        var intervals = finder.Search();
+
+        // Assert
+        Assert.Empty(intervals);
+    }
+
     #endregion // Irregular
 
     #region Drops

@@ -1,5 +1,4 @@
 ﻿using Yact.Domain.Exceptions.Activity;
-using Yact.Domain.ValueObjects.Activity.Intervals;
 using Yact.Domain.ValueObjects.Activity.Records;
 using Yact.Domain.ValueObjects.Cyclist;
 
@@ -7,24 +6,16 @@ namespace Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 
 internal class IntervalsHighPowerFinder : IntervalsFinder
 {
+    private const int MinTime = 30;
     private const int WindowSizeHighPower = 10;
     private const float CvAllowed = 0.1f;
     private const float DeviationAllowed = 0.1f;
 
-    private readonly int _minPower;
-
     internal IntervalsHighPowerFinder(
         PowerZones powerZones,
         IEnumerable<RecordData> records) 
-        : base(records, powerZones, WindowSizeHighPower, CvAllowed, DeviationAllowed, 0)    // Delta allowed as 0 because isn't needed
+        : base(records, powerZones, WindowSizeHighPower, MinTime, CvAllowed, DeviationAllowed, minPower: powerZones.Values[5].LowLimit) 
     {
-        _minPower = powerZones.Values[5].LowLimit;
-    }
-
-    protected override bool IsConsideredAnInterval(IntervalSummary interval)
-    {
-        return interval.DurationSeconds >= 30 &&
-            interval.AveragePower >= _powerZones.Values[5].LowLimit;
     }
 
     protected override bool IsIntervalStart(int index)
@@ -42,9 +33,6 @@ internal class IntervalsHighPowerFinder : IntervalsFinder
 
     protected override void HandleFirstWarningPoint(int index)
     {
-        if (_records == null)
-            throw new NoDataException();
-
         // Check from the beggining of the window to see what's wrong
         for (int j = _windowSize - 1; j >= 0; j--)
         {
@@ -71,7 +59,7 @@ internal class IntervalsHighPowerFinder : IntervalsFinder
         // but won't check if the interval has to end
         if (_powerModels[indexModels].LastPoint.Value < _minPower)
         {
-            var deviation = Math.Abs(dangerAverage - _referenceAverage) / _referenceAverage;
+            var deviation = Math.Abs(dangerAverage - _minPower) / _minPower;
             if (deviation > 0.50f ||
                 (deviation > 0.25f && _dangerCount > 5) ||
                 (deviation > 0.10f && _dangerCount > 15) ||
@@ -82,5 +70,61 @@ internal class IntervalsHighPowerFinder : IntervalsFinder
             }
         }
         return false;
+    }
+
+    protected override int GetStartIndex(
+        IEnumerable<RecordData> records,
+        DateTime startTime,
+        DateTime endTime)
+    {
+        var intervalRecords = records
+                .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
+                .ToList();
+
+        var expectedAverage = intervalRecords
+            .Skip(_windowSize)
+            .SkipLast(_windowSize)
+            .Select(r => r.Performance?.Power)
+            .Average();
+
+        int startIndex = 0;
+        for (int i = 0; i < _windowSize; i++)
+        {
+            if (intervalRecords.ElementAt(i).Performance?.Power >= _minPower)
+            {
+                startIndex = i;
+                break;
+            }
+        }
+
+        return startIndex;
+    }
+
+    protected override int GetEndIndex(
+        IEnumerable<RecordData> records,
+        DateTime startTime,
+        DateTime endTime)
+    {
+        var intervalRecords = records
+        .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
+        .ToList();
+
+        var expectedAverage = intervalRecords
+            .Skip(_windowSize)
+            .SkipLast(_windowSize)
+            .Select(r => r.Performance?.Power)
+            .Average();
+
+        int endIndex = 0;
+        for (int i = intervalRecords.Count - 1; i >= intervalRecords.Count - _windowSize; i--)
+        {
+            if (intervalRecords.ElementAt(i).Performance?.Power >= _minPower)
+            {
+                endIndex = i;
+                break;
+            }
+        }
+
+        return endIndex;
     }
 }

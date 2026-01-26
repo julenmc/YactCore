@@ -17,6 +17,9 @@ internal abstract class IntervalsFinder
     protected readonly float _cvAllowed;
     protected readonly float _deviationAllowed;
     protected readonly float _deltaAllowed;
+    protected readonly int _minPower;
+    protected readonly int _maxPower;
+    protected readonly int _minTime;
 
     protected List<MovingAverageMetric<SmoothInput>> _powerModels;
     protected IEnumerable<RecordData> _records;
@@ -25,14 +28,19 @@ internal abstract class IntervalsFinder
     protected int _dangerTotalPower = 0;
     protected float _referenceAverage = 0f;
     protected int _lastAllowedRecordsIndex = 0;
+    protected int _startIndexRecords = 0;
+    protected DateTime _startTime;
 
     protected IntervalsFinder(
         IEnumerable<RecordData> records,
         PowerZones powerZones,
         int windowSize,
+        int minTime,
         float cvAllowed, 
         float deviationAllowed,
-        float deltaAllowed)
+        float deltaAllowed = 0,
+        int minPower = 0,
+        int maxPower = 2000)
     {
         _records = records;
         _powerZones = powerZones;
@@ -40,7 +48,10 @@ internal abstract class IntervalsFinder
         _deviationAllowed = deviationAllowed;
         _windowSize = windowSize;
         _powerModels = new();
+        _minTime = minTime;
         _deltaAllowed = deltaAllowed;
+        _minPower = minPower;
+        _maxPower = maxPower;
     }
 
     internal virtual IEnumerable<IntervalSummary> Search()
@@ -64,14 +75,14 @@ internal abstract class IntervalsFinder
             if (indexModels >= _powerModels.Count)
                 break;
 
-            var startIndexRecords = _powerModels[indexModels].Index - (_windowSize - 1);
-            var startTime = _records.ElementAt(startIndexRecords).Timestamp;
+            _startIndexRecords = _powerModels[indexModels].Index - (_windowSize - 1);
+            _startTime = _records.ElementAt(_startIndexRecords).Timestamp;
             _referenceAverage = _powerModels[indexModels].Average;
             int totalPower = (int)_referenceAverage;
             int pointCount = 1;
             bool sessionStopped = false;
             indexModels++;
-            RaiseLogEvent($"New interval might start at: startDate={startTime.TimeOfDay} Average={_powerModels[indexModels].Average}. CV={_powerModels[indexModels].CoefficientOfVariation}");
+            RaiseLogEvent($"New interval might start at: startDate={_startTime.TimeOfDay} Average={_powerModels[indexModels].Average}. CV={_powerModels[indexModels].CoefficientOfVariation}");
 
             // While it keeps stable
             _dangerCount = 0;
@@ -118,7 +129,7 @@ internal abstract class IntervalsFinder
                         _dangerTotalPower = 0;
                         _dangerCount = 0;
                         _lastAllowedRecordsIndex = 0;
-                        RaiseLogEvent($"Unstable points end at {_powerModels[indexModels].LastPoint.Timestamp.TimeOfDay} ({indexModels}): Power={_powerModels[indexModels].Average}");
+                        RaiseLogEvent($"Unstable points end at {_powerModels[indexModels].LastPoint.Timestamp.TimeOfDay} ({_powerModels[indexModels].Index}): Power={_powerModels[indexModels].Average}");
                     }
                     else
                     {
@@ -130,7 +141,7 @@ internal abstract class IntervalsFinder
                 indexModels++;
             }
 
-            var refinedLimits = GetIntervalLimitDateTimes(indexModels, startIndexRecords);
+            var refinedLimits = GetIntervalLimitDateTimes(indexModels);
 
             // Check if it can be considered an interval
             var newInterval = IntervalSummary.Create(
@@ -145,6 +156,25 @@ internal abstract class IntervalsFinder
             else
             {
                 RaiseLogEvent($"Interval at {newInterval.StartTime.TimeOfDay}, {newInterval.DurationSeconds}s at {newInterval.AveragePower}W not saved");
+            }
+
+            if (indexModels < _powerModels.Count)
+            {
+                int index = 0;
+                int? lastIntervalEndIndex = null;
+
+                foreach (var r in _records)
+                {
+                    if (r.Timestamp == newInterval.EndTime)
+                    {
+                        lastIntervalEndIndex = index;
+                        break;
+                    }
+                    index++;
+                }
+
+                if (lastIntervalEndIndex != null) 
+                    indexModels = lastIntervalEndIndex.Value;
             }
         }
         return result;
@@ -162,29 +192,32 @@ internal abstract class IntervalsFinder
 
     protected virtual bool IsIntervalStart(int index)
     {
-        return false;
+        return _powerModels[index].CoefficientOfVariation <= _cvAllowed &&
+            _powerModels[index].RangePercent <= _deltaAllowed &&
+            _powerModels[index].Average >= _minPower &&
+            _powerModels[index].Average <= _maxPower;
     }
 
     protected virtual bool IsIntervalEndWarning(int index)
     {
-        return false;
+        return _powerModels[index].CoefficientOfVariation > _cvAllowed ||
+            Math.Abs(_powerModels[index].DeviationFromReference) >= _deviationAllowed ||
+            _powerModels[index].Average < _minPower;
     }
 
     protected virtual void HandleFirstWarningPoint(int index)
     {
-        if (_records == null)
-            throw new NoDataException();
-
         // Check from the beggining of the window to see what's wrong
         for (int j = _windowSize - 1; j >= 0; j--)
         {
             int dangerIndexRecords = _powerModels[index].Index - j;
-            if (_records.ElementAt(dangerIndexRecords).Performance?.Power < _referenceAverage)
+            if (_records.ElementAt(dangerIndexRecords).Performance?.Power < _referenceAverage * (1 - _deviationAllowed) ||
+                _records.ElementAt(dangerIndexRecords).Performance?.Power > _referenceAverage * (1 + _deviationAllowed))
             {
                 _lastAllowedRecordsIndex = dangerIndexRecords - 1;
                 LogEventHandler?.Invoke(
                     this,
-                    $"Unstable point found at {_records.ElementAt(dangerIndexRecords).Timestamp.TimeOfDay} ({index}): Power={_records.ElementAt(dangerIndexRecords).Performance?.Power}W");
+                    $"Unstable point found at {_records.ElementAt(dangerIndexRecords).Timestamp.TimeOfDay} ({dangerIndexRecords}): Power={_records.ElementAt(dangerIndexRecords).Performance?.Power}W");
                 _dangerTotalPower = (int)_records
                     .Skip(_lastAllowedRecordsIndex + 1)
                     .Take(j + 1)
@@ -192,46 +225,39 @@ internal abstract class IntervalsFinder
                     .Where(p => p.HasValue)
                     .Sum(p => p!.Value);
                 _dangerCount = j + 1;
+                _referenceAverage = _records
+                    .Skip(_startIndexRecords)
+                    .Take(_lastAllowedRecordsIndex - _startIndexRecords)
+                    .Select(r => r.Performance?.Power)
+                    .Where(p => p.HasValue)
+                    .Average(p => p!.Value);
                 break;
             }
         }
     }
 
-    protected virtual bool HasToEndInterval(int indexModels, float dangerAverage)
+    private (DateTime, DateTime) GetIntervalLimitDateTimes(int currentIndexModels)
     {
-        var deviation = Math.Abs(dangerAverage - _referenceAverage) / _referenceAverage;
-        if (deviation > 0.50f ||
-            (deviation > 0.25f && _dangerCount > 5) ||
-            (deviation > 0.10f && _dangerCount > 15) ||
-            _dangerCount > 30)
-        {
-            RaiseLogEvent($"Interval finished. {_dangerCount} seconds with a deviation of {deviation}");
-            return true;
-        }
-        else
-            return false;
-    }
-
-    protected virtual (DateTime, DateTime) GetIntervalLimitDateTimes(int currentIndexModels, int startIndexRecords)
-    {
-        if (_records == null)
-            throw new NoDataException();
-
         int auxIndexRecords = _dangerCount > 0 ?
-                _lastAllowedRecordsIndex :
-                currentIndexModels >= _powerModels.Count ? _records.Count() - 1 : _powerModels[currentIndexModels].Index;
+                _lastAllowedRecordsIndex != _startIndexRecords ? 
+                    _lastAllowedRecordsIndex : _startIndexRecords + 1 
+                : currentIndexModels >= _powerModels.Count ? 
+                    _records.Count() - 1 : _powerModels[currentIndexModels].Index;
 
         // Get refined limits
-        var startTime = _records.ElementAt(startIndexRecords).Timestamp;
-        
-        var refinedEndTime = _records.ElementAt(auxIndexRecords).Timestamp;
-        var refinedStartIndex = GetStartIndex(_records, startTime, refinedEndTime) + startIndexRecords;
+        var startTime = _records.ElementAt(_startIndexRecords).Timestamp;
+        var endTime = _records.ElementAt(auxIndexRecords).Timestamp;
+
+        var refinedStartIndex = GetStartIndex(_records, startTime, endTime) + _startIndexRecords;
         var refinedStartTime = _records.ElementAt(refinedStartIndex).Timestamp;
+
+        var refinedEndIndex = GetEndIndex(_records, startTime, endTime) + _startIndexRecords;
+        var refinedEndTime = _records.ElementAt(refinedEndIndex).Timestamp;
 
         return (refinedStartTime, refinedEndTime);
     }
 
-    private int GetStartIndex(
+    protected virtual int GetStartIndex(
         IEnumerable<RecordData> records,
         DateTime startTime,
         DateTime endTime)
@@ -241,15 +267,16 @@ internal abstract class IntervalsFinder
                 .ToList();
 
         var expectedAverage = intervalRecords
-            .Skip(10)
-            .SkipLast(10)
+            .Skip(_windowSize)
+            .SkipLast(_windowSize)
             .Select(r => r.Performance?.Power)
             .Average();
 
         int startIndex = 0;
-        for (int i = 0; i < _windowSize; i++)
+        for (int i = 0; i < intervalRecords.Count; i++)
         {
-            if (intervalRecords.ElementAt(i).Performance?.Power >= expectedAverage)
+            if (intervalRecords.ElementAt(i).Performance?.Power >= expectedAverage * (1 - _deviationAllowed) &&
+                intervalRecords.ElementAt(i).Performance?.Power <= expectedAverage * (1 + _deviationAllowed))
             {
                 startIndex = i;
                 break;
@@ -259,7 +286,42 @@ internal abstract class IntervalsFinder
         return startIndex;
     }
 
-    protected abstract bool IsConsideredAnInterval(IntervalSummary interval);
+    protected virtual int GetEndIndex(
+        IEnumerable<RecordData> records,
+        DateTime startTime,
+        DateTime endTime)
+    {
+        var intervalRecords = records
+        .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
+        .ToList();
+
+        var expectedAverage = intervalRecords
+            .Skip(_windowSize)
+            .SkipLast(_windowSize)
+            .Select(r => r.Performance?.Power)
+            .Average();
+
+        int endIndex = 0;
+        for (int i = intervalRecords.Count - 1; i >= 0; i--)
+        {
+            if (intervalRecords.ElementAt(i).Performance?.Power >= expectedAverage * (1 - _deviationAllowed) &&
+                intervalRecords.ElementAt(i).Performance?.Power <= expectedAverage * (1 + _deviationAllowed))
+            {
+                endIndex = i;
+                break;
+            }
+        }
+
+        return endIndex;
+    }
+
+    private bool IsConsideredAnInterval(IntervalSummary interval)
+    {
+        return interval.DurationSeconds >= _minTime &&
+            interval.AveragePower >= _minPower;
+    }
+
+    protected abstract bool HasToEndInterval(int indexModels, float dangerAverage);
 
     protected void RaiseLogEvent(string message)
     {

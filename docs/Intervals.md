@@ -45,7 +45,7 @@ Se trabaja con los últimos 60 segundos. Requisitos:
 - Comienzo de intervalo: 
     - Potencia máxima => Z5.
     - Coeficiente de desviación de 0.2 máximo.
-    - Delta máximo-mínimo de 0.15 máximo.
+    - Delta máximo-mínimo de 0.35 máximo.
 - Desviaciones: comprobación de la desviación de media reciente respecto a la referencia (actual). Relaciones en función de la desviación de potencia:
     > 75% => 5 segundos.
     > 50% => 30 segundos.
@@ -60,7 +60,7 @@ Se trabaja con los últimos 60 segundos. Requisitos:
 ### Intervalos medios
 Se trabaja con los últimos 30 segundos. Requisitos:
 - Tiempo mínimo: 4 minutos.
-- Potencia media mínima: Z3 punto medio, delta máximo-mínimo.
+- Potencia media mínima: Z3 punto medio.
 - Comienzo de intervalo: 
     - Potencia máxima => Z5 (límite alto).
     - Coeficiente de desviación de 0.15 máximo.
@@ -68,6 +68,11 @@ Se trabaja con los últimos 30 segundos. Requisitos:
 - Desviaciones: comprobación de la desviación de media reciente respecto a la referencia (actual). Relaciones en función de la desviación de potencia:
     > 75% => 1 segundo.
     > 50% => 5 segundos.
-    > 25% => 10 segundos.
+    > 25% => 15 segundos.
     > 15% => 30 segundos.
     else  => sigue el intervalo.
+    Estas condiciones se mantienen mientras la potencia media esté por encima del mínimo, si no, estos son los tiempo de aceptación según la caída de potencia respecto a la potencia mínima:
+        > 75% => 1 segundo.
+        > 50% => 5 segundos.
+        > 25% => 10 segundos.
+        else => 30 segundos.
