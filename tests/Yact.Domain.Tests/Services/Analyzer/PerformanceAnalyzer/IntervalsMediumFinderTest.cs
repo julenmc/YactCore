@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
+using System.Diagnostics;
 using Xunit.Abstractions;
 using Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 using Yact.Domain.ValueObjects.Activity.Records;
@@ -8,12 +9,23 @@ namespace Yact.Domain.Tests.Services.Analyzer.PerformanceAnalyzer;
 
 public sealed class MediumFinderUnitTests
 {
-    private readonly ITestOutputHelper _output;
+    private readonly ITestOutputHelper output;
     private const int IntervalMinTime = 4 * 60;    // 4 mins
+
+    private IntervalsMediumFinder finder;
+    private PowerZones powerZones;
 
     public MediumFinderUnitTests(ITestOutputHelper output)
     {
-        _output = output;
+        this.output = output;
+        powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
+    }
+
+    private void CreateFinder(List<TestRecord> testRecords)
+    {
+        var records = FitnessDataService.SetData(testRecords);
+        finder = new IntervalsMediumFinder(powerZones, records);
+        finder.LogEventHandler += (s, e) => { output.WriteLine(e); };
     }
 
     #region No Interval
@@ -22,7 +34,7 @@ public sealed class MediumFinderUnitTests
     public void Search_NoRecords_NoIntervalReturned()
     {
         // Arrange
-        var finder = new IntervalsMediumFinder(PowerZones.Create(IntervalsTestConstants.PowerZones), new List<RecordData>());
+        var finder = new IntervalsMediumFinder(powerZones, new List<RecordData>());
 
         // Act
         var intervals = finder.Search();
@@ -35,14 +47,11 @@ public sealed class MediumFinderUnitTests
     public void Search_MinimumTimeNotReached_NoIntervalReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>
         {
             new TestRecord{ Time = IntervalMinTime - 1, Power = powerZones.Values[3].HighLimit, HearRate = 120, Cadence = 85},
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -55,14 +64,11 @@ public sealed class MediumFinderUnitTests
     public void Search_MinimumPowerNotReached_NoIntervalReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>
         {
             new TestRecord{ Time = 5 * 60, Power = powerZones.Values[3].LowLimit, HearRate = 120, Cadence = 85},
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -76,14 +82,11 @@ public sealed class MediumFinderUnitTests
     {
         // Asserts that interval won't start until power goes bellow the max allowed
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>
         {
             new TestRecord{ Time = 5 * 60, Power = powerZones.Values[6].HighLimit + 1, HearRate = 120, Cadence = 85}, 
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -100,15 +103,12 @@ public sealed class MediumFinderUnitTests
     public void Search_PowerAndDurationReached_OneIntervalReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         var power = (powerZones.Values[3].HighLimit + powerZones.Values[3].LowLimit) / 2;
         List<TestRecord> testRecords = new List<TestRecord>
         {
             new TestRecord{ Time = IntervalMinTime, Power = power, HearRate = 120, Cadence = 85},
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -125,16 +125,13 @@ public sealed class MediumFinderUnitTests
     public void Search_IntervalBetweenBreaks_OneIntervalReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>
         {
             new TestRecord{ Time = 30, Power = powerZones.Values[3].LowLimit, HearRate = 120, Cadence = 85},
             new TestRecord{ Time = IntervalMinTime, Power = powerZones.Values[3].HighLimit, HearRate = 125, Cadence = 90},
             new TestRecord{ Time = 30, Power = powerZones.Values[3].LowLimit, HearRate = 120, Cadence = 85},
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -152,16 +149,13 @@ public sealed class MediumFinderUnitTests
     public void Search_TwoIntervalsDividedByBreak_TwoIntervalsReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>
         {
             new TestRecord{ Time = IntervalMinTime, Power = powerZones.Values[3].HighLimit, HearRate = 125, Cadence = 90},
             new TestRecord{ Time = 6, Power = powerZones.Values[3].HighLimit / 2 - 1, HearRate = 120, Cadence = 85},   // 6 secs above 50% deviation has to break an interval
             new TestRecord{ Time = IntervalMinTime, Power = powerZones.Values[3].HighLimit, HearRate = 125, Cadence = 90},
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -189,16 +183,13 @@ public sealed class MediumFinderUnitTests
     public void Search_SmallIrregularPower_OneIntervalReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>();
         for (int i = 0; i < 30; i++)
         {
             testRecords.Add(new TestRecord { Time = 4, Power = powerZones.Values[3].LowLimit, HearRate = 120, Cadence = 85 });
             testRecords.Add(new TestRecord { Time = 6, Power = powerZones.Values[4].LowLimit, HearRate = 125, Cadence = 90 });
         }
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -218,16 +209,13 @@ public sealed class MediumFinderUnitTests
     public void Search_BigDeviation_NoIntervalReturned()
     {
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>();
         for (int i = 0; i < 30; i++)
         {
             testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[2].HighLimit, HearRate = 120, Cadence = 85 });
             testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[4].HighLimit, HearRate = 120, Cadence = 85 });
         }
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -241,7 +229,6 @@ public sealed class MediumFinderUnitTests
     {
         // When the interval is too irregular, it should't be detected
         // Arrange
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         List<TestRecord> testRecords = new List<TestRecord>()
         {
             new TestRecord { Time = 30, Power = powerZones.Values[4].HighLimit, HearRate = 120, Cadence = 85 }
@@ -251,9 +238,7 @@ public sealed class MediumFinderUnitTests
             testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[2].HighLimit, HearRate = 120, Cadence = 85 });
             testRecords.Add(new TestRecord { Time = 5, Power = powerZones.Values[4].HighLimit, HearRate = 120, Cadence = 85 });
         }
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -268,7 +253,6 @@ public sealed class MediumFinderUnitTests
 
     private (PowerZones, int, int, int) ChangeSetUp(int normalPower, float powerChangePercentage, int changeTime)
     {
-        var powerZones = PowerZones.Create(IntervalsTestConstants.PowerZones);
         var averagePower = powerChangePercentage < 1 ? powerZones.Values[3].HighLimit : powerChangePercentage * 1.1f;
         var changePower = normalPower * powerChangePercentage;
         
@@ -334,9 +318,7 @@ public sealed class MediumFinderUnitTests
             new TestRecord { Time = changeTime, Power = ChangePower, HearRate = 120, Cadence = 85 },
             new TestRecord { Time = normalPowerDuration, Power = normalPower, HearRate = 125, Cadence = 90 }
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -367,9 +349,7 @@ public sealed class MediumFinderUnitTests
             new TestRecord { Time = normalPowerDuration * 2, Power = normalPower, HearRate = 125, Cadence = 90 },
             new TestRecord { Time = changeTime, Power = ChangePower, HearRate = 120, Cadence = 85 },
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
@@ -448,9 +428,7 @@ public sealed class MediumFinderUnitTests
             new TestRecord { Time = changeTime, Power = changePower, HearRate = 120, Cadence = 85 },
             new TestRecord { Time = normalPowerDuration, Power = normalPower, HearRate = 125, Cadence = 90 }
         };
-        var records = FitnessDataService.SetData(testRecords);
-        var finder = new IntervalsMediumFinder(powerZones, records);
-        finder.LogEventHandler += (s, e) => { _output.WriteLine(e); };
+        CreateFinder(testRecords);
 
         // Act
         var intervals = finder.Search();
