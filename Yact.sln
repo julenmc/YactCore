@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yact.Domain.Tests", "tests\Yact.Domain.Tests\Yact.Domain.Tests.csproj", "{392C63EE-92D0-42AC-8091-E4F44F9D0E87}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B3A3D3A-6C90-433B-B69F-ED6997B213A5}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Intervals.md = docs\Intervals.md
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
