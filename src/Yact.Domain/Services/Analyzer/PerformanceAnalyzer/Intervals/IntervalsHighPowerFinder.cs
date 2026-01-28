@@ -73,11 +73,10 @@ internal class IntervalsHighPowerFinder : IntervalsFinder
     }
 
     protected override int GetStartIndex(
-        IEnumerable<RecordData> records,
         DateTime startTime,
         DateTime endTime)
     {
-        var intervalRecords = records
+        var intervalRecords = _records
                 .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
                 .ToList();
 
@@ -101,11 +100,10 @@ internal class IntervalsHighPowerFinder : IntervalsFinder
     }
 
     protected override int GetEndIndex(
-        IEnumerable<RecordData> records,
         DateTime startTime,
         DateTime endTime)
     {
-        var intervalRecords = records
+        var intervalRecords = _records
         .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
         .ToList();
 

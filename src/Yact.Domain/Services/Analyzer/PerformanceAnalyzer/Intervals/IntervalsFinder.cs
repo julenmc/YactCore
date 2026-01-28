@@ -78,8 +78,8 @@ internal abstract class IntervalsFinder
             _startIndexRecords = _powerModels[indexModels].Index - (_windowSize - 1);
             _startTime = _records.ElementAt(_startIndexRecords).Timestamp;
             _referenceAverage = _powerModels[indexModels].Average;
-            int totalPower = (int)_referenceAverage;
-            int pointCount = 1;
+            int totalPower = (int)_referenceAverage * _windowSize;
+            int pointCount = _windowSize;
             bool sessionStopped = false;
             indexModels++;
             RaiseLogEvent($"New interval might start at: startDate={_startTime.TimeOfDay} Average={_powerModels[indexModels].Average}. CV={_powerModels[indexModels].CoefficientOfVariation}");
@@ -105,7 +105,7 @@ internal abstract class IntervalsFinder
                 if (IsIntervalEndWarning(indexModels))
                 {
                     // Warning, might finish the interval
-                    if (_dangerCount == 0)  // First warning
+                    if (_dangerCount == 0)  
                     {
                         HandleFirstWarningPoint(indexModels);
                     }
@@ -113,8 +113,11 @@ internal abstract class IntervalsFinder
                     {
                         _dangerTotalPower += (int)_powerModels[indexModels].LastPoint.Value;
                         _dangerCount++;
-                        float dangerAverage = _dangerTotalPower / _dangerCount;
+                    }
 
+                    if (_dangerCount > 0)
+                    {
+                        float dangerAverage = _dangerTotalPower / _dangerCount;
                         if (HasToEndInterval(indexModels, dangerAverage))
                             break;
                     }
@@ -129,7 +132,7 @@ internal abstract class IntervalsFinder
                         _dangerTotalPower = 0;
                         _dangerCount = 0;
                         _lastAllowedRecordsIndex = 0;
-                        RaiseLogEvent($"Unstable points end at {_powerModels[indexModels].LastPoint.Timestamp.TimeOfDay} ({_powerModels[indexModels].Index}): Power={_powerModels[indexModels].Average}");
+                        RaiseLogEvent($"Unstable points end at {_powerModels[indexModels].LastPoint.Timestamp.TimeOfDay} ({_powerModels[indexModels].Index}): Power={_powerModels[indexModels].LastPoint.Value}W");
                     }
                     else
                     {
@@ -160,20 +163,18 @@ internal abstract class IntervalsFinder
 
             if (indexModels < _powerModels.Count)
             {
-                int index = 0;
                 int? lastIntervalEndIndex = null;
 
-                foreach (var r in _records)
+                for (int index = 0; index < _powerModels.Count; index++) // TODO: optimize this search
                 {
-                    if (r.Timestamp == newInterval.EndTime)
+                    if (_powerModels[index].Index == _lastAllowedRecordsIndex + _windowSize)
                     {
                         lastIntervalEndIndex = index;
                         break;
                     }
-                    index++;
                 }
 
-                if (lastIntervalEndIndex != null) 
+                if (lastIntervalEndIndex != null)
                     indexModels = lastIntervalEndIndex.Value;
             }
         }
@@ -217,7 +218,8 @@ internal abstract class IntervalsFinder
                 _lastAllowedRecordsIndex = dangerIndexRecords - 1;
                 LogEventHandler?.Invoke(
                     this,
-                    $"Unstable point found at {_records.ElementAt(dangerIndexRecords).Timestamp.TimeOfDay} ({dangerIndexRecords}): Power={_records.ElementAt(dangerIndexRecords).Performance?.Power}W");
+                    $"Unstable point found at {_records.ElementAt(dangerIndexRecords).Timestamp.TimeOfDay} ({dangerIndexRecords}): " +
+                    $"Average power => {_referenceAverage}W, point power => {_records.ElementAt(dangerIndexRecords).Performance?.Power}W");
                 _dangerTotalPower = (int)_records
                     .Skip(_lastAllowedRecordsIndex + 1)
                     .Take(j + 1)
@@ -248,21 +250,20 @@ internal abstract class IntervalsFinder
         var startTime = _records.ElementAt(_startIndexRecords).Timestamp;
         var endTime = _records.ElementAt(auxIndexRecords).Timestamp;
 
-        var refinedStartIndex = GetStartIndex(_records, startTime, endTime) + _startIndexRecords;
+        var refinedStartIndex = GetStartIndex(startTime, endTime) + _startIndexRecords;
         var refinedStartTime = _records.ElementAt(refinedStartIndex).Timestamp;
 
-        var refinedEndIndex = GetEndIndex(_records, startTime, endTime) + _startIndexRecords;
+        var refinedEndIndex = GetEndIndex(startTime, endTime) + _startIndexRecords;
         var refinedEndTime = _records.ElementAt(refinedEndIndex).Timestamp;
 
         return (refinedStartTime, refinedEndTime);
     }
 
     protected virtual int GetStartIndex(
-        IEnumerable<RecordData> records,
         DateTime startTime,
         DateTime endTime)
     {
-        var intervalRecords = records
+        var intervalRecords = _records
                 .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
                 .ToList();
 
@@ -287,11 +288,10 @@ internal abstract class IntervalsFinder
     }
 
     protected virtual int GetEndIndex(
-        IEnumerable<RecordData> records,
         DateTime startTime,
         DateTime endTime)
     {
-        var intervalRecords = records
+        var intervalRecords = _records
         .Where(p => p.Timestamp >= startTime && p.Timestamp <= endTime)
         .ToList();
 
