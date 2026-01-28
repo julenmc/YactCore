@@ -1,6 +1,4 @@
-﻿using Yact.Domain.Common.Activities.Intervals;
-using Yact.Domain.ValueObjects.Activity.Records;
-using Yact.Domain.ValueObjects.Cyclist;
+﻿using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.ValueObjects.Activity.Intervals;
 

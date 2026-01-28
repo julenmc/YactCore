@@ -1,4 +1,4 @@
-﻿using Yact.Domain.Common.Activities.Intervals;
+﻿using Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
 
 namespace Yact.Domain.ValueObjects.Activity.Intervals;
 

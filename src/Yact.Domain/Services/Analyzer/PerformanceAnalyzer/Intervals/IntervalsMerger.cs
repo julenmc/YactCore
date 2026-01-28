@@ -1,5 +1,4 @@
-﻿using Yact.Domain.Common.Activities.Intervals;
-using Yact.Domain.ValueObjects.Activity.Intervals;
+﻿using Yact.Domain.ValueObjects.Activity.Intervals;
 using Yact.Domain.ValueObjects.Activity.Records;
 
 namespace Yact.Domain.Services.Analyzer.PerformanceAnalyzer.Intervals;
@@ -72,7 +71,6 @@ internal class IntervalsMerger
         if (Math.Abs(firstInterval.AveragePower - secondInterval.AveragePower) > allowedDeviation)
         {
             return null;
-            //throw new MergeExpection($"Average deviation is too high: {interval2.AveragePower} vs {interval1.AveragePower}, where allowed is {allowedDeviation}");
         }
 
         // Once checked proceed with merge
