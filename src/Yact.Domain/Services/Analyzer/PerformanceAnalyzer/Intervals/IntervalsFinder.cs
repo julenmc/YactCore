@@ -69,8 +69,9 @@ internal abstract class IntervalsFinder
         while (indexModels < _powerModels.Count)
         {
             // Look for start
-            while (indexModels < _powerModels.Count && !IsIntervalStart(indexModels))
-                indexModels++;
+            for (; indexModels < _powerModels.Count; indexModels++)
+                if (IsIntervalStart(indexModels))
+                    break;
 
             if (indexModels >= _powerModels.Count)
                 break;
@@ -88,7 +89,7 @@ internal abstract class IntervalsFinder
             _dangerCount = 0;
             _dangerTotalPower = 0;
             _lastAllowedRecordsIndex = 0;
-            while (indexModels < _powerModels.Count)
+            for (; indexModels < _powerModels.Count; indexModels++)
             {
                 int timeDiff = (indexModels > 0) ?
                     (int)(_powerModels[indexModels].LastPoint.Timestamp - _powerModels[indexModels - 1].LastPoint.Timestamp).TotalSeconds : 1;
@@ -141,7 +142,6 @@ internal abstract class IntervalsFinder
                     }
                     _referenceAverage = totalPower / pointCount;
                 }
-                indexModels++;
             }
 
             var refinedLimits = GetIntervalLimitDateTimes(indexModels);
